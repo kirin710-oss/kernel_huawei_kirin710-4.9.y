@@ -25,6 +25,7 @@ export LC_COLLATE LC_NUMERIC
 unexport GREP_OPTIONS
 TARGET_BUILD_VARIANT := user
 export TARGET_BUILD_VARIANT
+export secdog=rsa2048
 
 # We are using a recursive build, so we need to do a little thinking
 # to get the ordering right.
@@ -382,7 +383,7 @@ USERINCLUDE    := \
 		-I$(objtree)/include/generated/uapi \
                 -include $(srctree)/include/linux/kconfig.h
 
-export TARGET_BOARD_PLATFORM = kirin710
+export TARGET_BOARD_PLATFORM = hi6250
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
 LINUXINCLUDE    := \
@@ -461,8 +462,8 @@ ifneq ($(BALONG_FAMA_FLAGS),)
 KBUILD_CFLAGS += $(BALONG_FAMA_FLAGS)
 endif
 
-OBB_PRODUCT_NAME = kirin710
-CFG_PLATFORM = kirin710
+OBB_PRODUCT_NAME = hi6250
+CFG_PLATFORM = hi6250
 TARGET_ARM_TYPE = arm64
 export OBB_PRODUCT_NAME CFG_PLATFORM TARGET_ARM_TYPE 
 # add hisilicon balong configs end
@@ -905,16 +906,13 @@ ifdef CONFIG_CC_STACKPROTECTOR
 endif
 KBUILD_CFLAGS += $(stackp-flag)
 
-
 ifeq ($(cc-name),clang)
 ifneq ($(CROSS_COMPILE),)
-CLANG_TRIPLE    ?= $(CROSS_COMPILE)
-CLANG_TARGET	:= --target=$(notdir $(CLANG_TRIPLE:%-=%))
+CLANG_TARGET	:= --target=$(notdir $(CROSS_COMPILE:%-=%))
 GCC_TOOLCHAIN	:= $(realpath $(dir $(shell which $(LD)))/..)
 endif
 ifneq ($(GCC_TOOLCHAIN),)
-#CLANG_GCC_TC   := --gcc-toolchain=$(GCC_TOOLCHAIN)
-CLANG_GCC_TC    := --gcc-toolchain=$(shell perl -e 'use File::Spec; print File::Spec->abs2rel(@ARGV) . "\n"' $(GCC_TOOLCHAIN) $(CURDIR))
+CLANG_GCC_TC	:= --gcc-toolchain=$(GCC_TOOLCHAIN)
 endif
 KBUILD_CFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
 KBUILD_AFLAGS += $(CLANG_TARGET) $(CLANG_GCC_TC)
@@ -1056,6 +1054,11 @@ endif
 ifeq ($(SET_SYSTEM_PARTITION), internal)
     KBUILD_CFLAGS += -DCONFIG_MARKET_INTERNAL
 endif
+
+ifeq ($(BUILD_WITH_HARMONY), true)
+    KBUILD_CFLAGS += -DCONFIG_HARMONY_PERFORMANCE
+endif
+
 include scripts/Makefile.kasan
 include scripts/Makefile.extrawarn
 include scripts/Makefile.ubsan
