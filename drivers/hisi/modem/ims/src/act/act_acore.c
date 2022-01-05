@@ -378,8 +378,6 @@ static void act_cdev_setup( struct act_cdev *dev,  int index)
 
     printk(KERN_INFO "Enter act_cdev_setup.");
 
-    //mutex_init(&(dev->lock));
-
     //Init the device
     cdev_init( &dev->cdev, &act_cdev_fops );
     dev->cdev.owner = THIS_MODULE;

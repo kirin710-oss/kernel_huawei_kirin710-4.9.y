@@ -687,12 +687,6 @@ void lcdkit_parse_backlight_ic_config(struct device_node *np)
     int j = 0;
     struct property *prop = NULL;
 
-    LCDKIT_INFO("lcdkit_parse_backlight_ic_config\n");
-    if(!strlen(chip_name) || !strcmp(chip_name,"default") ||(NULL == np))
-    {
-        return -1;
-    }
-
 	lcdkit_parse_backlight_ic_param(np, "lcdkit-bl-ic-level", &g_bl_config.bl_level);
 	lcdkit_parse_backlight_ic_param(np, "lcdkit-bl-ic-ctrl-mode", &g_bl_config.bl_ctrl_mod);
 	lcdkit_parse_backlight_ic_param(np, "lcdkit-bl-ic-type", &g_bl_config.ic_type);

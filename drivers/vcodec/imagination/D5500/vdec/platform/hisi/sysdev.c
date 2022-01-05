@@ -167,6 +167,7 @@ void power_on(int isDec)
 
 }
 #endif
+
 static int driver_probe(struct platform_device *pdev)
 {
     struct device *dev = &pdev->dev;
