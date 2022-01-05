@@ -14,7 +14,6 @@ obj-$(CONFIG_HISPIPP_V250) += v250es/
 obj-$(CONFIG_HISPIPP_V250) += device/
 
 
-subdir-ccflags-$(CONFIG_HISPIPP_V250) += -Wall -Werror
 subdir-ccflags-$(CONFIG_HISPIPP_V250) += -I$(srctree)/drivers/hisi/ipp/v250es \
                                     -I$(srctree)/drivers/hisi/ipp/v250es/v250es \
                                     -I$(srctree)/drivers/hisi/ipp/v250es/device \

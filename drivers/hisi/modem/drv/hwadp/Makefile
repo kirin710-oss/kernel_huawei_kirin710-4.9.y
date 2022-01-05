@@ -17,4 +17,3 @@ ifeq ($(strip $(CFG_CONFIG_MALLOC_UNIFIED)),YES)
 obj-y += malloc_interface.o
 endif
 
-subdir-ccflags-y := -Werror

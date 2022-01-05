@@ -1,4 +1,3 @@
-subdir-ccflags-y += -Wall -Werror
 
 EXTRA_CFLAGS +=	-Isound/usb/
 ccflags-y += -Idrivers/devkit/audiokit/
