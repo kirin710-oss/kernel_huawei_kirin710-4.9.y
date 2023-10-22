@@ -106,11 +106,11 @@ jobs:
 
 
 
-       rm -rf KernelSU
+       #rm -rf KernelSU
 
-       rm -rf drivers/kernelsu
+       #rm -rf drivers/kernelsu
 
-       curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+       #curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
 
        export PATH=$(pwd)/ToolChains/bin/:$PATH
 
