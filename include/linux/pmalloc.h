@@ -17,6 +17,7 @@
 
 #include <linux/genalloc.h>
 #include <linux/string.h>
+#include <linux/gfp.h>
 
 #define PMALLOC_DEFAULT_ALLOC_ORDER (-1)
 
