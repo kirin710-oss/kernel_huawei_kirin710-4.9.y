@@ -130,6 +130,6 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: sydney_KSU-kernel-${{ steps.get_time.outputs.TIME }}
-        path: 
+        path: |
           sydney_KSU-*.img
           out/.config
