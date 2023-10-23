@@ -21,4 +21,3 @@ obj-$(CONFIG_HISI_HW_SP)           += mntn_hw_sp.o
 obj-$(CONFIG_HISI_L3CACHE_ECC)       += mntn_l3cache_ecc.o
 obj-$(CONFIG_HISI_HISEE_MNTN) += hisee/
 obj-$(CONFIG_HISI_BL31_MNTN) += bl31/
-obj-$(CONFIG_HISI_SUBPMU) += subpmu/
