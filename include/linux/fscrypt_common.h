@@ -150,7 +150,7 @@ struct fscrypt_name {
 struct fscrypt_operations {
 	unsigned int flags;
 	const char *key_prefix;
-	int (*get_context)(struct inode *, void *, unsigned long);
+	int (*get_context)(struct inode *, void *, size_t, int *);
 	int (*get_verify_context)(struct inode *, void *, size_t);
 	int (*set_context)(struct inode *, const void *, size_t, void *);
 	int (*set_verify_context)(struct inode *, const void *, size_t,
