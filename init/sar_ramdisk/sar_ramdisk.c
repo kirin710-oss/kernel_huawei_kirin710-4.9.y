@@ -16,7 +16,7 @@ static int padding(unsigned itemsize, int pagesize) {
 	return pagesize - (itemsize & pagemask);
 }
 
-int mount_sar_ramdisk(char* name) {
+__init int mount_sar_ramdisk(char* name) {
 	struct boot_img_hdr_v1 header;
 	unsigned int rd_offset;
 	int fd;
@@ -47,7 +47,7 @@ int mount_sar_ramdisk(char* name) {
 		goto clean_nobuf;
 	}
 
-	buf = kmalloc(header.ramdisk_size, GFP_KERNEL);
+	buf = kmalloc_large(header.ramdisk_size, GFP_KERNEL);
 
 	if (!buf) {
 		pr_err("SAR_RD: Out of memory");
