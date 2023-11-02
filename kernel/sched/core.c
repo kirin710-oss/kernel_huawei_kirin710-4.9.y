@@ -140,8 +140,6 @@ static inline bool is_ed_task(struct rq *rq, struct task_struct *p, u64 wall)
  * EARLY_DETECTION_DURATION can be flagged early as potential
  * high load tasks.
  */
-int schedtune_prefer_idle(struct task_struct *tsk);
-
 bool early_detection_notify(struct rq *rq, u64 wallclock)
 {
 	struct task_struct *p;
