@@ -97,10 +97,11 @@
 #include <linux/hisi/rdr_hisi_ap_hook.h>
 #endif
 
+#include "tune.h"
+
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
 #include "walt.h"
-#include "tune.h"
 #include <linux/hisi_rtg.h>
 
 #ifdef CONFIG_HW_VIP_THREAD
