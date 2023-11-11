@@ -8,7 +8,7 @@
 
 #ifdef CONFIG_INITRAMFS_IGNORE_SKIP_FLAG
 #define INITRAMFS_STR_FIND "root=PARTUUID=b5abc42c-d422-4290-a4c3-29e4424da312"
-#define INITRAMFS_STR_REPLACE "root=/dev/block/mmcblk0p66"
+#define INITRAMFS_STR_REPLACE "root=/dev/block/mmcblk0p69"
 #define INITRAMFS_STR_LEN (sizeof(INITRAMFS_STR_FIND) - 1)
 
 static char proc_command_line[COMMAND_LINE_SIZE];
