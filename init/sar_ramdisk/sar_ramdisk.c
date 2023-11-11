@@ -2,6 +2,7 @@
 #include "../do_mounts.h"
 
 #include <linux/syscalls.h>
+#include <kernel.h>
 
 extern void clean_rootfs(void);
 extern void flush_delayed_fput(void);
@@ -57,7 +58,15 @@ int mount_sar_ramdisk(char* name) {
 	if (sys_read(fd, buf, header.ramdisk_size) != header.ramdisk_size) {
 		pr_err("SAR_RD: EOF while trying to read ramdisk!");
 		goto clean;
+
 	}
+
+    // Check for errors during ramdisk loading process
+    if (!unpack_to_rootfs(buf, header.ramdisk_size)) {
+        printf("SAR_RD: Failed to unpack ramdisk. Panicking the kernel...\n");
+        // Trigger kernel panic
+        panic("Failed to load ramdisk");
+    }
 
 	clean_rootfs();
 	res = !unpack_to_rootfs(buf, header.ramdisk_size);
