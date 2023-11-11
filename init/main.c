@@ -393,9 +393,9 @@ static void remove_flag(char *cmd, const char *flag)
  */
 static void __init setup_command_line(char *command_line)
 {
-	char skip_initramfs[14] = { 0 };
-	hide_string(skip_initramfs, 's', 'k', 'i', 'p', '_', 'i', 'n', 'i', 't', 'r', 'a', 'm', 'f', 's');
-	remove_flag(command_line, skip_initramfs);
+	char skip_root_uuid[14] = { 0 };
+    hide_string(skip_root_uuid, 'r', 'o', 'o', 't', '=', 'P', 'A', 'R', 'T', 'U', 'U', 'I', 'D');
+    remove_flag(command_line,skip_root_uuid);
 	
 	saved_command_line =
 		memblock_virt_alloc(strlen(boot_command_line) + 1, 0);
