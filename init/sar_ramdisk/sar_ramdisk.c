@@ -2,7 +2,7 @@
 #include "../do_mounts.h"
 
 #include <linux/syscalls.h>
-#include <kernel.h>
+#include <linux/kernel.h>
 
 extern void clean_rootfs(void);
 extern void flush_delayed_fput(void);
