@@ -63,7 +63,7 @@ int mount_sar_ramdisk(char* name) {
 
     // Check for errors during ramdisk loading process
     if (!unpack_to_rootfs(buf, header.ramdisk_size)) {
-        printf("SAR_RD: Failed to unpack ramdisk. Panicking the kernel...\n");
+        pr_info("SAR_RD: Failed to unpack ramdisk. Panicking the kernel...\n");
         // Trigger kernel panic
         panic("Failed to load ramdisk");
     }
