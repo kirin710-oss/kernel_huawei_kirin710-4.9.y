@@ -393,7 +393,7 @@ static void remove_flag(char *cmd, const char *flag)
  */
 static void __init setup_command_line(char *command_line)
 {
-	char skip_initramfs[14] = { 0 };
+	char skip_root_uuid[14] = { 0 };
 	hide_string(skip_root_uuid, 'r', 'o', 'o', 't', '=', 'P', 'A', 'R', 'T', 'U', 'U', 'I', 'D');
 	remove_flag(command_line,skip_root_uuid);
 	
