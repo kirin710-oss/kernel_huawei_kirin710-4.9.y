@@ -356,33 +356,14 @@ static inline void setup_nr_cpu_ids(void) { }
 static inline void smp_prepare_cpus(unsigned int maxcpus) { }
 #endif
 
-static void hide_string(char *buf, ...)
+void remove_substring(char *str, const char *sub)
 {
-	char arg;
-	va_list args;
-	va_start(args, buf);     /* Initialize the argument args. */
-
-	arg = va_arg(args, int);
-
-	while (arg) {
-		sprintf(buf, "%s%c", buf, arg);
-		arg = va_arg(args, int);
-	}
-
-	va_end(args);                  /* Clean up. */
-}
-
-static void remove_flag(char *cmd, const char *flag)
-{
-	char *start_addr, *end_addr;
-	/* Ensure all instances of a flag are removed */
-	while ((start_addr = strstr(cmd, flag))) {
-		end_addr = strchr(start_addr, ' ');
-		if (end_addr)
-			memmove(start_addr, end_addr + 1, strlen(end_addr));
-		else
-			*(start_addr - 1) = '\0';
-	}
+  char *start, *end; 
+  while ((start = strstr(str, sub))) 
+  {
+    end = start + strlen(sub); 
+    memmove(start, end, strlen(end) + 1); 
+  }
 }
 
 /*
@@ -393,10 +374,6 @@ static void remove_flag(char *cmd, const char *flag)
  */
 static void __init setup_command_line(char *command_line)
 {
-	char skip_initramfs[14] = { 0 };
-	hide_string(skip_initramfs, 's', 'k', 'i', 'p', '_', 'i', 'n', 'i', 't', 'r', 'a', 'm', 'f', 's');
-	remove_flag(command_line, skip_initramfs);
-	
 	saved_command_line =
 		memblock_virt_alloc(strlen(boot_command_line) + 1, 0);
 	initcall_command_line =
@@ -576,6 +553,7 @@ asmlinkage __visible void __init start_kernel(void)
 #endif
 	mm_init_cpumask(&init_mm);
 	setup_command_line(command_line);
+	remove_substring(saved_command_line, "root=PARTUUID=b5abc42c-d422-4290-a4c3-29e4424da312");
 	setup_nr_cpu_ids();
 	setup_per_cpu_areas();
 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
