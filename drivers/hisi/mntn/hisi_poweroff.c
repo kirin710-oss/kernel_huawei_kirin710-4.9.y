@@ -37,7 +37,7 @@ static int g_powerhold_protect_offset = 0xFFFF;
 static unsigned int g_powerhold_protect_bit = 0xFF;
 
 #include <linux/hisi/rdr_hisi_platform.h>
-#include <rdr_inner.h>
+#include "blackbox/rdr_inner.h"
 
 static void __iomem *sysctrl_base;
 extern void (*pm_power_off)(void);
@@ -84,8 +84,8 @@ void hisi_pm_system_off(void)
 
 /*******************************************************************************
 Function:       hisi_pm_system_reset
-Description: 	×¢²áµ½machine_restartº¯ÊýÖÐµÄ»Øµ÷£¬µ±ÏµÍ³¸´Î»Ê±£¬µ÷ÓÃ¡£
-Input:		    cmd  ¸´Î»ÀàÐÍ
+Description: 	×¢ï¿½áµ½machine_restartï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ»Øµï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½Î»Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã¡ï¿½
+Input:		    cmd  ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
 Output:		    NA
 Return:		    NA
 ********************************************************************************/
