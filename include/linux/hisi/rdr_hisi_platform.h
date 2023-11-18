@@ -101,7 +101,7 @@ static inline void hisiap_nmi_notify_lpm3(void) {}
 static inline void set_exception_info(unsigned long address){}
 static inline int register_module_dump_mem_func(rdr_hisiap_dump_func_ptr func,
 				  char *module_name, dump_mem_module modu){return -1;}
-extern inline int get_module_dump_mem_addr(dump_mem_module modu, unsigned char *dump_addr){return -1;}
+extern int get_module_dump_mem_addr(dump_mem_module modu, unsigned char *dump_addr){return -1;}
 static inline bool rdr_get_ap_init_done(void){return 0;}
 static inline unsigned long long get_pmu_reset_reg(void){return 0;}
 static inline void set_reboot_reason(unsigned int reboot_reason) {}
