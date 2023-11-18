@@ -31927,7 +31927,6 @@ bkops_status_str_mmc:
 	.4byte	0xe0d6
 	.byte	0
 	.uleb128 0x69
-	.4byte	.LASF3311
 	.byte	0x99
 	.2byte	0x126
 	.4byte	0x10282

@@ -91,8 +91,8 @@
 											bit 0-7   TYPE_POWER */
 
 #define CFG_DSP_NMI                     (0x3C)               /*DSP NMI ,bit0-bit15*/
-#define CFG_MMBUF_REMAP_EN              (0x130)              /*mmbuf remap enable£¬9bit*/
-#define CFG_OCRAM_REMAP_EN              (0x13C)              /*ocram remap enable£¬9bit*/
+#define CFG_MMBUF_REMAP_EN              (0x130)              /*mmbuf remap enableï¿½ï¿½9bit*/
+#define CFG_OCRAM_REMAP_EN              (0x13C)              /*ocram remap enableï¿½ï¿½9bit*/
 #define ASP_CFG_BASE                    (SOC_ACPU_ASP_CFG_BASE_ADDR)
 
 struct rdr_soc_des_s {
@@ -435,9 +435,9 @@ static int parse_sochifi_iccdebug(char *original_data, unsigned int original_dat
 }
 
 struct parse_log parse_sochifi_log[] = {
-	{HIFI_OM_LOG_SIZE + DRV_DSP_UART_TO_MEM_SIZE, DRV_DSP_STACK_TO_MEM_SIZE, PARSER_SOCHIFI_TRACE_SIZE, parse_hifi_trace},
+	{HIFI_OM_LOG_SIZE + DRV_DSP_UART_TO_MEM_SIZE, DRV_DSP_STACK_TO_MEM_SIZE, PARSER_SOCHIFI_TRACE_SIZE},
 	{RDR_FALG_OFFSET, HIFI_FLAG_DATA_SIZE, PARSE_FLAG_LOG_SIZE, parse_sochifi_flag},
-	{0, SOCHIFI_ORIGINAL_CPUVIEW_SIZE, PARSER_SOCHIFI_CPUVIEW_LOG_SIZE, parse_hifi_cpuview},
+	{0, SOCHIFI_ORIGINAL_CPUVIEW_SIZE, PARSER_SOCHIFI_CPUVIEW_LOG_SIZE},
 	{SOCHIFI_ORIGINAL_CPUVIEW_SIZE, SOCHIFI_ORIGINAL_INNERLOG_SIZE, PARSE_INNERLOG_SIZE, parse_sochifi_innerlog},
 	{SOCHIFI_ORIGINAL_CPUVIEW_SIZE + SOCHIFI_ORIGINAL_INNERLOG_SIZE, SOCHIFI_ORIGINAL_DYNMEM_SIZE, PARSE_MEM_DYN_LOG_SIZE, parse_sochifi_dynmem},
 	{HIFI_OM_LOG_SIZE + DRV_DSP_UART_TO_MEM_SIZE + DRV_DSP_STACK_TO_MEM_SIZE, HIFI_ICC_DEBUG_SIZE, PARSE_ICC_DEBUG_LOG_SIZE, parse_sochifi_iccdebug},
@@ -557,7 +557,7 @@ static int save_icc_channel_fifo(void)
 
 	for (i = 0; i < 2; i++) {
 		struct icc_channel *channel = &icc_dbg_info->icc_channels[i];
-		/* ±£´æ½ÓÊÕfifo */
+		/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½fifo */
 		if (0 != channel->fifo_recv) {
 			dst_fifo = (struct icc_channel_fifo *)(((char *)&(channel->fifo_recv)) + *(unsigned int *)(&channel->fifo_recv));/*lint !e826*/
 			src_fifo = (struct icc_channel_fifo *)ioremap_wc(*((unsigned int *)dst_fifo->data) + ICC_SHARE_FAMA_ADDR_OFFSET,
@@ -568,11 +568,11 @@ static int save_icc_channel_fifo(void)
 				return -ENOMEM;
 			}
 
-			/* ¿½±´fifoÍ¨µÀÊý¾Ý */
+			/* ï¿½ï¿½ï¿½ï¿½fifoÍ¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 			memcpy((void *)((char *)dst_fifo + sizeof(struct icc_channel_fifo)),
 					(void *)((char *)src_fifo + sizeof(struct icc_channel_fifo)),
 					(unsigned long)dst_fifo->size);
-			/* ¸üÐÂFifoÍ·ÐÅÏ¢ */
+			/* ï¿½ï¿½ï¿½ï¿½FifoÍ·ï¿½ï¿½Ï¢ */
 			dst_fifo->magic = src_fifo->magic;
 			dst_fifo->read  = src_fifo->read;
 			dst_fifo->write = src_fifo->write;
@@ -580,7 +580,7 @@ static int save_icc_channel_fifo(void)
 			src_fifo = NULL;
 		}
 
-		/* ±£´æ·¢ËÍfifo */
+		/* ï¿½ï¿½ï¿½æ·¢ï¿½ï¿½fifo */
 		if (0 != channel->fifo_send) {
 			dst_fifo = (struct icc_channel_fifo *)((char *)&(channel->fifo_send) + *(unsigned int *)(&channel->fifo_send));/*lint !e826*/
 			src_fifo = (struct icc_channel_fifo *)ioremap_wc(*((unsigned int *)dst_fifo->data) + ICC_SHARE_FAMA_ADDR_OFFSET,
@@ -591,11 +591,11 @@ static int save_icc_channel_fifo(void)
 				iounmap(icc_dbg_info);
 				return -ENOMEM;
 			}
-			/* ¿½±´fifoÍ¨µÀÊý¾Ý */
+			/* ï¿½ï¿½ï¿½ï¿½fifoÍ¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 			memcpy((void *)((char *)dst_fifo + sizeof(struct icc_channel_fifo)),
 						(void *)((char *)src_fifo + sizeof(struct icc_channel_fifo)),
 						(unsigned long)(dst_fifo->size));
-			/* ¸üÐÂFifoÍ·ÐÅÏ¢ */
+			/* ï¿½ï¿½ï¿½ï¿½FifoÍ·ï¿½ï¿½Ï¢ */
 			dst_fifo->magic = src_fifo->magic;
 			dst_fifo->read = src_fifo->read;
 			dst_fifo->write = src_fifo->write;
@@ -1009,13 +1009,13 @@ static int reset_hifi(void)
 struct sreset_mgr_lli *g_pmgr_hifireset_data;
 
 /*****************************************************************************
- º¯ Êý Ãû  : reset_link_insert
- ¹¦ÄÜÃèÊö  : ½«Êý¾Ý²åÈëÁ´±í
- ÊäÈë²ÎÊý  :
-			struct sreset_mgr_lli *plink, Á´±íÖ¸Õë
-			struct sreset_mgr_lli *punit£¬´ý²åÈëµÄ½ÚµãÖ¸Õë
- Êä³ö²ÎÊý  : ÎÞ
- ·µ »Ø Öµ  : int
+ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½  : reset_link_insert
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : ï¿½ï¿½ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  :
+			struct sreset_mgr_lli *plink, ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+			struct sreset_mgr_lli *punitï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½Úµï¿½Ö¸ï¿½ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : ï¿½ï¿½
+ ï¿½ï¿½ ï¿½ï¿½ Öµ  : int
 *****************************************************************************/
 struct sreset_mgr_lli *reset_link_insert(struct sreset_mgr_lli *plink, struct sreset_mgr_lli *punit)
 {
@@ -1029,7 +1029,7 @@ struct sreset_mgr_lli *reset_link_insert(struct sreset_mgr_lli *plink, struct sr
 	}
 
 	while (NULL != ppose) {
-		/*¸ù¾ÝÓÅÏÈ¼¶²åÈëµ½Á´±íÖÐ*/
+		/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½ëµ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 		if (ppose->cbfuninfo.priolevel > punit->cbfuninfo.priolevel) {
 			if (phead == ppose) {
 				punit->pnext = ppose;
@@ -1051,23 +1051,23 @@ struct sreset_mgr_lli *reset_link_insert(struct sreset_mgr_lli *plink, struct sr
 }
 
 /*****************************************************************************
- º¯ Êý Ãû  : reset_do_regcbfunc
- ¹¦ÄÜÃèÊö  : ÓÃÓÚÆäËü×é¼þ×¢²á»Øµ÷º¯Êý£¬´¦ÀíModem¸´Î»Ç°ºóÏà¹ØÊý¾Ý¡£
- ÊäÈë²ÎÊý  :
-			struct sreset_mgr_lli *plink,¹ÜÀíÁ´±í£¬×¢Òâ£¬ÔÊÐíÎª¿Õ.
-			const char *pname, ×é¼þ×¢²áµÄÃû×Ö
-			pdrv_reset_cbfun cbfun,    ×é¼þ×¢²áµÄ»Øµ÷º¯Êý
-			int userdata,×é¼þµÄË½ÓÐÊý¾Ý
-			Int Priolevel, »Øµ÷º¯Êýµ÷ÓÃÓÅÏÈ¼¶ 0-49£¬ÆäÖÐ0-9 ±£Áô¡£
- Êä³ö²ÎÊý  : ÎÞ
- ·µ »Ø Öµ  : int
+ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½  : reset_do_regcbfunc
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Modemï¿½ï¿½Î»Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¡ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  :
+			struct sreset_mgr_lli *plink,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½â£¬ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½.
+			const char *pname, ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			pdrv_reset_cbfun cbfun,    ï¿½ï¿½ï¿½×¢ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½
+			int userdata,ï¿½ï¿½ï¿½ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			Int Priolevel, ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ 0-49ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0-9 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : ï¿½ï¿½
+ ï¿½ï¿½ ï¿½ï¿½ Öµ  : int
 *****************************************************************************/
 struct sreset_mgr_lli *reset_do_regcbfunc(struct sreset_mgr_lli *plink, const char *pname, pdrv_reset_cbfun pcbfun, int userdata, int priolevel)
 {
 	struct sreset_mgr_lli  *phead = plink;
 	struct sreset_mgr_lli  *pmgr_unit = NULL;
 
-	/*ÅÐ¶ÏÈë²ÎÊÇ·ñºÏ·¨£¬²»ºÏ·¨·µ»Ø´íÎó*/
+	/*ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½*/
 	if ((NULL == pname)
 		|| (NULL == pcbfun)
 		|| (priolevel < RESET_CBFUNC_PRIO_LEVEL_LOWT || priolevel > RESET_CBFUNC_PRIO_LEVEL_HIGH)) {
@@ -1075,11 +1075,11 @@ struct sreset_mgr_lli *reset_do_regcbfunc(struct sreset_mgr_lli *plink, const ch
 		return NULL;
 	}
 
-	/*·ÖÅä¿Õ¼ä*/
+	/*ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½*/
 	pmgr_unit = kmalloc(sizeof(*pmgr_unit), GFP_KERNEL);
 	if (NULL != pmgr_unit) {
 		memset((void *)pmgr_unit, 0, (sizeof(*pmgr_unit)));
-		/*¸³Öµ*/
+		/*ï¿½ï¿½Öµ*/
 		strncpy(pmgr_unit->cbfuninfo.name, pname, (unsigned long)DRV_MODULE_NAME_LEN);
 		pmgr_unit->cbfuninfo.priolevel = priolevel;
 		pmgr_unit->cbfuninfo.userdata = userdata;
@@ -1089,11 +1089,11 @@ struct sreset_mgr_lli *reset_do_regcbfunc(struct sreset_mgr_lli *plink, const ch
 		return NULL;
 	}
 
-	/*µÚÒ»´Îµ÷ÓÃ¸Ãº¯Êý£¬Á´±íÎª¿Õ*/
+	/*ï¿½ï¿½Ò»ï¿½Îµï¿½ï¿½Ã¸Ãºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½*/
 	if (NULL == phead) {
 		phead = pmgr_unit;
 	} else {
-	/*¸ù¾ÝÓÅÏÈ¼¶²åÈëÁ´±í*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 		phead = reset_link_insert(phead, pmgr_unit);
 	}
 
@@ -1101,15 +1101,15 @@ struct sreset_mgr_lli *reset_do_regcbfunc(struct sreset_mgr_lli *plink, const ch
 }
 
 /*****************************************************************************
- º¯ Êý Ãû  : hifireset_regcbfunc
- ¹¦ÄÜÃèÊö  : ÓÃÓÚÆäËü×é¼þ×¢²á»Øµ÷º¯Êý£¬´¦ÀíHIFI¸´Î»Ç°ºóÏà¹ØÊý¾Ý¡£
- ÊäÈë²ÎÊý  :
-			const char *pname, ×é¼þ×¢²áµÄÃû×Ö
-			pdrv_reset_cbfun cbfun,    ×é¼þ×¢²áµÄ»Øµ÷º¯Êý
-			int userdata,×é¼þµÄË½ÓÐÊý¾Ý
-			Int Priolevel, »Øµ÷º¯Êýµ÷ÓÃÓÅÏÈ¼¶ 0-49£¬ÆäÖÐ0-9 ±£Áô¡£
- Êä³ö²ÎÊý  : ÎÞ
- ·µ »Ø Öµ  : int
+ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½  : hifireset_regcbfunc
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HIFIï¿½ï¿½Î»Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¡ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  :
+			const char *pname, ï¿½ï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			pdrv_reset_cbfun cbfun,    ï¿½ï¿½ï¿½×¢ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½
+			int userdata,ï¿½ï¿½ï¿½ï¿½ï¿½Ë½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			Int Priolevel, ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ 0-49ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0-9 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : ï¿½ï¿½
+ ï¿½ï¿½ ï¿½ï¿½ Öµ  : int
 *****************************************************************************/
 int hifireset_regcbfunc(const char *pname, pdrv_reset_cbfun pcbfun, int userdata, int priolevel)
 {
@@ -1120,12 +1120,12 @@ int hifireset_regcbfunc(const char *pname, pdrv_reset_cbfun pcbfun, int userdata
 }
 
 /*****************************************************************************
- º¯ Êý Ãû  :  hifireset_doruncbfun
- ¹¦ÄÜÃèÊö  : HIFI¸´Î»Ç°ºóµ÷ÓÃ»Øµ÷º¯ÊýµÄº¯Êý¡£ÓÉÓÚÈ¦¸´ÔÓ¶È³¬±ê£¬ËùÒÔÕâÀï·â×°º¯Êý
- ÊäÈë²ÎÊý  : enum DRV_RESET_CALLCBFUN_MOMENT eparam, 0 ±íÊ¾HIFI¸´Î»Ç°£»·ÇÁã±íÊ¾¸´Î»ºó¡£
+ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½  :  hifireset_doruncbfun
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : HIFIï¿½ï¿½Î»Ç°ï¿½ï¿½ï¿½ï¿½Ã»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¦ï¿½ï¿½ï¿½Ó¶È³ï¿½ï¿½ê£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : enum DRV_RESET_CALLCBFUN_MOMENT eparam, 0 ï¿½ï¿½Ê¾HIFIï¿½ï¿½Î»Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Î»ï¿½ï¿½
 
- Êä³ö²ÎÊý  : ÎÞ
- ·µ »Ø Öµ  : 0, ³É¹¦£¬·Ç0£¬Ê§°Ü
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : ï¿½ï¿½
+ ï¿½ï¿½ ï¿½ï¿½ Öµ  : 0, ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½ï¿½
 *****************************************************************************/
 int hifireset_doruncbfun(const char *pname, enum DRV_RESET_CALLCBFUN_MOMENT eparam)
 {
@@ -1134,14 +1134,14 @@ int hifireset_doruncbfun(const char *pname, enum DRV_RESET_CALLCBFUN_MOMENT epar
 
 	WARN_ON(NULL == pname);
 
-	/*²»ÅÐ¶ÏÄ£¿éÃû×Ö,°´Ë³ÐòÖ´ÐÐ*/
+	/*ï¿½ï¿½ï¿½Ð¶ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Ë³ï¿½ï¿½Ö´ï¿½ï¿½*/
 	if (strncmp(pname, RESET_CBFUN_IGNORE_NAME, strlen(RESET_CBFUN_IGNORE_NAME)) == 0) {
 		while (NULL != phead) {
 			if (NULL != phead->cbfuninfo.cbfun) {
 				iresult = phead->cbfuninfo.cbfun(eparam, phead->cbfuninfo.userdata);
 
 				if (BSP_RESET_OK != iresult) {
-					/*Èç¹û·µ»ØÊ§°Ü£¬¼ÇÂ¼ÏÂ×é¼þÃû×Ö,·µ»ØÖµ*/
+					/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Öµ*/
 					BB_PRINT_ERR("fail to run cbfun of %s, at %d return %d\n", phead->cbfuninfo.name, eparam, iresult);
 					break;
 				}
@@ -1150,7 +1150,7 @@ int hifireset_doruncbfun(const char *pname, enum DRV_RESET_CALLCBFUN_MOMENT epar
 			phead = phead->pnext;
 		}
 	} else {
-	/*ÐèÒªÅÐ¶ÏÄ£¿éÃû×Ö£¬Ö´ÐÐÖ¸¶¨µÄ»Øµ÷º¯Êý*/
+	/*ï¿½ï¿½Òªï¿½Ð¶ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½Ö´ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä»Øµï¿½ï¿½ï¿½ï¿½ï¿½*/
 		while (NULL != phead) {
 			if (strncmp(pname, phead->cbfuninfo.name, strlen(phead->cbfuninfo.name)) == 0
 				&& NULL != phead->cbfuninfo.cbfun) {
@@ -1174,26 +1174,26 @@ int hifireset_doruncbfun(const char *pname, enum DRV_RESET_CALLCBFUN_MOMENT epar
 }
 
 /*****************************************************************************
- º¯ Êý Ãû  :  hifireset _runcbfun
- ¹¦ÄÜÃèÊö  : HIFI¸´Î»Ç°ºóµ÷ÓÃ»Øµ÷º¯ÊýµÄº¯Êý¡£
- ÊäÈë²ÎÊý  : enum DRV_RESET_CALLCBFUN_MOMENT eparam, 0 ±íÊ¾HIFI¸´Î»Ç°£»·ÇÁã±íÊ¾¸´Î»ºó¡£
+ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½  :  hifireset _runcbfun
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : HIFIï¿½ï¿½Î»Ç°ï¿½ï¿½ï¿½ï¿½Ã»Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : enum DRV_RESET_CALLCBFUN_MOMENT eparam, 0 ï¿½ï¿½Ê¾HIFIï¿½ï¿½Î»Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Î»ï¿½ï¿½
 
- Êä³ö²ÎÊý  : ÎÞ
- ·µ »Ø Öµ  : 0, ³É¹¦£¬·Ç0£¬Ê§°Ü
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  : ï¿½ï¿½
+ ï¿½ï¿½ ï¿½ï¿½ Öµ  : 0, ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½Ê§ï¿½ï¿½
 *****************************************************************************/
 int hifireset_runcbfun(enum DRV_RESET_CALLCBFUN_MOMENT eparam)
 {
 	int  iresult = 0;
 
 	if (DRV_RESET_CALLCBFUN_RESET_BEFORE == eparam) {
-		/*±éÀú»Øµ÷º¯ÊýÁ´±í£¬µ÷ÓÃNASµÄ»Øµ÷*/
+		/*ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½NASï¿½Ä»Øµï¿½*/
 		iresult = hifireset_doruncbfun("NAS_AT", eparam);
 		if (BSP_RESET_OK != iresult) {
-			/*Èç¹û·µ»ØÊ§°Ü£¬¼ÇÂ¼ÏÂ×é½¨name, ·µ»ØÖµ£¬±£´æµ½ÎÄ¼þ*/
+			/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü£ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½é½¨name, ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½æµ½ï¿½Ä¼ï¿½*/
 			goto return_error;
 		}
 	} else {
-		/*±éÀú»Øµ÷º¯ÊýÁ´±í£¬µ÷ÓÃ»Øµ÷º¯Êý*/
+		/*ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»Øµï¿½ï¿½ï¿½ï¿½ï¿½*/
 		iresult = hifireset_doruncbfun(RESET_CBFUN_IGNORE_NAME, eparam);
 		if (BSP_RESET_OK != iresult)
 			goto return_error;
