@@ -102,7 +102,6 @@ mmc_bkops_status_query:
 	mov	x1, 0
 	movk	w0, 0x8000, lsl 16
 	mov	x2, 0
-	bl	rdr_syserr_process_for_ap
 .LVL14:
 	b	.L2
 .LVL15:
@@ -558,7 +557,6 @@ mmc_bkops_start_stop:
 	mov	x1, 0
 	movk	w0, 0x8000, lsl 16
 	mov	x2, 0
-	bl	rdr_syserr_process_for_ap
 .LVL76:
 	b	.L46
 .L49:
@@ -34410,8 +34408,6 @@ bkops_status_str_mmc:
 	.string	"find_special_page"
 .LASF811:
 	.string	"force_atomic"
-.LASF3311:
-	.string	"rdr_syserr_process_for_ap"
 .LASF96:
 	.string	"poll"
 .LASF2779:
