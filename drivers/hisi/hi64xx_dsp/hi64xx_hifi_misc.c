@@ -787,7 +787,7 @@ static void hi64xx_watchdog_process(void)
 	/* stop soundtrigger asp dma */
 	hi64xx_soundtrigger_dma_close();
 
-	//rdr_codec_hifi_watchdog_process();
+	rdr_codec_hifi_watchdog_process();
 }
 
 static int hi64xx_check_sync_write_status(void)
@@ -2311,7 +2311,7 @@ static int hi64xx_func_fw_download(struct krn_param_io_buf *param)
 		}
 	} else {
 		reload_retry_count = 0;
-		//rdr_audio_clear_reboot_times();
+		rdr_audio_clear_reboot_times();
 	}
 
 	msleep(1);
@@ -2739,7 +2739,7 @@ static void hi64xx_hifi_dump_no_path(void)
 	up(&dsp_priv->hi64xx_dump_sema);
 }
 
-//extern int rdr_audio_write_file(char *name, const char *data, u32 size);
+extern int rdr_audio_write_file(char *name, const char *data, u32 size);
 
 static void hi64xx_parser_codec_reg(char* codec_reg_addr, char* dump_reg_addr, const size_t dump_reg_size)
 {
@@ -2900,10 +2900,10 @@ static int hi64xx_parse_ocram_log(char *path, char* buf)
 		vfree(parse_buff);
 	}
 
-	/*ret = rdr_audio_write_file(path, full_text, strlen(full_text));
+	ret = rdr_audio_write_file(path, full_text, strlen(full_text));
 	if (ret)
 		HI64XX_DSP_ERROR("write file fail\n");
-	vfree(full_text);*/
+	vfree(full_text);
 
 	return ret;
 }
@@ -2935,11 +2935,11 @@ static int hi64xx_dump_data(char *dump_ram_path, unsigned int type,
 			HI64XX_DSP_ERROR("save ocram file fail, ret:%d\n", ret);
 			goto exit;
 		}
-	} /*else {
+	} else {
 		ret = rdr_audio_write_file(dump_ram_path, buf, dump_size);
 		if (ret)
 			HI64XX_DSP_ERROR("write file fail\n");
-	}*/
+	}
 exit:
 	vfree(buf);
 	return ret;
