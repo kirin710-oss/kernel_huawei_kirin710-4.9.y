@@ -338,8 +338,6 @@ int parse_hifi_cpuview(char *original_buf, unsigned int original_buf_size,
 	return ret;
 }
 
-#ifdef CONFIG_HISI_BB
-
 int parse_hifi_trace(char *original_data, unsigned int original_data_size,
 					char *parsed_data, unsigned int parsed_data_size,
 					unsigned int core_type)
@@ -375,7 +373,7 @@ int parse_hifi_trace(char *original_data, unsigned int original_data_size,
 
 	return 0;
 }
-#endif
+
 
 static int create_dir(char *path)
 {

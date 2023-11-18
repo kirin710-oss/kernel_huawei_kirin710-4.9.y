@@ -2852,8 +2852,8 @@ static int hi64xx_save_reg_file(char *path)
 }
 
 struct parse_log parse_codec_log[] = {
-	{0, RDR_CODECDSP_STACK_TO_MEM_SIZE, PARSER_CODEC_TRACE_SIZE},
-	{RDR_CODECDSP_STACK_TO_MEM_SIZE, RDR_CODECDSP_CPUVIEW_TO_MEM_SIZE, PARSER_CODEC_CPUVIEW_LOG_SIZE}
+	{0, RDR_CODECDSP_STACK_TO_MEM_SIZE, PARSER_CODEC_TRACE_SIZE, parse_hifi_trace},
+	{RDR_CODECDSP_STACK_TO_MEM_SIZE, RDR_CODECDSP_CPUVIEW_TO_MEM_SIZE, PARSER_CODEC_CPUVIEW_LOG_SIZE, parse_hifi_cpuview}
 };
 
 static int hi64xx_parse_ocram_log(char *path, char* buf)

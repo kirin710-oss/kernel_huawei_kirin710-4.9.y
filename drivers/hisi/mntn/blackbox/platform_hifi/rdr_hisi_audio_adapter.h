@@ -77,11 +77,11 @@ struct parse_log {
 };
 
 int rdr_audio_write_file(char *name, const char *data, u32 size);
-/*int parse_hifi_cpuview(char *original_buf, unsigned int original_buf_size,
+int parse_hifi_cpuview(char *original_buf, unsigned int original_buf_size,
 	char *parsed_buf, unsigned int parsed_buf_size, unsigned int core_type);
 int parse_hifi_trace(char *original_data, unsigned int original_data_size,
 	char *parsed_data, unsigned int parsed_data_size, unsigned int core_type);
-*/
+
 #ifdef __cplusplus
 #if __cplusplus
 }
