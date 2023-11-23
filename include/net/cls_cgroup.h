@@ -15,7 +15,6 @@
 
 #include <linux/cgroup.h>
 #include <linux/hardirq.h>
-#include <linux/cgroup-defs.h>
 #include <linux/rcupdate.h>
 #include <net/sock.h>
 #include <net/inet_sock.h>
