@@ -256,7 +256,7 @@ void sched_hwstatus_iodelay_caller(struct task_struct *tsk, u64 delta)
 		return;
 	}
 
-	if((tsk) && (tsk->static_vip)) {
+	if ((tsk) && (tsk->static_prio)) {
 		if(tsk->pid != tsk->tgid) {
 			if((tsk->comm[0] != 'R') || (tsk->comm[1] != 'e')) {
 				return;
