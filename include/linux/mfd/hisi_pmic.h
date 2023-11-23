@@ -166,7 +166,7 @@ enum pmic_irq_list {
 };
 #endif
 
-//#ifdef CONFIG_HISI_SR_DEBUG
+#ifdef CONFIG_HISI_SR_DEBUG
 extern void get_ip_regulator_state(void);
-//#endif
+#endif
 #endif		/* __HISI_PMIC_H */
