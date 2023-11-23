@@ -896,6 +896,34 @@ VOS_UINT32 SI_PIH_SciCfgQuery (
     return TAF_SUCCESS;
 }
 
+extern int TC_NS_RegisterServiceCallbackFunc(char *uuid, void *func, void *private_data);
+
+VOS_VOID SI_PIH_AcpuInit(VOS_VOID)
+{
+    VOS_UINT8    aucUUID[] = {0x47,0x91,0xe8,0xab,
+                                0x61,0xcd,
+                                0x3f,0xf4,
+                                0x71,0xc4,0x1a,0x31,0x7e,0x40,0x53,0x12};
+
+    if (VOS_OK != TC_NS_RegisterServiceCallbackFunc((VOS_CHAR*)aucUUID,
+                                                    SI_PIH_TEETimeOutCB,
+                                                    VOS_NULL_PTR))
+    {
+        vos_printf("[PAM][OSA] %s: Reg TEE Timeout CB FUN Fail\r\n", __FUNCTION__);
+    }
+
+    vos_printf("[PAM][OSA] %s: Reg TEE Timeout CB FUN\r\n", __FUNCTION__);
+
+    return;
+}
+
+
+VOS_UINT32 SI_PIH_GetSecIccVsimVer(VOS_VOID)
+{
+    return SI_PIH_SEC_ICC_VSIM_VER;
+}
+
+
 VOS_VOID SI_PIH_TEETimeOutCB (VOS_VOID *timerDataCb)
 {
 
@@ -938,32 +966,6 @@ VOS_VOID SI_PIH_TEETimeOutCB (VOS_VOID *timerDataCb)
     return ;
 }
 
-extern int TC_NS_RegisterServiceCallbackFunc(char *uuid, void *func, void *private_data);
-
-VOS_VOID SI_PIH_AcpuInit(VOS_VOID)
-{
-    VOS_UINT8    aucUUID[] = {0x47,0x91,0xe8,0xab,
-                                0x61,0xcd,
-                                0x3f,0xf4,
-                                0x71,0xc4,0x1a,0x31,0x7e,0x40,0x53,0x12};
-
-    if (VOS_OK != TC_NS_RegisterServiceCallbackFunc((VOS_CHAR*)aucUUID,
-                                                    SI_PIH_TEETimeOutCB,
-                                                    VOS_NULL_PTR))
-    {
-        vos_printf("[PAM][OSA] %s: Reg TEE Timeout CB FUN Fail\r\n", __FUNCTION__);
-    }
-
-    vos_printf("[PAM][OSA] %s: Reg TEE Timeout CB FUN\r\n", __FUNCTION__);
-
-    return;
-}
-
-
-VOS_UINT32 SI_PIH_GetSecIccVsimVer(VOS_VOID)
-{
-    return SI_PIH_SEC_ICC_VSIM_VER;
-}
 
 VOS_UINT32 SI_PIH_HvCheckCardQuery(
     MN_CLIENT_ID_T                      ClientId,
