@@ -220,3 +220,4 @@ static inline void do_ns_tui_release(void)
 #endif
 
 #endif
+void tui_poweroff_work_start(void);
