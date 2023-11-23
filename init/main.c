@@ -89,9 +89,6 @@
 #include <asm/sections.h>
 #include <asm/cacheflush.h>
 
-#ifdef CONFIG_HUAWEI_BOOT_TIME
-#include <huawei_platform/boottime/hw_boottime.h>
-#endif
 static int kernel_init(void *);
 
 extern void init_IRQ(void);
@@ -356,35 +353,6 @@ static inline void setup_nr_cpu_ids(void) { }
 static inline void smp_prepare_cpus(unsigned int maxcpus) { }
 #endif
 
-static void hide_string(char *buf, ...)
-{
-	char arg;
-	va_list args;
-	va_start(args, buf);     /* Initialize the argument args. */
-
-	arg = va_arg(args, int);
-
-	while (arg) {
-		sprintf(buf, "%s%c", buf, arg);
-		arg = va_arg(args, int);
-	}
-
-	va_end(args);                  /* Clean up. */
-}
-
-static void remove_flag(char *cmd, const char *flag)
-{
-	char *start_addr, *end_addr;
-	/* Ensure all instances of a flag are removed */
-	while ((start_addr = strstr(cmd, flag))) {
-		end_addr = strchr(start_addr, ' ');
-		if (end_addr)
-			memmove(start_addr, end_addr + 1, strlen(end_addr));
-		else
-			*(start_addr - 1) = '\0';
-	}
-}
-
 /*
  * We need to store the untouched command line for future reference.
  * We also need to store the touched command line since the parameter
@@ -393,10 +361,6 @@ static void remove_flag(char *cmd, const char *flag)
  */
 static void __init setup_command_line(char *command_line)
 {
-	char skip_root_uuid[14] = { 0 };
-	hide_string(skip_root_uuid, 'r', 'o', 'o', 't', '=', 'P', 'A', 'R', 'T', 'U', 'U', 'I', 'D');
-	remove_flag(command_line,skip_root_uuid);
-	
 	saved_command_line =
 		memblock_virt_alloc(strlen(boot_command_line) + 1, 0);
 	initcall_command_line =
@@ -514,35 +478,6 @@ static void __init mm_init(void)
 	kaiser_init();
 }
 
-#ifdef CMDLINE_INFO_FILTER
-static void __init filter_args(char *cmdline) {
-	static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
-	char *cmd_prefix = NULL;
-	char *cmd_suffix = NULL;
-	int len = 0;
-	strlcpy(tmp_cmdline, cmdline, COMMAND_LINE_SIZE);
-	cmd_prefix = strstr(tmp_cmdline, "androidboot.serialno");
-	if (cmd_prefix == NULL) {
-		pr_notice("Kernel command line: %s\n", tmp_cmdline);
-		return;
-	}
-	cmd_suffix = strstr(cmd_prefix, " ");
-	len = (cmd_suffix != NULL) ? (cmd_suffix - cmd_prefix)
-                             : (cmdline + strlen(cmdline) - cmd_prefix);
-	memset(cmd_prefix, '*', len);
-	pr_notice("Kernel command line: %s\n", tmp_cmdline);
-	return;
-}
-#endif
-
-#ifdef CONFIG_DEBUG_RODATA
-void mark_constdata_ro(void);
-#else
-static void mark_constdata_ro(void)
-{
-}
-#endif
-
 asmlinkage __visible void __init start_kernel(void)
 {
 	char *command_line;
@@ -552,28 +487,19 @@ asmlinkage __visible void __init start_kernel(void)
 	smp_setup_processor_id();
 	debug_objects_early_init();
 
-	/*
-	 * Set up the the initial canary ASAP:
-	 */
-	boot_init_stack_canary();
-
 	cgroup_init_early();
 
 	local_irq_disable();
 	early_boot_irqs_disabled = true;
 
-/*
- * Interrupts are still disabled. Do necessary setups, then
- * enable them
- */
+	/*
+	 * Interrupts are still disabled. Do necessary setups, then
+	 * enable them.
+	 */
 	boot_cpu_init();
 	page_address_init();
 	pr_notice("%s", linux_banner);
 	setup_arch(&command_line);
-#ifdef CONFIG_HISI_EARLY_RODATA_PROTECTION
-/* setup_arch is the last function to alter the constdata content */
-	mark_constdata_ro();
-#endif
 	mm_init_cpumask(&init_mm);
 	setup_command_line(command_line);
 	setup_nr_cpu_ids();
@@ -581,12 +507,12 @@ asmlinkage __visible void __init start_kernel(void)
 	smp_prepare_boot_cpu();	/* arch-specific boot-cpu hooks */
 	boot_cpu_hotplug_init();
 
-	build_all_zonelists(NULL, NULL);
+	build_all_zonelists(NULL, NULL, false);
 	page_alloc_init();
 
-#ifdef CMDLINE_INFO_FILTER
-	filter_args(boot_command_line);
-#endif
+	pr_notice("Kernel command line: %s\n", boot_command_line);
+	/* parameters may set static keys */
+	jump_label_init();
 	parse_early_param();
 	after_dashes = parse_args("Booting kernel",
 				  static_command_line, __start___param,
@@ -595,8 +521,6 @@ asmlinkage __visible void __init start_kernel(void)
 	if (!IS_ERR_OR_NULL(after_dashes))
 		parse_args("Setting init args", after_dashes, NULL, 0, -1, -1,
 			   NULL, set_init_arg);
-
-	jump_label_init();
 
 	/*
 	 * These use large bootmem allocations and must precede
@@ -624,6 +548,14 @@ asmlinkage __visible void __init start_kernel(void)
 		 "Interrupts were enabled *very* early, fixing it\n"))
 		local_irq_disable();
 	idr_init_cache();
+
+	/*
+	 * Allow workqueue creation and work item queueing/cancelling
+	 * early.  Work item execution depends on kthreads and starts after
+	 * workqueue_init().
+	 */
+	workqueue_init_early();
+
 	rcu_init();
 
 	/* trace_printk() and trace points may be used after this */
@@ -641,6 +573,17 @@ asmlinkage __visible void __init start_kernel(void)
 	softirq_init();
 	timekeeping_init();
 	time_init();
+
+	/*
+	 * For best initial stack canary entropy, prepare it after:
+	 * - setup_arch() for any UEFI RNG entropy and boot cmdline access
+	 * - timekeeping_init() for ktime entropy used in random_init()
+	 * - time_init() for making random_get_entropy() work on some platforms
+	 * - random_init() to initialize the RNG from from early entropy sources
+	 */
+	random_init(command_line);
+	boot_init_stack_canary();
+
 	sched_clock_postinit();
 	printk_nmi_init();
 	perf_event_init();
@@ -733,6 +676,8 @@ asmlinkage __visible void __init start_kernel(void)
 
 	/* Do the rest non-__init'ed, we're now alive */
 	rest_init();
+
+	prevent_tail_call_optimization();
 }
 
 /* Call all constructor functions linked into the kernel. */
@@ -774,7 +719,7 @@ static int __init initcall_blacklist(char *str)
 		}
 	} while (str_entry);
 
-	return 0;
+	return 1;
 }
 
 static bool __init_or_module initcall_blacklisted(initcall_t fn)
@@ -848,11 +793,7 @@ int __init_or_module do_one_initcall(initcall_t fn)
 	if (initcall_debug)
 		ret = do_one_initcall_debug(fn);
 	else
-#ifdef CONFIG_HUAWEI_BOOT_TIME
-		ret = do_boottime_initcall(fn);
-#else
 		ret = fn();
-#endif
 
 	msgbuf[0] = 0;
 
@@ -994,7 +935,9 @@ static noinline void __init kernel_init_freeable(void);
 bool rodata_enabled __ro_after_init = true;
 static int __init set_debug_rodata(char *str)
 {
-	return strtobool(str, &rodata_enabled);
+	if (strtobool(str, &rodata_enabled))
+		pr_warn("Invalid option string for rodata: '%s'\n", str);
+	return 1;
 }
 __setup("rodata=", set_debug_rodata);
 #endif
@@ -1002,14 +945,10 @@ __setup("rodata=", set_debug_rodata);
 #ifdef CONFIG_DEBUG_RODATA
 static void mark_readonly(void)
 {
-	if (rodata_enabled) {
-#ifndef CONFIG_HISI_EARLY_RODATA_PROTECTION
-		mark_constdata_ro();
-#endif
+	if (rodata_enabled)
 		mark_rodata_ro();
-	} else {
+	else
 		pr_info("Kernel memory protection disabled.\n");
-	}
 }
 #else
 static inline void mark_readonly(void)
@@ -1032,10 +971,6 @@ static int __ref kernel_init(void *unused)
 
 	rcu_end_inkernel_boot();
 
-	pr_err("Kernel init end, jump to execute /init\n");
-#ifdef CONFIG_HUAWEI_BOOT_TIME
-	boot_record("[INFOR] Kernel_init_done");
-#endif
 	if (ramdisk_execute_command) {
 		ret = run_init_process(ramdisk_execute_command);
 		if (!ret)
@@ -1054,11 +989,6 @@ static int __ref kernel_init(void *unused)
 		ret = run_init_process(execute_command);
 		if (!ret)
 			return 0;
-#ifdef CONFIG_HISI_ENGINEER_MODE
-		ret = run_init_process("/init");
-		if (!ret)
-			return 0;
-#endif
 		panic("Requested init %s failed (error %d).",
 		      execute_command, ret);
 	}
@@ -1091,9 +1021,11 @@ static noinline void __init kernel_init_freeable(void)
 	 */
 	set_cpus_allowed_ptr(current, cpu_all_mask);
 
-	cad_pid = task_pid(current);
+	cad_pid = get_pid(task_pid(current));
 
 	smp_prepare_cpus(setup_max_cpus);
+
+	workqueue_init();
 
 	do_pre_smp_initcalls();
 	lockup_detector_init();
