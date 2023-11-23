@@ -218,7 +218,7 @@ extern const struct file_operations proc_reclaim_operations;
 #ifdef CONFIG_HISI_SMART_RECLAIM
 extern void smart_soft_shrink(struct mm_struct *);
 #else
-static inline void smart_soft_shrink(void) { }
+extern inline void smart_soft_shrink(void) { }
 #endif
 
 extern void proc_init_inodecache(void);
