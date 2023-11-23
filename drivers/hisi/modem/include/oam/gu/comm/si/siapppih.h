@@ -58,7 +58,7 @@ extern "C"{
 #endif
 
 /*****************************************************************************
-  1 ï¿½ï¿½ï¿½ï¿½Í·ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
+  1 ÆäËûÍ·ÎÄ¼þ°üº¬
 *****************************************************************************/
 #include "vos.h"
 #include "product_config.h"
@@ -76,7 +76,7 @@ extern "C"{
 #include "nv_stru_pam.h"
 
 /*****************************************************************************
-  2 ï¿½ê¶¨ï¿½ï¿½
+  2 ºê¶¨Òå
 *****************************************************************************/
 
 #define SI_PIH_POLL_TIMER_LEN           28000
@@ -88,47 +88,47 @@ extern "C"{
 #define SI_PH_PINCODELENMAX             8
 #define SI_MAX_IMSI_LEN                 9
 
-#define SI_MAX_PLMN_ID_LEN              3       /* PLMN IDï¿½ï¿½ï¿½ï¿½ */
-#define SI_MAX_PLMN_ID_NUM              4       /* ï¿½ï¿½ï¿½ï¿½Ê±Ö§ï¿½Öµï¿½PLMN IDï¿½ï¿½ */
+#define SI_MAX_PLMN_ID_LEN              3       /* PLMN ID³¤¶È */
+#define SI_MAX_PLMN_ID_NUM              4       /* ËøÍøÊ±Ö§³ÖµÄPLMN IDÊý */
 
-#define SI_APDU_MAX_LEN                 260     /* APDUï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ó³¤¶ï¿½ */
+#define SI_APDU_MAX_LEN                 260     /* APDUÊý¾ÝµÄ×î´ó³¤¶È */
 
-#define SI_PRIVATECGLA_APDU_MAX_LEN     (256*3)    /* APDUï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ó³¤¶ï¿½ */
+#define SI_PRIVATECGLA_APDU_MAX_LEN     (256*3)    /* APDUÊý¾ÝµÄ×î´ó³¤¶È */
 
-#define SI_ATR_MAX_LEN                  (80)    /* ATRï¿½ï¿½ï¿½ï¿½ó³¤¶ï¿½ */
+#define SI_ATR_MAX_LEN                  (80)    /* ATRµÄ×î´ó³¤¶È */
 
-#define SI_PIH_VSIMAPN_MAX              (100)   /* VSIM APN ï¿½ï¿½ï¿½ï¿½ó³¤¶È£ï¿½ï¿½ï¿½ï¿½ï¿½TAFï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+#define SI_PIH_VSIMAPN_MAX              (100)   /* VSIM APN µÄ×î´ó³¤¶È£¬°´ÕÕTAFµÄÈÝÁ¿¶¨Òå */
 
 typedef VOS_UINT32 SI_PIH_ERROR;
 
-#define SI_RSFW_MAX_INDEX               (255)   /* Ö§ï¿½ï¿½RSFWXï¿½Ö°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
-#define SI_PIH_HPLMN_MAX_NUM            (32)    /* Ö§ï¿½ï¿½HPLMN/EHPLMNï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
-#define SI_PIH_EHPLMN_BYTE_NUM          (3)     /* EHPLMNï¿½Ä¼ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½EHPLMNï¿½ï¿½ÔªÕ¼ï¿½ï¿½3ï¿½ï¿½ï¿½Ö½ï¿½ */
+#define SI_RSFW_MAX_INDEX               (255)   /* Ö§³ÖRSFWX·Ö°üµÄ×î´ó¸öÊý */
+#define SI_PIH_HPLMN_MAX_NUM            (32)    /* Ö§³ÖHPLMN/EHPLMNµÄ×î´ó¸öÊý */
+#define SI_PIH_EHPLMN_BYTE_NUM          (3)     /* EHPLMNÎÄ¼þÖÐÃ¿¸öEHPLMNµ¥ÔªÕ¼ÓÃ3¸ö×Ö½Ú */
 
-#define SI_AUTH_DATA_MAX                (256)   /* Ö§ï¿½Ö¼ï¿½È¨ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ó³¤¶ï¿½ */
+#define SI_AUTH_DATA_MAX                (256)   /* Ö§³Ö¼øÈ¨Êý¾ÝµÄ×î´ó³¤¶È */
 
-#define SI_IMSI_MAX_LEN                 (15 + 1)    /* IMSI ×ªï¿½ï¿½ï¿½É¿É¼ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ */
+#define SI_IMSI_MAX_LEN                 (15 + 1)    /* IMSI ×ª»»³É¿É¼û×Ö·û³¤¶È */
 
-#define SI_PIH_KEYFILE_MAX_NUM          (2)         /* ï¿½ï¿½ï¿½Ö§ï¿½ï¿½2ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ */
+#define SI_PIH_KEYFILE_MAX_NUM          (2)         /* ×î´óÖ§³Ö2¸ö¹Ø¼üÎÄ¼þ¼ì */
 
-#define SI_PIH_KEYFILE_SEND_PARA        (0xABABAB)  /* ï¿½Ø¼ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½send para */
+#define SI_PIH_KEYFILE_SEND_PARA        (0xABABAB)  /* ¹Ø¼üÎÄ¼þ¼ì²â¶ÁÎÄ¼þsend para */
 
-#define SI_PIH_KEYFILE_INIT_TIME_LEN    (5)         /* ï¿½Ø¼ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¼ï¿½ï¿½Ê§ï¿½Üºó£¬¶ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+#define SI_PIH_KEYFILE_INIT_TIME_LEN    (5)         /* ¹Ø¼üÎÄ¼þ¼ì²â³õÊ¼¶¨Ê±Æ÷Ê±³¤£¬¶à´Î¼ì²âÊ§°Üºó£¬¶¨Ê±Æ÷À­³¤ */
 
-#define SI_PIH_KEYFILE_INIT_CHECK_TIMER (5)         /* ï¿½Ø¼ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Õ³ï¿½Ê¼ï¿½ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+#define SI_PIH_KEYFILE_INIT_CHECK_TIMER (5)         /* ¹Ø¼üÎÄ¼þ°´ÕÕ³õÊ¼¶¨Ê±Æ÷Ê±³¤£¬¼ì²â´ÎÊý */
 
-#define SI_PIH_KEYFILE_TIME_LEN         (60)        /* ï¿½Ø¼ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ê±ï¿½ï¿½ */
+#define SI_PIH_KEYFILE_TIME_LEN         (60)        /* ¹Ø¼üÎÄ¼þ¼ì²âÀ­³¤ºó¶¨Ê±Æ÷Ê±³¤ */
 
-#define SI_CRYPTO_CBC_PIN_LEN           (16)  /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½AES_CCBï¿½ï¿½ï¿½ï¿½ */
+#define SI_CRYPTO_CBC_PIN_LEN           (16)  /* ÃÜÂëµÄÃÜÎÄ³¤¶ÈAES_CCB¼ÓÃÜ */
 
-#define SI_SIGNATURE_LEN                (32)  /* Ç©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+#define SI_SIGNATURE_LEN                (32)  /* Ç©Ãû³¤¶È */
 
 #define SI_PIH_SEND_PAPA(ClientId, EventType)   (ClientId | (EventType << 16))
 #define SI_PIH_CLIENT_ID(Para)                  (Para & 0xFFFF)
 #define SI_PIH_EVENT_TYPE(Para)                 ((Para & 0xFFFF0000) >> 16)
 
 /*******************************************************************************
-  3 Ã¶ï¿½Ù¶ï¿½ï¿½ï¿½
+  3 Ã¶¾Ù¶¨Òå
 *******************************************************************************/
 
 enum SI_PIH_PIN_TYPE_ENUM
@@ -139,7 +139,7 @@ enum SI_PIH_PIN_TYPE_ENUM
     SI_PUK2                         = 7,      /* PUK2 */
     SI_PHNET_PIN                    = 8,      /* PH-NET PIN*/
     SI_PHSIM_PIN                    = 9,      /* PH-SIM PIN*/
-    SI_SIM_NON                      = 255,    /* ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½PINï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Öµ*/
+    SI_SIM_NON                      = 255,    /* ²»È·¶¨²Ù×÷PINµÄÀàÐÍÊ±ÌîÈë´ËÖµ*/
     SI_PIN_BUTT
 };
 typedef VOS_UINT32 SI_PIH_PIN_TYPE;
@@ -158,29 +158,29 @@ typedef VOS_UINT32 SI_PIH_RESTRIC_CMD;
 
 enum SI_PIH_EVENT_ENUM
 {
-    SI_PIH_EVENT_PIN_OPER_CNF       = 1,      /* ï¿½ï¿½ï¿½ï¿½PINï¿½ë·µï¿½Ø½ï¿½ï¿½        */
-    SI_PIH_EVENT_PIN_QUERY_CNF      = 2,      /* ï¿½ï¿½Ñ¯PINï¿½ë·µï¿½Ø½ï¿½ï¿½        */
-    SI_PIH_EVENT_PIN_INFO_IND       = 3,      /* ï¿½ï¿½ï¿½ï¿½PINï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½        */
-    SI_PIH_EVENT_SIM_INFO_IND       = 4,      /* SIMï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ï±ï¿½            */
-    SI_PIH_EVENT_GENERIC_ACCESS_CNF = 5,      /* +CSIM ï¿½Ø¸ï¿½               */
-    SI_PIH_EVENT_RESTRIC_ACCESS_CNF = 6,      /* +CRSM ï¿½Ø¸ï¿½               */
-    SI_PIH_EVENT_FDN_CNF            = 7,      /* FDNï¿½Ø¸ï¿½                  */
-    SI_PIH_EVENT_BDN_CNF            = 8,      /* BDNï¿½Ø¸ï¿½                  */
-    SI_PIH_EVENT_PERO_LOCK_CNF      = 9,      /* ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½                 */
-    SI_PIH_EVENT_ISDB_ACCESS_CNF    = 10,     /* ISDBÍ¸ï¿½ï¿½ï¿½Ø¸ï¿½             */
-    SI_PIH_EVENT_HVSST_QUERY_CNF    = 11,       /* ^HVSSTï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½î·µï¿½ï¿½       */
-    SI_PIH_EVENT_HVSST_SET_CNF      = 12,       /* ^HVSSTï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½       */
-    SI_PIH_EVENT_HVSDH_SET_CNF      = 13,       /* ^HVSDHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½       */
-    SI_PIH_EVENT_HVSDH_QRY_CNF      = 14,       /* ^HVSDHï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½î·µï¿½ï¿½       */
-    SI_PIH_EVENT_HVSCONT_QUERY_CNF  = 15,       /* ^HVSCONTï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½î·µï¿½ï¿½     */
-    SI_PIH_EVENT_FILE_WRITE_CNF     = 16,       /* ^RSFWï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½        */
-    SI_PIH_EVENT_CCHO_SET_CNF       = 17,       /* +CCHOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½        */
-    SI_PIH_EVENT_CCHC_SET_CNF       = 18,       /* +CCHCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½        */
-    SI_PIH_EVENT_CGLA_SET_CNF       = 19,       /* +CGLAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½        */
-    SI_PIH_EVENT_CARD_ATR_QRY_CNF   = 20,       /* ^CARDATRï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½î·µï¿½ï¿½     */
-    SI_PIH_EVENT_HVRDH_IND          = 21,       /* ^HVRDHÖ¸Ê¾ï¿½Ï±ï¿½           */
-    SI_PIH_EVENT_UICCAUTH_CNF       = 22,       /* ^UICCAUTHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½    */
-    SI_PIH_EVENT_URSM_CNF           = 23,       /* ^URSMï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½        */
+    SI_PIH_EVENT_PIN_OPER_CNF       = 1,      /* ²Ù×÷PINÂë·µ»Ø½á¹û        */
+    SI_PIH_EVENT_PIN_QUERY_CNF      = 2,      /* ²éÑ¯PINÂë·µ»Ø½á¹û        */
+    SI_PIH_EVENT_PIN_INFO_IND       = 3,      /* ¿ª»úPINÂëÖ÷¶¯ÉÏ±¨        */
+    SI_PIH_EVENT_SIM_INFO_IND       = 4,      /* SIM¿¨ÐÅÏ¢ÉÏ±¨            */
+    SI_PIH_EVENT_GENERIC_ACCESS_CNF = 5,      /* +CSIM »Ø¸´               */
+    SI_PIH_EVENT_RESTRIC_ACCESS_CNF = 6,      /* +CRSM »Ø¸´               */
+    SI_PIH_EVENT_FDN_CNF            = 7,      /* FDN»Ø¸´                  */
+    SI_PIH_EVENT_BDN_CNF            = 8,      /* BDN»Ø¸´                  */
+    SI_PIH_EVENT_PERO_LOCK_CNF      = 9,      /* Ëø¿¨»Ø¸´                 */
+    SI_PIH_EVENT_ISDB_ACCESS_CNF    = 10,     /* ISDBÍ¸´«»Ø¸´             */
+    SI_PIH_EVENT_HVSST_QUERY_CNF    = 11,       /* ^HVSST²éÑ¯ÃüÁî·µ»Ø       */
+    SI_PIH_EVENT_HVSST_SET_CNF      = 12,       /* ^HVSSTÉèÖÃÃüÁî·µ»Ø       */
+    SI_PIH_EVENT_HVSDH_SET_CNF      = 13,       /* ^HVSDHÉèÖÃÃüÁî·µ»Ø       */
+    SI_PIH_EVENT_HVSDH_QRY_CNF      = 14,       /* ^HVSDH²éÑ¯ÃüÁî·µ»Ø       */
+    SI_PIH_EVENT_HVSCONT_QUERY_CNF  = 15,       /* ^HVSCONT²éÑ¯ÃüÁî·µ»Ø     */
+    SI_PIH_EVENT_FILE_WRITE_CNF     = 16,       /* ^RSFWÉèÖÃÃüÁî·µ»Ø        */
+    SI_PIH_EVENT_CCHO_SET_CNF       = 17,       /* +CCHOÉèÖÃÃüÁî·µ»Ø        */
+    SI_PIH_EVENT_CCHC_SET_CNF       = 18,       /* +CCHCÉèÖÃÃüÁî·µ»Ø        */
+    SI_PIH_EVENT_CGLA_SET_CNF       = 19,       /* +CGLAÉèÖÃÃüÁî·µ»Ø        */
+    SI_PIH_EVENT_CARD_ATR_QRY_CNF   = 20,       /* ^CARDATR²éÑ¯ÃüÁî·µ»Ø     */
+    SI_PIH_EVENT_HVRDH_IND          = 21,       /* ^HVRDHÖ¸Ê¾ÉÏ±¨           */
+    SI_PIH_EVENT_UICCAUTH_CNF       = 22,       /* ^UICCAUTHÉèÖÃÃüÁî·µ»Ø    */
+    SI_PIH_EVENT_URSM_CNF           = 23,       /* ^URSMÉèÖÃÃüÁî·µ»Ø        */
     SI_PIH_EVENT_CARDTYPE_QUERY_CNF = 24,
     SI_PIH_EVENT_CRSM_SET_CNF       = 25,
     SI_PIH_EVENT_CRLA_SET_CNF       = 26,
@@ -193,28 +193,28 @@ enum SI_PIH_EVENT_ENUM
     SI_PIH_EVENT_HVCHECKCARD_CNF    = 32,
     SI_PIH_EVENT_CIMI_QRY_CNF       = 33,
     SI_PIH_EVENT_CCIMI_QRY_CNF      = 34,
-    SI_PIH_EVENT_SIM_ERROR_IND      = 35,     /* SIMï¿½ï¿½Errorï¿½ï¿½Ï¢ï¿½Ï±ï¿½       */
+    SI_PIH_EVENT_SIM_ERROR_IND      = 35,     /* SIM¿¨ErrorÐÅÏ¢ÉÏ±¨       */
 
     SI_PIH_EVENT_SIM_ICCID_IND      = 36,
     SI_PIH_CALL_BACK_TYPE_ICC_SEC_CHANNEL = 37,  /* icc sec ch call back */
 
     SI_PIH_EVENT_SIM_HOTPLUG_IND    = 38,
 
-    SI_PIH_EVENT_CCHP_SET_CNF       = 39,        /* +CCHPï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½ */
+    SI_PIH_EVENT_CCHP_SET_CNF       = 39,        /* +CCHPÉèÖÃÃüÁî·µ»Ø */
 
     SI_PIH_EVENT_SW_CHECK_IND       = 40,        /* Apdu SW check */
 
     SI_PIH_EVENT_CARDVOLTAGE_QUERY_CNF = 41,
-    SI_PIH_EVENT_PRIVATECGLA_SET_IND   = 42,       /* ^CGLAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½        */
-    SI_PIH_EVENT_PRIVATECGLA_SET_CNF   = 43,       /* ^CGLAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î·µï¿½ï¿½        */
+    SI_PIH_EVENT_PRIVATECGLA_SET_IND   = 42,       /* ^CGLAÉèÖÃÃüÁîÉÏ±¨        */
+    SI_PIH_EVENT_PRIVATECGLA_SET_CNF   = 43,       /* ^CGLAÉèÖÃÃüÁî·µ»Ø        */
     SI_PIH_EVENT_CARDTYPEEX_QUERY_CNF  = 44,
 #if (FEATURE_ON == FEATURE_PHONE_SC)
     SI_PIH_EVENT_SILENT_PIN_SET_CNF         = 45,
     SI_PIH_EVENT_SILENT_PININFO_SET_CNF     = 46,
 #endif
-    SI_PIH_EVENT_IMSI_POLLING_SET_CNF  = 47, /* PIHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IMSIï¿½ï¿½Ñ¯Ê¹ï¿½Ã£ï¿½Îªï¿½Ë¸ï¿½Ê½Í³Ò» */
+    SI_PIH_EVENT_IMSI_POLLING_SET_CNF  = 47, /* PIHÖÜÆÚÐÔIMSIÂÖÑ¯Ê¹ÓÃ£¬ÎªÁË¸ñÊ½Í³Ò» */
 
-    /*ï¿½ï¿½500ï¿½ï¿½Ê¼ï¿½ï¿½ÎªPIHï¿½Ú²ï¿½ï¿½ï¿½Î¬ï¿½É²ï¿½ï¿½ï¿½Ï¢ï¿½Ä¹ï¿½ï¿½ï¿½*/
+    /*´Ó500¿ªÊ¼×÷ÎªPIHÄÚ²¿¿ÉÎ¬¿É²âÏûÏ¢µÄ¹´°ü*/
     SI_PIH_USIMREG_PID_HOOK         = 500,
     SI_PIH_REFRESHREG_PID_HOOK      = 501,
     SI_PIH_ISIMREG_PID_HOOK         = 502,
@@ -256,8 +256,8 @@ typedef VOS_UINT32      SI_PIH_QUERY_TYPE_ENUM_UINT32;
 
 enum SI_PIH_FDN_BDN_STATE_ENUM
 {
-    SI_PIH_STATE_FDN_BDN_DISABLE    = 0,     /*FDN/BDNï¿½ï¿½ï¿½ï¿½Î´Ê¹ï¿½ï¿½*/
-    SI_PIH_STATE_FDN_BDN_ENABLE     = 1,     /*FDN/BDNï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½*/
+    SI_PIH_STATE_FDN_BDN_DISABLE    = 0,     /*FDN/BDN¹¦ÄÜÎ´Ê¹ÄÜ*/
+    SI_PIH_STATE_FDN_BDN_ENABLE     = 1,     /*FDN/BDN¹¦ÄÜÊ¹ÄÜ*/
     SI_PIH_STATE_FDN_BDN_BUTT
 };
 typedef VOS_UINT32   SI_PIH_FDN_BDN_STATE;
@@ -265,9 +265,9 @@ typedef VOS_UINT32   SI_PIH_FDN_BDN_STATE;
 
 enum SI_PIH_FDN_BDN_CMD_ENUM
 {
-    SI_PIH_FDN_BDN_DISABLE          = 0,     /*È¥ï¿½ï¿½ï¿½ï¿½FDN/BDNï¿½ï¿½ï¿½ï¿½*/
-    SI_PIH_FDN_BDN_ENABLE           = 1,     /*ï¿½ï¿½ï¿½ï¿½FDN/BDNï¿½ï¿½ï¿½ï¿½*/
-    SI_PIH_FDN_BDN_QUERY            = 2,     /*È¥ï¿½ï¿½ï¿½ï¿½FDN/BDN×´Ì¬ï¿½ï¿½Ñ¯*/
+    SI_PIH_FDN_BDN_DISABLE          = 0,     /*È¥¼¤»îFDN/BDN¹¦ÄÜ*/
+    SI_PIH_FDN_BDN_ENABLE           = 1,     /*¼¤»îFDN/BDN¹¦ÄÜ*/
+    SI_PIH_FDN_BDN_QUERY            = 2,     /*È¥¼¤»îFDN/BDN×´Ì¬²éÑ¯*/
     SI_PIH_FDN_BDN_CMD_BUTT
 };
 typedef VOS_UINT32   SI_PIH_FDN_BDN_CMD;
@@ -404,8 +404,8 @@ enum SI_PIH_CHANGEPOLLTIMER_ENUM
 typedef VOS_UINT32  SI_PIH_CHANGEPOLLTIMER_ENUM_UINT32;
 
 /*****************************************************************************
- Ã¶ï¿½ï¿½ï¿½ï¿½    : SI_PIH_CMD_REQ_TYPE_ENUM
- ï¿½á¹¹Ëµï¿½ï¿½  : SI_PIHï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½
+ Ã¶¾ÙÃû    : SI_PIH_CMD_REQ_TYPE_ENUM
+ ½á¹¹ËµÃ÷  : SI_PIH¶ÔÍâÏûÏ¢Ãû³ÆÃ¶¾Ù
 *****************************************************************************/
 enum SI_PIH_CMD_REQ_TYPE_ENUM
 {
@@ -417,8 +417,8 @@ enum SI_PIH_CMD_REQ_TYPE_ENUM
 typedef VOS_UINT32  SI_PIH_CMD_REQ_TYPE_ENUM_UINT32;
 
 /*****************************************************************************
- Ã¶ï¿½ï¿½ï¿½ï¿½    : SI_PIH_CMD_CNF_TYPE_ENUM
- ï¿½á¹¹Ëµï¿½ï¿½  : SI_PIHï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½
+ Ã¶¾ÙÃû    : SI_PIH_CMD_CNF_TYPE_ENUM
+ ½á¹¹ËµÃ÷  : SI_PIH¶ÔÍâ»Ø¸´ÏûÏ¢Ãû³ÆÃ¶¾Ù
 *****************************************************************************/
 enum SI_PIH_CMD_CNF_TYPE_ENUM
 {
@@ -433,79 +433,79 @@ enum SI_PIH_CMD_CNF_TYPE_ENUM
 typedef VOS_UINT32  SI_PIH_CMD_CNF_TYPE_ENUM_UINT32;
 
 /*****************************************************************************
-  4 ï¿½ï¿½ï¿½Ý½á¹¹ï¿½ï¿½ï¿½ï¿½
+  4 Êý¾Ý½á¹¹¶¨Òå
 *****************************************************************************/
 
 
 typedef struct
 {
-    VOS_UINT32                          ulLen;                                  /* ï¿½ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ */
-    VOS_UINT8                           aucCommand[SI_APDU_MAX_LEN];            /* ï¿½ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT32                          ulLen;                                  /* ÊäÈëAPDUÊý¾Ý³¤¶È */
+    VOS_UINT8                           aucCommand[SI_APDU_MAX_LEN];            /* ÊäÈëAPDUÊý¾ÝÄÚÈÝ */
 }SI_PIH_ISDB_ACCESS_COMMAND_STRU;
 
 
 
 typedef struct
 {
-    VOS_UINT32                          ulAIDLen;                               /* AIDï¿½Ä³ï¿½ï¿½ï¿½ */
+    VOS_UINT32                          ulAIDLen;                               /* AIDµÄ³¤¶È */
     VOS_UINT32                          ulRsv;
-    VOS_UINT8                           *pucADFName;                             /* ï¿½ï¿½ï¿½ï¿½ADFï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT8                           *pucADFName;                             /* ±£´æADFµÄÃû×Ö */
 }SI_PIH_CCHO_COMMAND_STRU;
 
 
 typedef struct
 {
-    VOS_UINT32                          ulAIDLen;                               /* AIDï¿½Ä³ï¿½ï¿½ï¿½ */
+    VOS_UINT32                          ulAIDLen;                               /* AIDµÄ³¤¶È */
     VOS_UINT8                           ucAPDUP2;                               /* Save APDU para P2 for OMA3.0 */
     VOS_UINT8                           ucRsv[3];
-    VOS_UINT8                          *pucADFName;                             /* ï¿½ï¿½ï¿½ï¿½ADFï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT8                          *pucADFName;                             /* ±£´æADFµÄÃû×Ö */
 }SI_PIH_CCHP_COMMAND_STRU;
 
 
 typedef struct
 {
-    VOS_UINT32                          ulSessionID;                            /* Í¨ï¿½ï¿½ï¿½ï¿½ */
-    VOS_UINT32                          ulLen;                                  /* ï¿½ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ */
-    VOS_UINT8                           *pucCommand;                             /* ï¿½ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT32                          ulSessionID;                            /* Í¨µÀºÅ */
+    VOS_UINT32                          ulLen;                                  /* ÊäÈëAPDUÊý¾Ý³¤¶È */
+    VOS_UINT8                           *pucCommand;                             /* ÊäÈëAPDUÊý¾ÝÄÚÈÝ */
 }SI_PIH_CGLA_COMMAND_STRU;
 
 
 typedef struct
 {
-    VOS_UINT16                          usLen;                                    /* ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ */
-    VOS_UINT8                           ucSW1;                                    /* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½1      */
-    VOS_UINT8                           ucSW2;                                    /* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½2      */
-    VOS_UINT8                           aucCommand[SI_APDU_MAX_LEN];              /* ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT16                          usLen;                                    /* Êä³öAPDUÊý¾Ý³¤¶È */
+    VOS_UINT8                           ucSW1;                                    /* ·µ»Ø×´Ì¬×Ö1      */
+    VOS_UINT8                           ucSW2;                                    /* ·µ»Ø×´Ì¬×Ö2      */
+    VOS_UINT8                           aucCommand[SI_APDU_MAX_LEN];              /* Êä³öAPDUÊý¾ÝÄÚÈÝ */
 }SI_PIH_CGLA_COMMAND_CNF_STRU;
 
 
 typedef struct
 {
-    VOS_UINT16                          usLen;                                    /* ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ */
+    VOS_UINT16                          usLen;                                    /* Êä³öAPDUÊý¾Ý³¤¶È */
     VOS_UINT8                           ucLastDataFlag;
-    VOS_UINT8                           ucSW1;                                    /* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½1      */
-    VOS_UINT8                           ucSW2;                                    /* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½2      */
+    VOS_UINT8                           ucSW1;                                    /* ·µ»Ø×´Ì¬×Ö1      */
+    VOS_UINT8                           ucSW2;                                    /* ·µ»Ø×´Ì¬×Ö2      */
     VOS_UINT8                           aucRsv[3];
-    VOS_UINT8                           aucCommand[SI_PRIVATECGLA_APDU_MAX_LEN];  /* ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT8                           aucCommand[SI_PRIVATECGLA_APDU_MAX_LEN];  /* Êä³öAPDUÊý¾ÝÄÚÈÝ */
 }SI_PIH_CGLA_HANDLE_CNF_STRU;
 
 
 typedef struct
 {
-    VOS_UINT32                          ulLen;                                    /* ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ */
-    VOS_UINT8                           aucCommand[SI_ATR_MAX_LEN];            /* ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT32                          ulLen;                                    /* Êä³öAPDUÊý¾Ý³¤¶È */
+    VOS_UINT8                           aucCommand[SI_ATR_MAX_LEN];            /* Êä³öAPDUÊý¾ÝÄÚÈÝ */
 }SI_PIH_ATR_QRY_CNF_STRU;
 
 /*****************************************************************************
- ï¿½á¹¹ï¿½ï¿½    : SI_PIH_ISDB_ACCESS_COMMAND_CNF_STRU
- ï¿½á¹¹Ëµï¿½ï¿½  : ISDBÍ¸ï¿½ï¿½APDUï¿½ï¿½ï¿½ï¿½ï¿½Ý»Ø¸ï¿½ï¿½ï¿½ï¿½
+ ½á¹¹Ãû    : SI_PIH_ISDB_ACCESS_COMMAND_CNF_STRU
+ ½á¹¹ËµÃ÷  : ISDBÍ¸´«APDUµÄÊý¾Ý»Ø¸´½á¹û
 *****************************************************************************/
 typedef struct
 {
-    VOS_UINT16                          usLen;                                    /* ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ */
-    VOS_UINT8                           ucSW1;                                    /* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½1      */
-    VOS_UINT8                           ucSW2;                                    /* ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½2      */
-    VOS_UINT8                           aucCommand[SI_APDU_MAX_LEN];               /* ï¿½ï¿½ï¿½APDUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT16                          usLen;                                    /* Êä³öAPDUÊý¾Ý³¤¶È */
+    VOS_UINT8                           ucSW1;                                    /* ·µ»Ø×´Ì¬×Ö1      */
+    VOS_UINT8                           ucSW2;                                    /* ·µ»Ø×´Ì¬×Ö2      */
+    VOS_UINT8                           aucCommand[SI_APDU_MAX_LEN];               /* Êä³öAPDUÊý¾ÝÄÚÈÝ */
 }SI_PIH_ISDB_ACCESS_COMMAND_CNF_STRU;
 
 typedef struct
@@ -547,8 +547,8 @@ typedef struct
 
 typedef struct
 {
-    SI_PIH_SIM_STATE_ENUM_UINT8         enVSimState;    /*vSIMï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½*/
-    SI_PIH_CARD_USE_ENUM_UINT8          enCardUse;      /*ï¿½ï¿½ï¿½Ü·ï¿½Ê¹ï¿½ï¿½*/
+    SI_PIH_SIM_STATE_ENUM_UINT8         enVSimState;    /*vSIM¿¨×´Ì¬£¬ºÍÓ²¿¨×´Ì¬»¥³â*/
+    SI_PIH_CARD_USE_ENUM_UINT8          enCardUse;      /*¿¨ÄÜ·ñÊ¹ÓÃ*/
     VOS_UINT8                           aucRsv[2];
 }SI_PIH_EVENT_HVSST_QUERY_CNF_STRU;
 
@@ -569,17 +569,17 @@ typedef struct
 typedef struct
 {
     VOS_UINT8                           ucIndex;
-    VOS_UINT8                           ucCardCap;  /* ï¿½ï¿½BITÎ»ï¿½ï¿½ï¿½Ð´ï¿½Å£ï¿½BIT1:SIM,BIT2:USIM */
-    VOS_UINT8                           ucCardType; /* ï¿½ï¿½BITÎ»ï¿½ï¿½ï¿½Ð´ï¿½Å£ï¿½BIT1:SIM,BIT2:USIM */
+    VOS_UINT8                           ucCardCap;  /* °´BITÎ»½øÐÐ´æ·Å£¬BIT1:SIM,BIT2:USIM */
+    VOS_UINT8                           ucCardType; /* °´BITÎ»½øÐÐ´æ·Å£¬BIT1:SIM,BIT2:USIM */
     VOS_UINT8                           ucRsv;
-    VOS_UINT8                           aucImsi[USIMM_EF_IMSI_LEN*2];   /* IMSI,ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ASCIIï¿½ë³¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ */
-    VOS_UINT16                          usPlmnNum;  /* PLMNï¿½ï¿½ï¿½ï¿½ */
-    SI_PIH_PLMN_STRU                    astPlmn[SI_PIH_HPLMN_MAX_NUM]; /* PLMNï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT8                           aucImsi[USIMM_EF_IMSI_LEN*2];   /* IMSI,ÐèÒª´«ËÍASCIIÂë³¤¶ÈÔö´óÒ»±¶ */
+    VOS_UINT16                          usPlmnNum;  /* PLMN¸öÊý */
+    SI_PIH_PLMN_STRU                    astPlmn[SI_PIH_HPLMN_MAX_NUM]; /* PLMNÄÚÈÝ */
 }SI_PIH_CARD_CONTENT_STRU;
 
 typedef struct
 {
-    SI_PIH_CARD_CONTENT_STRU            astSimCard[SI_PIH_CARD_BUTT];   /* Ö§ï¿½Ö¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¿¨ */
+    SI_PIH_CARD_CONTENT_STRU            astSimCard[SI_PIH_CARD_BUTT];   /* Ö§³Ö¿¨µÄ×î´ó¸öÊý°üÀ¨Ó²¿¨ºÍÐéÄâ¿¨ */
 }SI_PIH_HVSCONT_QUERY_CNF_STRU;
 
 typedef struct
@@ -604,8 +604,8 @@ typedef struct
 typedef struct
 {
     SI_PIH_AUTHSTATUS_ENUM_UINT32       enStatus;
-    SI_PIH_UICCAPP_ENUM_UINT32          enAppType;      /* Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
-    SI_PIH_UICCAUTH_ENUM_UINT32         enAuthType;     /* ï¿½ï¿½È¨ï¿½ï¿½ï¿½ï¿½ */
+    SI_PIH_UICCAPP_ENUM_UINT32          enAppType;      /* Ó¦ÓÃÀàÐÍ */
+    SI_PIH_UICCAUTH_ENUM_UINT32         enAuthType;     /* ¼øÈ¨ÀàÐÍ */
     SI_PIH_UICCAKA_DATA_STRU            stAkaData;
     SI_PIH_UICCNAF_DATA_STRU            stNAFData;
 }SI_PIH_UICCAUTH_CNF_STRU;
@@ -731,8 +731,8 @@ typedef struct
 {
     VOS_UINT8                           ucSW1;                                      /* Status Word 1*/
     VOS_UINT8                           ucSW2;                                      /* Status Word 2 */
-    VOS_UINT16                          usLen;                                      /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SW1ï¿½ï¿½SW2       */
-    VOS_UINT8                           aucContent[USIMM_APDU_RSP_MAX_LEN];         /* ï¿½ï¿½ï¿½ï¿½Data*/
+    VOS_UINT16                          usLen;                                      /* ·µ»ØÊý¾Ý³¤¶È,²»°üº¬SW1ºÍSW2       */
+    VOS_UINT8                           aucContent[USIMM_APDU_RSP_MAX_LEN];         /* ·µ»ØData*/
 }SI_PIH_RACCESS_CNF_STRU;
 
 typedef struct
@@ -761,7 +761,7 @@ typedef struct
     SI_PIH_HVCHECKCARD_STATUS_ENUM_UINT32   enData;
 }SI_PIH_HVCHECKCARD_CNF_STRU;
 
-/* +CIMI - ï¿½ï¿½È¡IMSI */
+/* +CIMI - »ñÈ¡IMSI */
 typedef struct
 {
     VOS_UINT8  aucImsi[SI_IMSI_MAX_LEN];
@@ -777,13 +777,13 @@ typedef struct
 
 typedef struct
 {
-    VOS_UINT8                            aucCryptoPin[SI_CRYPTO_CBC_PIN_LEN];   /* PINï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT8                            aucCryptoPin[SI_CRYPTO_CBC_PIN_LEN];   /* PINÃÜÃØÎÄ */
     VOS_UINT32                           aulPinIv[4];                           /* IVÖµ */
-    VOS_UINT8                            aucHmacValue[SI_SIGNATURE_LEN];        /* hmacÇ©ï¿½ï¿½ */
+    VOS_UINT8                            aucHmacValue[SI_SIGNATURE_LEN];        /* hmacÇ©Ãû */
 } SI_PIH_CRYPTO_PIN_STRU;
 
 /*****************************************************************************
-  5 ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½á¹¹ï¿½ï¿½ï¿½ï¿½
+  5 »Øµ÷º¯ÊýÊý¾Ý½á¹¹¶¨Òå
 *****************************************************************************/
 
 typedef struct
@@ -836,13 +836,13 @@ typedef struct
 typedef struct
 {
     VOS_MSG_HEADER
-    SI_PIH_CHANGEPOLLTIMER_ENUM_UINT32  enMsgName;       /* ï¿½ï¿½Ï¢ï¿½ï¿½ */
+    SI_PIH_CHANGEPOLLTIMER_ENUM_UINT32  enMsgName;       /* ÏûÏ¢Ãû */
     VOS_UINT32                          ulTimerLen;
 }SI_PIH_CHANGEPOLLTIMER_REQ_STRU;
 
 /*****************************************************************************
- ï¿½á¹¹ï¿½ï¿½    : SI_PIH_FILE_INFO_STRU
- ï¿½á¹¹Ëµï¿½ï¿½  : NASï¿½Ø¼ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Í¨ï¿½Ð±ï¿½ï¿½á¹¹ï¿½ï¿½
+ ½á¹¹Ãû    : SI_PIH_FILE_INFO_STRU
+ ½á¹¹ËµÃ÷  : NAS¹Ø¼üÎÄ¼þ¼ìÍ¨ÁÐ±í½á¹¹Ìå
 *****************************************************************************/
 typedef struct
 {
@@ -851,8 +851,8 @@ typedef struct
 }SI_PIH_FILE_INFO_STRU;
 
 /*****************************************************************************
- ï¿½á¹¹ï¿½ï¿½    : SI_PIH_START_CHECK_KEYFILE_NTF_STRU
- ï¿½á¹¹Ëµï¿½ï¿½  : NASï¿½Ø¼ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Í¨ÖªPIHï¿½ï¿½Ï¢ï¿½á¹¹ï¿½ï¿½
+ ½á¹¹Ãû    : SI_PIH_START_CHECK_KEYFILE_NTF_STRU
+ ½á¹¹ËµÃ÷  : NAS¹Ø¼üÎÄ¼þ¼ìÍ¨ÖªPIHÏûÏ¢½á¹¹Ìå
 *****************************************************************************/
 typedef struct
 {
@@ -863,8 +863,8 @@ typedef struct
 }SI_PIH_START_CHECK_KEYFILE_NTF_STRU;
 
 /*****************************************************************************
- ï¿½á¹¹ï¿½ï¿½    : SI_PIH_STOP_CHECK_KEYFILE_NTF_STRU
- ï¿½á¹¹Ëµï¿½ï¿½  : ï¿½Ø¼ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½Ï¢ï¿½á¹¹ï¿½ï¿½
+ ½á¹¹Ãû    : SI_PIH_STOP_CHECK_KEYFILE_NTF_STRU
+ ½á¹¹ËµÃ÷  : ¹Ø¼üÎÄ¼þ¼ìÍ£Ö¹ÏûÏ¢½á¹¹Ìå
 *****************************************************************************/
 typedef struct
 {
@@ -873,8 +873,8 @@ typedef struct
 }SI_PIH_STOP_CHECK_KEYFILE_NTF_STRU;
 
 /*****************************************************************************
- ï¿½á¹¹ï¿½ï¿½    : SI_PIH_CHECK_KEYFILE_RLST_IND_STRU
- ï¿½á¹¹Ëµï¿½ï¿½  : ï¿½Ø¼ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½Í¨ÖªNASï¿½ï¿½Ï¢ï¿½á¹¹ï¿½ï¿½
+ ½á¹¹Ãû    : SI_PIH_CHECK_KEYFILE_RLST_IND_STRU
+ ½á¹¹ËµÃ÷  : ¹Ø¼üÎÄ¼þ¼ì²âÍ¨ÖªNASÏûÏ¢½á¹¹Ìå
 *****************************************************************************/
 typedef struct
 {
@@ -887,8 +887,8 @@ typedef struct
 }SI_PIH_CHECK_KEYFILE_RLST_IND_STRU;
 
 /*****************************************************************************
- ï¿½á¹¹ï¿½ï¿½    : SI_PIH_QUERY_CARDSTATUS_REQ_STRU
- ï¿½á¹¹Ëµï¿½ï¿½  : ï¿½ï¿½Ó¦ï¿½ï¿½×´Ì¬ï¿½ï¿½Ñ¯ï¿½á¹¹ï¿½ï¿½
+ ½á¹¹Ãû    : SI_PIH_QUERY_CARDSTATUS_REQ_STRU
+ ½á¹¹ËµÃ÷  : ¿¨Ó¦ÓÃ×´Ì¬²éÑ¯½á¹¹Ìå
 *****************************************************************************/
 typedef struct
 {
@@ -897,43 +897,43 @@ typedef struct
 }SI_PIH_QUERY_CARDSTATUS_REQ_STRU;
 
 /*****************************************************************************
- ï¿½á¹¹ï¿½ï¿½    : SI_PIH_CARDAPP_STATUS_STRU
- ï¿½á¹¹Ëµï¿½ï¿½  : ï¿½ï¿½Ó¦ï¿½ï¿½×´Ì¬ï¿½ï¿½Ï¢
+ ½á¹¹Ãû    : SI_PIH_CARDAPP_STATUS_STRU
+ ½á¹¹ËµÃ÷  : ¿¨Ó¦ÓÃ×´Ì¬ÐÅÏ¢
 *****************************************************************************/
 typedef struct
 {
     USIMM_CARDAPP_SERVIC_ENUM_UINT32    enCardAppService;
-    VOS_UINT32                          ulIsTestCard;                    /* VOS_TRUEÎªï¿½ï¿½ï¿½Ô¿ï¿½ï¿½ï¿½VOS_FALSEÎªï¿½Ç²ï¿½ï¿½Ô¿ï¿½ */
+    VOS_UINT32                          ulIsTestCard;                    /* VOS_TRUEÎª²âÊÔ¿¨£¬VOS_FALSEÎª·Ç²âÊÔ¿¨ */
 }SI_PIH_CARDAPP_STATUS_STRU;
 
 /*****************************************************************************
- ï¿½á¹¹ï¿½ï¿½    : SI_PIH_QUERY_CARDSTATUS_CNF_STRU
- ï¿½á¹¹Ëµï¿½ï¿½  : ï¿½ï¿½Ó¦ï¿½ï¿½×´Ì¬ï¿½Ø¸ï¿½ï¿½á¹¹ï¿½ï¿½
+ ½á¹¹Ãû    : SI_PIH_QUERY_CARDSTATUS_CNF_STRU
+ ½á¹¹ËµÃ÷  : ¿¨Ó¦ÓÃ×´Ì¬»Ø¸´½á¹¹Ìå
 *****************************************************************************/
 typedef struct
 {
     VOS_MSG_HEADER
     SI_PIH_CMD_CNF_TYPE_ENUM_UINT32     ulMsgName;
-    USIMM_PHYCARD_TYPE_ENUM_UINT32      enPhyCardType;  /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬*/
+    USIMM_PHYCARD_TYPE_ENUM_UINT32      enPhyCardType;  /*ÎïÀí¿¨×´Ì¬*/
     SI_PIH_CARDAPP_STATUS_STRU          stUsimSimInfo;  /*GUL SIM×´Ì¬*/
     SI_PIH_CARDAPP_STATUS_STRU          stCsimUimInfo;  /*CDMA SIM×´Ì¬*/
     SI_PIH_CARDAPP_STATUS_STRU          stIsimInfo;     /*ISIM×´Ì¬*/
-    USIMM_CARDSTATUS_ADDINFO_STRU       stAddInfo;      /*ï¿½ï¿½×´Ì¬ï¿½ï¿½Ð§Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢*/
+    USIMM_CARDSTATUS_ADDINFO_STRU       stAddInfo;      /*¿¨×´Ì¬ÓÐÐ§Ê±ºò²ÅÄÜÊ¹ÓÃÀïÃæµÄÐÅÏ¢*/
 }SI_PIH_QUERY_CARDSTATUS_CNF_STRU;
 
-/*ï¿½â²¿ï¿½Ó¿ï¿½*/
+/*Íâ²¿½Ó¿Ú*/
 #if (FEATURE_ON == FEATURE_VSIM)
 
 typedef struct
 {
     VOS_MSG_HEADER
-    SI_PIH_CMD_CNF_TYPE_ENUM_UINT32       enMsgName;       /* ï¿½ï¿½Ï¢ï¿½ï¿½ */
-    VOS_UINT8                             ucLength;        /* VSIM APNï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½ */
+    SI_PIH_CMD_CNF_TYPE_ENUM_UINT32       enMsgName;       /* ÏûÏ¢Ãû */
+    VOS_UINT8                             ucLength;        /* VSIM APNÄÚÈÝ³¤¶È */
     VOS_UINT8                             aucRev[3];
-    VOS_UINT8                             aucVsimApn[SI_PIH_VSIMAPN_MAX];  /* VSIM APNï¿½ï¿½ï¿½ï¿½ */
+    VOS_UINT8                             aucVsimApn[SI_PIH_VSIMAPN_MAX];  /* VSIM APNÄÚÈÝ */
 }SI_PIH_VSIMAPN_IND_STRU;
 
-//#ifdef CONFIG_TZDRIVER
+#ifdef CONFIG_TZDRIVER
 typedef struct
 {
     unsigned int    time_type;  /*Timer Type*/
@@ -946,11 +946,11 @@ extern int TC_NS_RegisterServiceCallbackFunc(char *uuid, void *func, void *priva
 
 extern VOS_VOID SI_PIH_TEETimeOutCB (VOS_VOID *timerDataCb);
 
-//#endif/*CONFIG_TZDRIVER*/
+#endif/*CONFIG_TZDRIVER*/
 #endif/*(FEATURE_ON == FEATURE_VSIM)*/
 
 /*****************************************************************************
-  6 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  6 º¯ÊýÉùÃ÷
 *****************************************************************************/
 #if (OSA_CPU_NRCPU != VOS_OSA_CPU)
 #if  ((OSA_CPU_ACPU == VOS_OSA_CPU) || (defined(DMT))) || (defined(__PC_UT__))
