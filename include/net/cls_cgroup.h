@@ -19,6 +19,9 @@
 #include <net/sock.h>
 #include <net/inet_sock.h>
 
+extern void sock_cgroup_set_classid(struct sock_cgroup_data *skcd, u32 classid);
+extern u32 sock_cgroup_classid(struct sock_cgroup_data *skcd);
+
 #ifdef CONFIG_CGROUP_NET_CLASSID
 struct cgroup_cls_state {
 	struct cgroup_subsys_state css;
