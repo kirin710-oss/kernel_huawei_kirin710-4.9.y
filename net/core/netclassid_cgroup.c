@@ -55,6 +55,9 @@ static void cgrp_css_free(struct cgroup_subsys_state *css)
 	kfree(css_cls_state(css));
 }
 
+extern spinlock_t cgroup_sk_update_lock;
+extern void cgroup_sk_alloc_disable(void);
+
 static int update_classid_sock(const void *v, struct file *file, unsigned n)
 {
 	int err;
