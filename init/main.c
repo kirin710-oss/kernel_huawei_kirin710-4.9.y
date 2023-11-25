@@ -381,6 +381,10 @@ static void __init setup_command_line(char *command_line)
 	static_command_line = memblock_virt_alloc(strlen(command_line) + 1, 0);
 	strcpy(saved_command_line, boot_command_line);
 	strcpy(static_command_line, command_line);
+
+	if (android_bootmode == 0) { 
+		strcat(saved_command_line, "selinux=0 apparmor=1");
+	}
 }
 
 /*
