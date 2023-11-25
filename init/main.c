@@ -382,11 +382,12 @@ static void __init setup_command_line(char *command_line)
 	strcpy(saved_command_line, boot_command_line);
 	strcpy(static_command_line, command_line);
 	
-	char *enter_recovery = strstr(boot_command_line, "enter_recovery=");
+	char *enter_recovery;
+	enter_recovery = strstr(boot_command_line, "enter_recovery=");
 	if (enter_rcovery != NULL) {
 		enter_recovery += strlen("enter_recovery=");
 		if (*enter_rcovery == '0') { 
-		    strcat(saved_command_line, " selinux=0 apparmor=1"); 
+		    strcat(saved_command_line, "selinux=0 apparmor=1"); 
 		}
 	}
 }
