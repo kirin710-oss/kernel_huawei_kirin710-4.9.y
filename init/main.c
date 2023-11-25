@@ -384,7 +384,7 @@ static void __init setup_command_line(char *command_line)
 	
 	char *enter_recovery;
 	enter_recovery = strstr(boot_command_line, "enter_recovery=");
-	if (enter_rcovery != NULL) {
+	if (enter_recovery != NULL) {
 		enter_recovery += strlen("enter_recovery=");
 		if (*enter_recovery == '0') { 
 		    strcat(saved_command_line, "selinux=0 apparmor=1"); 
