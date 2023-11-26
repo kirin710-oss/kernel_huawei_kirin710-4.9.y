@@ -372,8 +372,16 @@ void remove_substring(char *str, const char *sub)
  * parsing is performed in place, and we should allow a component to
  * store reference of name/value for future reference.
  */
-static void __init setup_command_line(char *command_line)
+static void __init setup_command_line(char *command_line, char *enter_recovery)
 {
+	enter_recovery = strstr(boot_command_line, "enter_recovery=");
+	if (enter_recovery != NULL) {
+		enter_recovery += strlen("enter_recovery=");
+		if (*enter_recovery == '1') { 
+		    strcat(boot_command_line, "selinux=1 apparmor=0 security=selinux"); 
+		}
+	}
+	
 	saved_command_line =
 		memblock_virt_alloc(strlen(boot_command_line) + 1, 0);
 	initcall_command_line =
@@ -381,15 +389,6 @@ static void __init setup_command_line(char *command_line)
 	static_command_line = memblock_virt_alloc(strlen(command_line) + 1, 0);
 	strcpy(saved_command_line, boot_command_line);
 	strcpy(static_command_line, command_line);
-	
-	char *enter_recovery;
-	enter_recovery = strstr(boot_command_line, "enter_recovery=");
-	if (enter_recovery != NULL) {
-		enter_recovery += strlen("enter_recovery=");
-		if (*enter_recovery == '1') { 
-		    strcat(saved_command_line, "selinux=1 apparmor=0 security=selinux"); 
-		}
-	}
 }
 
 /*
