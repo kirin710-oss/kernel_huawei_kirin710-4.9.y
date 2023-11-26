@@ -372,8 +372,9 @@ void remove_substring(char *str, const char *sub)
  * parsing is performed in place, and we should allow a component to
  * store reference of name/value for future reference.
  */
-static void __init setup_command_line(char *command_line, char *enter_recovery)
+static void __init setup_command_line(char *command_line)
 {
+	char *enter_recovery;
 	enter_recovery = strstr(boot_command_line, "enter_recovery=");
 	if (enter_recovery != NULL) {
 		enter_recovery += strlen("enter_recovery=");
