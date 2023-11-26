@@ -387,7 +387,7 @@ static void __init setup_command_line(char *command_line)
 	if (enter_recovery != NULL) {
 		enter_recovery += strlen("enter_recovery=");
 		if (*enter_recovery == '1') { 
-		    strcat(saved_command_line, "selinux=1 apparmor=0"); 
+		    strcat(saved_command_line, "selinux=1 apparmor=0 security=selinux"); 
 		}
 	}
 }
