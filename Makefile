@@ -381,7 +381,7 @@ USERINCLUDE    := \
 		-I$(objtree)/include/generated/uapi \
                 -include $(srctree)/include/linux/kconfig.h
 
-export TARGET_BOARD_PLATFORM = hi6250
+export TARGET_BOARD_PLATFORM = kirin710
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
 LINUXINCLUDE    := \
@@ -460,8 +460,8 @@ ifneq ($(BALONG_FAMA_FLAGS),)
 KBUILD_CFLAGS += $(BALONG_FAMA_FLAGS)
 endif
 
-OBB_PRODUCT_NAME = hi6250
-CFG_PLATFORM = hi6250
+OBB_PRODUCT_NAME = kirin710
+CFG_PLATFORM = kirin710
 TARGET_ARM_TYPE = arm64
 export OBB_PRODUCT_NAME CFG_PLATFORM TARGET_ARM_TYPE 
 # add hisilicon balong configs end
