@@ -1,5 +1,5 @@
 # balong spe module
-subdir-ccflags-y := -Werror
+subdir-ccflags-y := 
 
 obj-$(CONFIG_BALONG_ESPE) 		+= espe_objs.o
 obj-$(CONFIG_BALONG_ESPE)			+= nic/

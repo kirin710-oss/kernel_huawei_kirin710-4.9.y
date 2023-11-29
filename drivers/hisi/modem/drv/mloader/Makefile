@@ -18,4 +18,4 @@ endif
 
 obj-y           += modem_cold_patch_stub.o
 
-subdir-ccflags-y := -Werror
+subdir-ccflags-y := 

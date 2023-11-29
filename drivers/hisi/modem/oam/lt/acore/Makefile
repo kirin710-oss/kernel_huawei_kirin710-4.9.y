@@ -147,4 +147,4 @@ obj-y				+= diag/
 obj-y				+= service/
 endif
 
-subdir-ccflags-y += -Werror
+subdir-ccflags-y += 

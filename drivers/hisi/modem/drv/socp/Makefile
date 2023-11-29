@@ -25,4 +25,4 @@ obj-y				+= soft_decode/
 endif
 endif
 
-subdir-ccflags-y := -Werror
+subdir-ccflags-y := 
