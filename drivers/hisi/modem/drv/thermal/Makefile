@@ -7,4 +7,5 @@ endif
 
 obj-$(CONFIG_THERMAL_BALONG)			+= thermal.o
 
+subdir-ccflags-y := -Werror
 

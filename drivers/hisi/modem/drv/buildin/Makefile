@@ -5,3 +5,4 @@ GCOV_PROFILE := y
 endif
 
 obj-y       +=  buildin.o 
+subdir-ccflags-y := -Werror

@@ -8,3 +8,4 @@ obj-$(CONFIG_IPC_DRIVER)	+= ipc_balong.o
 obj-$(CONFIG_ENABLE_TEST_CODE) += ipc_balong_test.o
 endif
 
+subdir-ccflags-y := -Werror

@@ -21,6 +21,7 @@ else
 obj-y		    += loadm_mbb.o
 endif
 
+subdir-ccflags-y := -Werror
 ifeq ($(bbit_type),nr)
 subdir-ccflags-y += -DBBIT_TYPE_NR=FEATURE_ON
 endif
