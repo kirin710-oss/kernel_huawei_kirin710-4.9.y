@@ -204,8 +204,8 @@ void rdr_module_dump(struct rdr_exception_info_s *p_exce_info, char *path, u32 m
 
 	BB_PRINT_PN("rdr_notify_module_dump done. return mask=[0x%x]\n", mask);
 
-	/* mask的值是根据p_exce_info->e_notify_core_mask获得的,
-	 * 当mask为0时, 不走RDR框架导出LOG的流程. 确认人:刘海龙
+	/* mask碌脛脰碌脢脟啪霉鸥脻p_exce_info->e_notify_core_mask禄帽碌脙碌脛,
+	 * 碌卤mask脦陋0脢卤, 虏禄脳脽RDR驴貌艗脺碌艗鲁枚LOG碌脛脕梅鲁脤. 脠路脠脧脠脣:脕玫潞拢脕煤
 	 */
 	if (mask != 0) {
 		while (wait_dumplog_timeout > 0) {
@@ -239,19 +239,19 @@ void rdr_module_dump(struct rdr_exception_info_s *p_exce_info, char *path, u32 m
 			if (mask != RDR_HIFI)
 				rdr_save_cur_baseinfo(path);
 
-			/* 如果这次异常需要复位全系统，则表示log保存还未完成 */
+			/* 脠莽鹿没脮芒沤脦脪矛鲁拢脨猫脪陋啪沤脦禄脠芦脧碌脥鲁拢卢脭貌卤铆脢鸥log卤拢沤忙禄鹿脦沤脥锚鲁脡 */
 			if ((p_exce_info->e_reset_core_mask & RDR_AP) &&
 				need_save_mntndump_log(p_exce_info->e_exce_type)) {
-				/* 复位重启后还有一部分log需要保存 */
+				/* 啪沤脦禄脰脴脝么潞贸禄鹿脫脨脪禄虏驴路脰log脨猫脪陋卤拢沤忙 */
 				bbox_save_done(path, BBOX_SAVE_STEP1);
 			} else {
-				/* 此异常目录下的所有log都保存完毕 */
+				/* 沤脣脪矛鲁拢脛驴脗艗脧脗碌脛脣霉脫脨log露艗卤拢沤忙脥锚卤脧 */
 				bbox_save_done(path, BBOX_SAVE_STEP_DONE);
 			}
 
 			if (!in_atomic() && !irqs_disabled()
 				&& !in_irq()) {
-				/* 确保之前的所有文件系统相关操作都能完成 */
+				/* 脠路卤拢脰庐脟掳碌脛脣霉脫脨脦脛艗镁脧碌脥鲁脧脿鹿脴虏脵脳梅露艗脛脺脥锚鲁脡 */
 				sys_sync();
 			}
 		}
@@ -340,7 +340,7 @@ void rdr_syserr_process(struct rdr_syserr_param_s *p)
 		return;
 	}
 
-	/*如果此次异常需要复位全系统，则需要向pmu寄存器中记录复位原因，否则只写入history.log中 */
+	/*脠莽鹿没沤脣沤脦脪矛鲁拢脨猫脪陋啪沤脦禄脠芦脧碌脥鲁拢卢脭貌脨猫脪陋脧貌pmu艗脛沤忙脝梅脰脨艗脟脗艗啪沤脦禄脭颅脪貌拢卢路帽脭貌脰禄脨沤脠毛history.log脰脨 */
 	if (p_exce_info->e_reset_core_mask & RDR_AP) {
 		record_exce_type(p_exce_info);
 	}
@@ -457,7 +457,7 @@ static int rdr_main_thread_body(void *arg)
 					    ("invalid prio[%d], current modid [0x%x]\n",
 					     p_exce_info->e_process_priority,
 					     e_cur->modid);
-				/* 查找链表中所有已接收异常中处理优先级最高的一个 */
+				/* 虏茅脮脪脕沤卤铆脰脨脣霉脫脨脪脩艙脫脢脮脪矛鲁拢脰脨沤艩脌铆脫脜脧脠艗露脳卯啪脽碌脛脪禄啪枚 */
 				if (p_exce_info->e_process_priority < e_priority) {
 					BB_PRINT_PN
 					    ("current prio[%d], current modid [0x%x]\n",
@@ -527,7 +527,7 @@ bool rdr_init_done()
 static s32 __init rdr_init(void)
 {
 	struct task_struct *rdr_main = NULL;
-	struct task_struct *rdr_bootcheck = NULL;
+	//struct task_struct *rdr_bootcheck = NULL;
 	struct task_struct *rdr_cleartext = NULL;
 	struct sched_param   param;
 	int ret;
@@ -566,7 +566,7 @@ static s32 __init rdr_init(void)
 		wake_lock_destroy(&blackbox_wl);
 		return -1;
 	}
-	rdr_bootcheck =
+	/*rdr_bootcheck =
 	    kthread_run(rdr_bootcheck_thread_body, NULL, "bbox_bootcheck");
 	if (!rdr_bootcheck) {
 		BB_PRINT_ERR("create thread rdr_bootcheck_thread faild.\n");
@@ -574,6 +574,7 @@ static s32 __init rdr_init(void)
 		wake_lock_destroy(&blackbox_wl);
 		return -1;
 	}
+	*/
 	if (!kthread_run(rdr_dump_init, NULL, "bbox_dump_init")) {
 		BB_PRINT_ERR("create thread rdr_dump_init faild.\n");
 		kthread_stop(rdr_main);

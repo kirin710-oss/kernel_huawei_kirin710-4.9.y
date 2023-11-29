@@ -35,11 +35,11 @@ struct cmdword reboot_reason_map[] = {
 
 
 /*
- * 函数名: bbox_check_edition
- * 函数参数:
+ * 潞炉脢媒脙没: bbox_check_edition
+ * 潞炉脢媒虏脦脢媒:
  *     void
- * 返回值:
- *     unsigned int:	返回版本信息
+ * 路碌禄脴脰碌:
+ *     unsigned int:	路碌禄脴掳忙卤鸥脨脜脧垄
  *				0x01        EDITION_USER
  *				0x02        EDITION_INTERNAL_BETA
  *				0x03        EDITION_OVERSEA_BETA
@@ -666,7 +666,7 @@ u32 rdr_get_reboot_type(void)
 {
 	return g_reboot_type;
 }
-
+/*
 static int __init early_parse_reboot_reason_cmdline(char *reboot_reason_cmdline)
 {
 	int i;
@@ -685,7 +685,7 @@ static int __init early_parse_reboot_reason_cmdline(char *reboot_reason_cmdline)
 }
 
 early_param("reboot_reason", early_parse_reboot_reason_cmdline);
-
+*/
 void *bbox_vmap(phys_addr_t paddr, size_t size)
 {
 	int i;
@@ -749,13 +749,13 @@ EXPORT_SYMBOL(hisi_bbox_unmap);
 
 /*******************************************************************************
 Function:       bbox_save_done
-Description:	每次异常对应的log目录保存完毕后，需要调用此函数表示这个目录已经
-		记录完毕了，logserver可以将其打包上传了。
-Input:	logpath:异常对应的保存log的目录；
-		step:异常log保存到了哪一步，是否还需要继续使用的标记；
+Description:	脙驴沤脦脪矛鲁拢露脭脫艩碌脛log脛驴脗艗卤拢沤忙脥锚卤脧潞贸拢卢脨猫脪陋碌梅脫脙沤脣潞炉脢媒卤铆脢鸥脮芒啪枚脛驴脗艗脪脩鸥颅
+		艗脟脗艗脥锚卤脧脕脣拢卢logserver驴脡脪脭艙芦脝盲沤貌掳眉脡脧沤芦脕脣隆拢
+Input:	logpath:脪矛鲁拢露脭脫艩碌脛卤拢沤忙log碌脛脛驴脗艗拢禄
+		step:脪矛鲁拢log卤拢沤忙碌艙脕脣脛脛脪禄虏艙拢卢脢脟路帽禄鹿脨猫脪陋艗脤脨酶脢鹿脫脙碌脛卤锚艗脟拢禄
 Output:		    NA
 Return:		    NA
-Other:          used by rdr_core.c、rdr_hisi_ap_adapter.c
+Other:          used by rdr_core.c隆垄rdr_hisi_ap_adapter.c
 ********************************************************************************/
 void bbox_save_done(char *logpath, u32 step)
 {
@@ -773,14 +773,14 @@ void bbox_save_done(char *logpath, u32 step)
 	BB_PRINT_PN("logpath is [%s], step is [%d]\n", logpath, step);
 	if (BBOX_SAVE_STEP_DONE == step) {
 
-		/*组合done文件的绝对路径，作为sys_mkdir的参数 */
+		/*脳茅潞脧done脦脛艗镁碌脛鸥酶露脭脗路鸥露拢卢脳梅脦陋sys_mkdir碌脛虏脦脢媒 */
 		memset(path, 0, PATH_MAXLEN);
 		memcpy(path, logpath, strlen(logpath));
 		strncat(path, BBOX_SAVE_DONE_FILENAME,
 			((PATH_MAXLEN - 1) - strlen(path)));
 
 
-		/*在时间戳目录下面创建done文件 */
+		/*脭脷脢卤艗盲沤脕脛驴脗艗脧脗脙忙沤沤艙拧done脦脛艗镁 */
 		fd = sys_open(path, O_CREAT | O_WRONLY, FILE_LIMIT);
 		if (fd < 0) {
 			BB_PRINT_ERR("sys_mkdir [%s] error, fd is [%d]\n", path,
@@ -789,7 +789,7 @@ void bbox_save_done(char *logpath, u32 step)
 		}
 		sys_close(fd);
 
-		/*根据权限要求，hisi_logs目录及子目录群组调整为root-system */
+		/*啪霉鸥脻脠拧脧脼脪陋脟贸拢卢hisi_logs脛驴脗艗艗掳脳脫脛驴脗艗脠潞脳茅碌梅脮没脦陋root-system */
 		ret =
 		    (int)bbox_chown((const char __user *)path, ROOT_UID,
 				    SYSTEM_GID, false);
