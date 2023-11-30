@@ -675,7 +675,7 @@ void ao_ipc_mbx_irq_show(struct seq_file *s, const void __iomem *base, unsigned 
 			}
 			if (i == IPC_MBXDATA_TAG) {
 				source = GET_SHAREMEM_SOURCE(ipc_data);
-				dubai_update_wakeup_info("DUBAI_TAG_SENSORHUB_WAKEUP", "mem=%u source=%u", mem, source);
+				//dubai_update_wakeup_info("DUBAI_TAG_SENSORHUB_WAKEUP", "mem=%u source=%u", mem, source);
 			}
 		}
 		LOWPM_MSG(s, "SR:[MBXDATA%u]:0x%x\n", i, ipc_data); //lint !e666
