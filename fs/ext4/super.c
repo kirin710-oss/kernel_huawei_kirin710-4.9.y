@@ -1097,17 +1097,10 @@ static int bdev_try_to_free_page(struct super_block *sb, struct page *page,
 }
 
 #ifdef CONFIG_EXT4_FS_ENCRYPTION
-static int ext4_get_context(struct inode *inode, void *ctx, size_t len, int *dummy)
+static int ext4_get_context(struct inode *inode, void *ctx, size_t len)
 {
-    int ret;
-
-    ret = ext4_xattr_get(inode, EXT4_XATTR_INDEX_ENCRYPTION,
-                 EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, ctx, len);
-
-    /* Ignore the dummy argument */
-    (void)dummy;
-
-    return ret;
+	return ext4_xattr_get(inode, EXT4_XATTR_INDEX_ENCRYPTION,
+				 EXT4_XATTR_NAME_ENCRYPTION_CONTEXT, ctx, len);
 }
 
 static int ext4_set_context(struct inode *inode, const void *ctx, size_t len,
