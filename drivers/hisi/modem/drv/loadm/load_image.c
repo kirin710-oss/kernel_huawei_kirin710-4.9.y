@@ -73,7 +73,7 @@
 #include "product_config.h"
 #include "securec.h"
 
-/* Dalls֮���ֻ���MBB�ںϴ��� */
+/* DallsÖ®ºóÊÖ»úºÍMBBÈÚºÏŽúÂë */
 
 #define SECBOOT_BUFLEN  (0x100000)      /*1MB*/
 
@@ -91,7 +91,7 @@
 
 
 
-/* ����ȫOS��Ҫ��ȫ���أ�Ԥ�������ڴ棬������ϵͳ��ʱ�����к󣬵�����λʱ�������벻�������ڴ� */
+/* Žø°²È«OSÐèÒª°²È«ŒÓÔØ£¬Ô€ÁôÁ¬ÐøÄÚŽæ£¬·ñÔòÔÚÏµÍ³³€Ê±ŒäÔËÐÐºó£¬µ¥¶ÀžŽÎ»Ê±¿ÉÄÜÉêÇë²»µœÁ¬ÐøÄÚŽæ */
 static  u8 *SECBOOT_BUFFER = NULL;
 
 struct image_type_name
@@ -106,11 +106,11 @@ struct image_type_name
 struct image_type_name  modem_images_root[] =
 {
     {MODEM, DDR_MCORE_ADDR,         DDR_MCORE_SIZE,       MODEM_IMAGE_PATH,  "balong_modem.bin"},
-    {HIFI,  DDR_HIFI_ADDR,          DDR_HIFI_SIZE,        MODEM_IMAGE_PATH,  "hifi.img"},/* Ԥ�� */
+    {HIFI,  DDR_HIFI_ADDR,          DDR_HIFI_SIZE,        MODEM_IMAGE_PATH,  "hifi.img"},/* Ô€Áô */
     {DSP,   DDR_TLPHY_IMAGE_ADDR,   DDR_TLPHY_IMAGE_SIZE, MODEM_IMAGE_PATH,  "phy.bin"},
     {TAS,   0,                      0,                    MODEM_IMAGE_PATH,  "tas.bin"},
     {WAS,   0,                      0,                    MODEM_IMAGE_PATH,  "was.bin"},
-    {CAS,   0,                      0,                    MODEM_IMAGE_PATH,  "cas.bin"}, /* Ԥ�� */
+    {CAS,   0,                      0,                    MODEM_IMAGE_PATH,  "cas.bin"}, /* Ô€Áô */
     {MODEM_DTB, DDR_MCORE_DTS_ADDR, DDR_MCORE_DTS_SIZE,   MODEM_IMAGE_PATH,  "modem_dt.img"},
     {MODEM_COLD_PATCH, DDR_MCORE_ADDR,         DDR_MCORE_SIZE,       MODEM_COLD_PATCH_PATH,  "balong_modem.bin.p"},
     {DSP_COLD_PATCH,   DDR_MCORE_ADDR,         DDR_MCORE_SIZE,       MODEM_COLD_PATCH_PATH,  "phy.bin.p"},
@@ -120,11 +120,11 @@ struct image_type_name  modem_images_root[] =
 struct image_type_name modem_images_vendor[] =
 {
     {MODEM, DDR_MCORE_ADDR,         DDR_MCORE_SIZE,       MODEM_IMAGE_PATH_VENDOR,  "balong_modem.bin"},
-    {HIFI,  DDR_HIFI_ADDR,          DDR_HIFI_SIZE,        MODEM_IMAGE_PATH_VENDOR,  "hifi.img"},/* Ԥ�� */
+    {HIFI,  DDR_HIFI_ADDR,          DDR_HIFI_SIZE,        MODEM_IMAGE_PATH_VENDOR,  "hifi.img"},/* Ô€Áô */
     {DSP,   DDR_TLPHY_IMAGE_ADDR,   DDR_TLPHY_IMAGE_SIZE, MODEM_IMAGE_PATH_VENDOR,  "phy.bin"},
     {TAS,   0,                      0,                    MODEM_IMAGE_PATH_VENDOR,  "tas.bin"},
     {WAS,   0,                      0,                    MODEM_IMAGE_PATH_VENDOR,  "was.bin"},
-    {CAS,   0,                      0,                    MODEM_IMAGE_PATH_VENDOR,  "cas.bin"}, /* Ԥ�� */
+    {CAS,   0,                      0,                    MODEM_IMAGE_PATH_VENDOR,  "cas.bin"}, /* Ô€Áô */
     {MODEM_DTB, DDR_MCORE_DTS_ADDR, DDR_MCORE_DTS_SIZE,   MODEM_IMAGE_PATH_VENDOR,  "modem_dt.img"},
     {MODEM_COLD_PATCH, DDR_MCORE_ADDR,         DDR_MCORE_SIZE,       MODEM_COLD_PATCH_PATH,  "balong_modem.bin.p"},
     {DSP_COLD_PATCH,   DDR_MCORE_ADDR,         DDR_MCORE_SIZE,       MODEM_COLD_PATCH_PATH,  "phy.bin.p"},
@@ -180,7 +180,7 @@ static int get_image(struct image_type_name** image, enum SVC_SECBOOT_IMG_TYPE e
         return -ENOENT;
         /* cov_verified_stop */
     }
-    /*�����tas was����Ļ�Ҫ*/
+    /*Èç¹ûÊÇtas wasŸµÏñµÄ»°Òª*/
     if(run_addr && ddr_size)
     {
         img->run_addr = run_addr ;
@@ -210,18 +210,17 @@ static int get_file_size(const char *filename)
 
 static int get_file_name(char *file_name, const struct image_type_name *image, bool *is_sec)
 {
-    /* ������sec_��ͷ�İ�ȫ���� */
+    /* ³¢ÊÔÒÔsec_¿ªÍ·µÄ°²È«ŸµÏñ */
     *is_sec = true;
     file_name[0] = '\0';
     strncat_s(file_name, LOADM_FILE_NAME_LEN, image->dir, strnlen(image->dir, LOADM_FILE_NAME_LEN));
     strncat_s(file_name, LOADM_FILE_NAME_LEN, "sec_", strnlen("sec_", LOADM_FILE_NAME_LEN));
     strncat_s(file_name, LOADM_FILE_NAME_LEN, image->name, strnlen(image->name, LOADM_FILE_NAME_LEN));
     sec_print_info("loading %s  image\n", file_name);
-    if(bsp_access((s8*) file_name, RFILE_RDONLY))
+    /*if(bsp_access((s8*) file_name, RFILE_RDONLY))
     {
         sec_print_info("file %s can't access, try unsec image\n", file_name);
 
-        /* �����Էǰ�ȫ���� */
         *is_sec = false;
         file_name[0] = '\0';
         strncat_s(file_name, LOADM_FILE_NAME_LEN, image->dir, strnlen(image->dir, LOADM_FILE_NAME_LEN));
@@ -232,7 +231,7 @@ static int get_file_name(char *file_name, const struct image_type_name *image, b
             sec_print_err("error: file %s can't access, return\n", file_name);
             return -EACCES;
         }
-    }
+    }*/
 
     return 0;
 }
@@ -431,10 +430,10 @@ static int trans_data_to_os(enum SVC_SECBOOT_IMG_TYPE  image,
 
     operation.params[0].value.a = image;
     operation.params[0].value.b = (u32)(paddr & 0xFFFFFFFF);;
-    operation.params[1].value.a = (u32)((u64)paddr >> 32);/* �ֻ���MBB ���� */
+    operation.params[1].value.a = (u32)((u64)paddr >> 32);/* ÊÖ»úºÍMBB ŒæÈÝ */
     operation.params[1].value.b = offset;
-    operation.params[2].value.a = (u32)virt_to_phys(buf);/* �ֻ���MBB ���� */
-    operation.params[2].value.b = (u64)virt_to_phys(buf) >> 32;/* �ֻ���MBB ���� */
+    operation.params[2].value.a = (u32)virt_to_phys(buf);/* ÊÖ»úºÍMBB ŒæÈÝ */
+    operation.params[2].value.b = (u64)virt_to_phys(buf) >> 32;/* ÊÖ»úºÍMBB ŒæÈÝ */
     operation.params[3].value.a = size;
     result = TEEK_InvokeCommand(
                 session,
@@ -484,7 +483,7 @@ static int verify_soc_image(enum SVC_SECBOOT_IMG_TYPE  image,
      operation.params[0].value.a = image;
      operation.params[0].value.b = 0;/*SECBOOT_LOCKSTATE , not used currently*/
      operation.params[1].value.a = (u32)(paddr & 0xFFFFFFFF);
-     operation.params[1].value.b = (u32)((u64)paddr >> 32);/* �ֻ���MBB ���� */
+     operation.params[1].value.b = (u32)((u64)paddr >> 32);/* ÊÖ»úºÍMBB ŒæÈÝ */
      result = TEEK_InvokeCommand(session,
                                    SECBOOT_CMD_ID_VERIFY_DATA_TYPE,
                                     &operation,
@@ -514,9 +513,9 @@ static u32 get_img_load_position_offset(const struct image_type_name* image,int 
     }
     if(image->etype == MODEM)
     {
-        /*����Ѿ�����CCORE��������MODEM DDR�ռ�����λ�ô��CCORE��������CCORE��������֮�ϴ��ԭCCORE��������ԭ�����
-        ����λ��=ddr_size - CCORE���������С - ԭCCORE�����С��
-        ���CCORE�������񲻴��ڻ����ʧ�ܣ�ԭCCORE������ص�MODEM DDR�ռ�����λ��*/
+        /*Èç¹ûÒÑŸ­ŒÓÔØCCORE²¹¶¡ŸµÏñ£¬MODEM DDR¿ÕŒäµÄ×îºóÎ»ÖÃŽæ·ÅCCORE²¹¶¡ŸµÏñ£¬CCORE²¹¶¡ŸµÏñÖ®ÉÏŽæ·ÅÔ­CCOREŸµÏñ£¬ËùÒÔÔ­ŸµÏñµÄ
+        ŒÓÔØÎ»ÖÃ=ddr_size - CCORE²¹¶¡ŸµÏñŽóÐ¡ - Ô­CCOREŸµÏñŽóÐ¡£»
+        Èç¹ûCCORE²¹¶¡ŸµÏñ²»ŽæÔÚ»òŒÓÔØÊ§°Ü£¬Ô­CCOREŸµÏñŒÓÔØµœMODEM DDR¿ÕŒäµÄ×îºóÎ»ÖÃ*/
         if(g_cold_patch_info.modem_patch_info[CCORE_PATCH].patch_status == PUT_PATCH)
             return (u32)(image->ddr_size - g_images_size[MODEM_COLD_PATCH] -(u32)img_size);
         else
@@ -524,10 +523,10 @@ static u32 get_img_load_position_offset(const struct image_type_name* image,int 
     }
     else if(image->etype == DSP)
     {
-         /*����Ѿ�����DSP������������DSP DDR�ռ����ޣ����Խ���MODEM DDR�ռ���DSP���������ԭDSP����Ȼ����о���ƴ�ӣ�
-         MODEM DDR�ռ�����λ�ô��DSP��������DSP��������֮�ϴ��ԭDSP����ԭDSP�������λ�� = DDR_MCORE_SIZE -
-         DSP���������С - ԭDSP�����С��
-         ���DSP�������񲻴��ڻ����ʧ�ܣ�ԭDSP������ص�DSP DDR�ռ�ƫ��Ϊ0�ĵ�ַ*/
+         /*Èç¹ûÒÑŸ­ŒÓÔØDSP²¹¶¡ŸµÏñ£¬ÓÉÓÚDSP DDR¿ÕŒäÓÐÏÞ£¬ËùÒÔœèÖúMODEM DDR¿ÕŒäŽæ·ÅDSP²¹¶¡ŸµÏñºÍÔ­DSPŸµÏñ£¬È»ºóœøÐÐŸµÏñÆŽœÓ£¬
+         MODEM DDR¿ÕŒäµÄ×îºóÎ»ÖÃŽæ·ÅDSP²¹¶¡ŸµÏñ£¬DSP²¹¶¡ŸµÏñÖ®ÉÏŽæ·ÅÔ­DSPŸµÏñ£¬Ô­DSPŸµÏñŒÓÔØÎ»ÖÃ = DDR_MCORE_SIZE -
+         DSP²¹¶¡ŸµÏñŽóÐ¡ - Ô­DSPŸµÏñŽóÐ¡£»
+         Èç¹ûDSP²¹¶¡ŸµÏñ²»ŽæÔÚ»òŒÓÔØÊ§°Ü£¬Ô­DSPŸµÏñŒÓÔØµœDSP DDR¿ÕŒäÆ«ÒÆÎª0µÄµØÖ·*/
         if(g_cold_patch_info.modem_patch_info[DSP_PATCH].patch_status == PUT_PATCH)
             return (u32)(DDR_MCORE_SIZE - g_images_size[DSP_COLD_PATCH] -(u32)img_size);
         else
@@ -538,14 +537,14 @@ static u32 get_img_load_position_offset(const struct image_type_name* image,int 
 
 /******************************************************************************
 Function:       load_data_to_secos
-Description:    ��ָ��ƫ�ƿ�ʼ����ָ����С�ľ���
+Description:    ŽÓÖž¶šÆ«ÒÆ¿ªÊŒŽ«ËÍÖž¶šŽóÐ¡µÄŸµÏñ
 Input:
-            part_name   - Ҫ���;��������
-            offset    - ƫ�Ƶ�ַ
-            sizeToRead  - ���������Ҫд��ľ����bytes��С
+            part_name   - Òª·¢ËÍŸµÏñµÄÃû³Æ
+            offset    - Æ«ÒÆµØÖ·
+            sizeToRead  - ÊäÈë²ÎÊý£¬ÒªÐŽÈëµÄŸµÏñµÄbytesŽóÐ¡
 
 Output:         none
-Return:         SEC_OK: OK  SEC_ERROR: ERROR��
+Return:         SEC_OK: OK  SEC_ERROR: ERRORÂë
 ******************************************************************************/
 static int load_data_to_secos(const char* file_name, u32 offset, u32 size,
             const struct image_type_name* image, bool is_sec)
@@ -557,13 +556,13 @@ static int load_data_to_secos(const char* file_name, u32 offset, u32 size,
     u32 file_offset = 0;
     u32 skip_offset = 0;
     u32 load_position_offset = 0;
-    /* ��ȡָ��ƫ�Ƶ�ָ����С */
+    /* ¶ÁÈ¡Öž¶šÆ«ÒÆµÄÖž¶šŽóÐ¡ */
     if(0 != offset)
     {
         skip_offset = offset;
         remain_bytes = (int)size;
     }
-    else    /* ��ȡ�����ļ� */
+    else    /* ¶ÁÈ¡ÕûžöÎÄŒþ */
     {
         remain_bytes = get_file_size(file_name);
         if (remain_bytes <=0)
@@ -584,7 +583,7 @@ static int load_data_to_secos(const char* file_name, u32 offset, u32 size,
         }
     }
 
-    /* ����ȡ�Ĵ�С�Ƿ񳬹�ddr������С */
+    /* Œì²é¶ÁÈ¡µÄŽóÐ¡ÊÇ·ñ³¬¹ýddr·ÖÇøŽóÐ¡ */
     if((u32)remain_bytes > image->ddr_size)
     {
         /* cov_verified_start */
@@ -612,7 +611,7 @@ static int load_data_to_secos(const char* file_name, u32 offset, u32 size,
         {
             if( (image->etype == DSP_COLD_PATCH) || (image->etype == MODEM_COLD_PATCH) )
             {
-                /* ������gzip��ʽ��ѹ���������DDR�ռ����λ�� */
+                /* œ«ÕûžögzipžñÊœµÄÑ¹ËõŸµÏñ·ÅÔÚDDR¿ÕŒäœáÊøÎ»ÖÃ */
                 load_position_offset = (u32)(image->ddr_size - (u32)remain_bytes);
             }
             else if (image->etype == MODEM)
@@ -626,11 +625,11 @@ static int load_data_to_secos(const char* file_name, u32 offset, u32 size,
         }
 
         if ((!load_position_offset) && (image->etype == MODEM))
-            /* ������gzip��ʽ��ѹ���������DDR�ռ����λ�� */
+            /* œ«ÕûžögzipžñÊœµÄÑ¹ËõŸµÏñ·ÅÔÚDDR¿ÕŒäœáÊøÎ»ÖÃ */
             load_position_offset = (u32)(image->ddr_size - (u32)remain_bytes);
 
         if ((!load_position_offset) && (image->etype == MODEM_DTB)) {
-            /* ������gzip��ʽ��ѹ���������DDR�ռ����λ�� */
+            /* œ«ÕûžögzipžñÊœµÄÑ¹ËõŸµÏñ·ÅÔÚDDR¿ÕŒäœáÊøÎ»ÖÃ */
             load_position_offset = (u32)(image->ddr_size - (u32)remain_bytes);
         }
 
@@ -827,9 +826,9 @@ void update_modem_cold_patch_status(enum modem_patch_type epatch_type)
     if(g_cold_patch_info.modem_patch_info[epatch_type].patch_status == PUT_PATCH)
         g_cold_patch_info.modem_patch_info[epatch_type].patch_status = PUT_PATCH_SUCESS;
 
-    /*����������񲻴��ڻ򲹶�����δ���أ�������״̬ΪNOT_LOAD_PATCH��������������뾵��ƴ�ӳɹ���������״̬ΪPUT_PATCH_SUCESS��
-    ������в��������״̬ΪNOT_LOAD_PATCH����ʾδ���صĲ������񣬽�cold_patch_status����Ϊ0��
-    ������в��������״̬ΪNOT_LOAD_PATCH��PUT_PATCH_SUCESS������һ����������״̬ΪPUT_PATCH_SUCESS������ʾ����������ԭ����ƴ�ӳɹ�����cold_patch_status����Ϊ1*/
+    /*Èç¹û²¹¶¡ŸµÏñ²»ŽæÔÚ»ò²¹¶¡ŸµÏñÎŽŒÓÔØ£¬²¹¶¡µÄ×ŽÌ¬ÎªNOT_LOAD_PATCH£»Èç¹û²¹¶¡ŸµÏñÓëŸµÏñÆŽœÓ³É¹Š£¬²¹¶¡µÄ×ŽÌ¬ÎªPUT_PATCH_SUCESS£»
+    Èç¹ûËùÓÐ²¹¶¡ŸµÏñµÄ×ŽÌ¬ÎªNOT_LOAD_PATCH£¬±íÊŸÎŽŒÓÔØµÄ²¹¶¡ŸµÏñ£¬œ«cold_patch_statusÉèÖÃÎª0£»
+    Èç¹ûËùÓÐ²¹¶¡ŸµÏñµÄ×ŽÌ¬ÎªNOT_LOAD_PATCH»òPUT_PATCH_SUCESS£šÖÁÉÙÒ»žö²¹¶¡ŸµÏñ×ŽÌ¬ÎªPUT_PATCH_SUCESS£©£¬±íÊŸ²¹¶¡ŸµÏñÓëÔ­ŸµÏñÆŽœÓ³É¹Š£¬œ«cold_patch_statusÉèÖÃÎª1*/
     for(i = 0; i < MAX_PATCH; i++)
     {
         if( (g_cold_patch_info.modem_patch_info[i].patch_status != PUT_PATCH_SUCESS) && (g_cold_patch_info.modem_patch_info[i].patch_status != NOT_LOAD_PATCH) ){
@@ -871,7 +870,7 @@ static int get_dtb_entry(unsigned int modemid, unsigned int num, struct modem_dt
     sec_id[2] = MODEMID_M_BITS(modemid);
     sec_id[3] = MODEMID_L_BITS(modemid);
 
-    /* ��ȡ��modemidƥ���acore/ccore dt_entry ָ��,����dtctool��modem config.dts�н�boardid����Ϊ��Ӧmodem_idֵ */
+    /* »ñÈ¡ÓëmodemidÆ¥ÅäµÄacore/ccore dt_entry ÖžÕë,žŽÓÃdtctool£¬modem config.dtsÖÐœ«boardidÅäÖÃÎª¶ÔÓŠmodem_idÖµ */
     for (i = 0; i < num; i++)
     {
         if ((dt_entry_ptr->boardid[0] == sec_id[0]) &&
@@ -928,7 +927,7 @@ static s32 load_and_verify_dtb_data(void)
     }
     sec_print_info("find file %s, is_sec: %d\n", file_name, is_sec);
 
-    /* ��ȫ�汾����sec VRLͷ */
+    /* °²È«°æ±ŸÌø¹ýsec VRLÍ· */
     if(is_sec)
     {
         offset = VRL_SIZE;
@@ -963,7 +962,7 @@ static s32 load_and_verify_dtb_data(void)
        goto err_out;
     }
     offset -= sizeof(struct modem_dt_table_t);
-    /* ��Ҫmask����Ƶ�۰�ID�Ż�modemid��bit[9:0] */
+    /* ÐèÒªmaskµôÉäÆµ¿Û°åIDºÅ»òmodemidµÄbit[9:0] */
 
     if (bsp_get_version_info() != NULL)
         modem_id = bsp_get_version_info()->board_id_udp_masked;
@@ -979,7 +978,7 @@ static s32 load_and_verify_dtb_data(void)
         goto err_out;
     }
 
-    /* ��ȫ�汾��ʹ����ǩ�� */
+    /* °²È«°æ±ŸÇÒÊ¹ÄÜÁËÇ©Ãû */
     if(is_sec && 0 != dt_entry_ptr.vrl_size)
     {
         /*load vrl data to sec os*/
@@ -1035,11 +1034,11 @@ err_out:
 }
 
 /*****************************************************************************
- �� �� ��  : Modem��ؾ�����ؽӿ�
- ��������  : Modem��ؾ�����ؽӿ�
- �������  : ��
- �������  : ��
- �� �� ֵ  : �ɹ�����OK,ʧ�ܷ���ERROR
+ º¯ Êý Ãû  : ModemÏà¹ØŸµÏñŒÓÔØœÓ¿Ú
+ ¹ŠÄÜÃèÊö  : ModemÏà¹ØŸµÏñŒÓÔØœÓ¿Ú
+ ÊäÈë²ÎÊý  : ÎÞ
+ Êä³ö²ÎÊý  : ÎÞ
+ ·µ »Ø Öµ  : ³É¹Š·µ»ØOK,Ê§°Ü·µ»ØERROR
 *****************************************************************************/
 int bsp_load_modem_images(void)
 {
@@ -1126,11 +1125,11 @@ error:
 }
 
 /*****************************************************************************
- �� �� ��  : was.img��tas.img�ȶ�̬���ؾ���ӿ�
- ��������  : Modem��ؾ�����ؽӿ�
- �������  : ��
- �������  : ��
- �� �� ֵ  : �ɹ�����OK,ʧ�ܷ���ERROR
+ º¯ Êý Ãû  : was.img¡¢tas.imgµÈ¶¯Ì¬ŒÓÔØŸµÏñœÓ¿Ú
+ ¹ŠÄÜÃèÊö  : ModemÏà¹ØŸµÏñŒÓÔØœÓ¿Ú
+ ÊäÈë²ÎÊý  : ÎÞ
+ Êä³ö²ÎÊý  : ÎÞ
+ ·µ »Ø Öµ  : ³É¹Š·µ»ØOK,Ê§°Ü·µ»ØERROR
 *****************************************************************************/
 int bsp_load_modem_single_image(enum SVC_SECBOOT_IMG_TYPE ecoretype, u32 run_addr, u32 ddr_size)
 {

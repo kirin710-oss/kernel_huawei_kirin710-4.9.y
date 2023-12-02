@@ -380,8 +380,8 @@ static void __init setup_command_line(char *command_line)
 		} else {
 		remove_substring(boot_command_line, "skip_initramfs");
 		remove_substring(boot_command_line, "hw_bfr_enable=1");
-		//remove_substring(boot_command_line, "androidboot.verifiedbootstate=orange");
-		strcat(boot_command_line, "hw_bfr_enable=0 selinux=1 apparmor=0 security=selinux");
+		remove_substring(boot_command_line, "androidboot.verifiedbootstate=orange");
+		strcat(boot_command_line, "androidboot.verifiedbootstate=GREEN hw_bfr_enable=0 selinux=1 apparmor=0 security=selinux");
 		}
 	}
 	
