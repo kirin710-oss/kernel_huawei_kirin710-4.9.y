@@ -3526,8 +3526,8 @@ VOS_VOID At_ZeroReplaceBlankInString( VOS_UINT8 *pData, VOS_UINT32 ulLen)
 
 VOS_UINT32 AT_RcvDrvAgentQryVersionRsp(VOS_VOID *pMsg)
 {
-    DRV_AGENT_MSG_STRU                 *pRcvMsg;
-    DRV_AGENT_VERSION_QRY_CNF_STRU     *pstVersionQryCnfInfo;
+    DRV_AGENT_MSG_STRU                 *pRcvMsg = VOS_NULL_PTR;
+    DRV_AGENT_VERSION_QRY_CNF_STRU     *pstVersionQryCnfInfo = VOS_NULL_PTR;
     VOS_UINT8                           ucIndex;
     VOS_UINT32                          ulLen;
     VOS_CHAR                            acTmpTime[AT_AGENT_DRV_VERSION_TIME_LEN] = {0};
@@ -4090,10 +4090,10 @@ VOS_UINT32 AT_GetTdsFeatureInfo(AT_FEATURE_SUPPORT_ST * pstFeATure)
 VOS_UINT32 AT_RcvDrvAgentQrySfeatureRsp(VOS_VOID *pMsg)
 {
     /* 初始化 */
-    DRV_AGENT_MSG_STRU                 *pRcvMsg;
-    DRV_AGENT_SFEATURE_QRY_CNF_STRU    *pstAtAgentSfeatureQryCnf;
+    DRV_AGENT_MSG_STRU                 *pRcvMsg = VOS_NULL_PTR;
+    DRV_AGENT_SFEATURE_QRY_CNF_STRU    *pstAtAgentSfeatureQryCnf = VOS_NULL_PTR;
     VOS_UINT8                           ucIndex;
-    AT_FEATURE_SUPPORT_ST              *pstFeATure;
+    AT_FEATURE_SUPPORT_ST              *pstFeATure = VOS_NULL_PTR;
     VOS_UINT32                          ulLen;
     VOS_UINT32                          ulReult;
     VOS_UINT8                           ucFeATrueNum;
@@ -6196,7 +6196,6 @@ TAF_VOID At_MsgProc(MsgBlock* pMsg)
             ulSliceEnd = VOS_GetSlice();
             AT_RecordAtMsgInfo(ulSendPid, ulMsgName, ulSliceStart, ulSliceEnd);
             break;
-
         default:
             AT_LOG1("At_MsgProc other PID msg",pMsg->ulSenderPid);
             ulSliceEnd = VOS_GetSlice();
@@ -7045,8 +7044,8 @@ VOS_UINT32 AT_RcvDrvAgentSetApSimstRsp(VOS_VOID *pMsg)
 
 VOS_UINT32 AT_RcvDrvAgentHukSetCnf(VOS_VOID *pMsg)
 {
-    DRV_AGENT_MSG_STRU                     *pRcvMsg;
-    DRV_AGENT_HUK_SET_CNF_STRU             *pstEvent;
+    DRV_AGENT_MSG_STRU                     *pRcvMsg = VOS_NULL_PTR;
+    DRV_AGENT_HUK_SET_CNF_STRU             *pstEvent = VOS_NULL_PTR;
     VOS_UINT8                               ucIndex;
     VOS_UINT32                              ulResult;
 
@@ -7159,8 +7158,8 @@ VOS_UINT32 AT_RcvDrvAgentFacAuthPubkeySetCnf(VOS_VOID *pMsg)
 
 VOS_UINT32 AT_RcvDrvAgentIdentifyStartSetCnf(VOS_VOID *pMsg)
 {
-    DRV_AGENT_MSG_STRU                     *pRcvMsg;
-    DRV_AGENT_IDENTIFYSTART_SET_CNF_STRU   *pstEvent;
+    DRV_AGENT_MSG_STRU                     *pRcvMsg = VOS_NULL_PTR;
+    DRV_AGENT_IDENTIFYSTART_SET_CNF_STRU   *pstEvent = VOS_NULL_PTR;
     VOS_UINT8                               ucIndex;
     VOS_UINT32                              ulResult;
     VOS_UINT16                              usLength;
@@ -7231,8 +7230,8 @@ VOS_UINT32 AT_RcvDrvAgentIdentifyStartSetCnf(VOS_VOID *pMsg)
 
 VOS_UINT32 AT_RcvDrvAgentIdentifyEndSetCnf(VOS_VOID *pMsg)
 {
-    DRV_AGENT_MSG_STRU                     *pRcvMsg;
-    DRV_AGENT_IDENTIFYEND_SET_CNF_STRU     *pstEvent;
+    DRV_AGENT_MSG_STRU                     *pRcvMsg = VOS_NULL_PTR;
+    DRV_AGENT_IDENTIFYEND_SET_CNF_STRU     *pstEvent = VOS_NULL_PTR;
     VOS_UINT8                               ucIndex;
     VOS_UINT32                              ulResult;
 
@@ -7286,8 +7285,8 @@ VOS_UINT32 AT_RcvDrvAgentIdentifyEndSetCnf(VOS_VOID *pMsg)
 
 VOS_UINT32 AT_RcvDrvAgentSimlockDataWriteSetCnf(VOS_VOID *pMsg)
 {
-    DRV_AGENT_MSG_STRU                         *pRcvMsg;
-    DRV_AGENT_SIMLOCKDATAWRITE_SET_CNF_STRU    *pstEvent;
+    DRV_AGENT_MSG_STRU                         *pRcvMsg = VOS_NULL_PTR;
+    DRV_AGENT_SIMLOCKDATAWRITE_SET_CNF_STRU    *pstEvent = VOS_NULL_PTR;
     VOS_UINT8                                   ucIndex;
     VOS_UINT32                                  ulResult;
 
@@ -7814,8 +7813,8 @@ VOS_UINT32 AT_SimlockDataReadPrint(
 
 VOS_UINT32 AT_RcvDrvAgentSimlockDataReadQryCnf(VOS_VOID *pMsg)
 {
-    DRV_AGENT_MSG_STRU                         *pRcvMsg;
-    DRV_AGENT_SIMLOCKDATAREAD_QRY_CNF_STRU     *pstEvent;
+    DRV_AGENT_MSG_STRU                         *pRcvMsg = VOS_NULL_PTR;
+    DRV_AGENT_SIMLOCKDATAREAD_QRY_CNF_STRU     *pstEvent = VOS_NULL_PTR;
     VOS_UINT8                                   ucIndex;
     VOS_UINT8                                   ucSimlockType;
     VOS_UINT32                                  ulResult;
@@ -7947,8 +7946,8 @@ VOS_UINT32 AT_RcvDrvAgentPhonePhynumSetCnf(VOS_VOID *pMsg)
 
 VOS_UINT32 AT_RcvDrvAgentPhonePhynumQryCnf(VOS_VOID *pMsg)
 {
-    DRV_AGENT_MSG_STRU                 *pRcvMsg;
-    DRV_AGENT_PHONEPHYNUM_QRY_CNF_STRU *pstEvent;
+    DRV_AGENT_MSG_STRU                 *pRcvMsg = VOS_NULL_PTR;
+    DRV_AGENT_PHONEPHYNUM_QRY_CNF_STRU *pstEvent = VOS_NULL_PTR;
     VOS_UINT8                           ucIndex;
     VOS_UINT32                          ulResult;
     VOS_UINT16                          usLength;
@@ -10978,8 +10977,8 @@ VOS_UINT32 AT_RcvMtaCgsnQryCnf(VOS_VOID *pstMsg)
     VOS_UINT32                          ulI;
     VOS_UINT8                           ucCheckData;
     VOS_UINT8                           ucIndex;
-    AT_MTA_MSG_STRU                    *pstRcvMsg;
-    MTA_AT_CGSN_QRY_CNF_STRU           *pstCgsn;
+    AT_MTA_MSG_STRU                    *pstRcvMsg = VOS_NULL_PTR;
+    MTA_AT_CGSN_QRY_CNF_STRU           *pstCgsn = VOS_NULL_PTR;
     VOS_UINT8                           aucImeiAscii[TAF_PH_IMEI_LEN];
 
     /* 初始化 */
@@ -13967,10 +13966,10 @@ VOS_UINT32 AT_RcvMmaCLModInd(
 )
 {
     VOS_UINT8                           ucIndex;
-    TAF_MMA_CLMODE_IND_STRU            *pstCLModeInd;
+    TAF_MMA_CLMODE_IND_STRU            *pstCLModeInd = VOS_NULL_PTR;
     MODEM_ID_ENUM_UINT16                enModemId;
     VOS_UINT32                          ulRslt;
-    VOS_UINT8                          *pucIsCLMode;
+    VOS_UINT8                          *pucIsCLMode = VOS_NULL_PTR;
 
     /* 初始化消息变量 */
     ucIndex             = 0;

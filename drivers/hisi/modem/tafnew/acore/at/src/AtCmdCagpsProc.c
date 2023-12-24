@@ -6,7 +6,7 @@
 * apply:
 *
 * * This program is free software; you can redistribute it and/or modify
-* * it under the terms of the GNU General Public License version 2 and 
+* * it under the terms of the GNU General Public License version 2 and
 * * only version 2 as published by the Free Software Foundation.
 * *
 * * This program is distributed in the hope that it will be useful,
@@ -28,10 +28,10 @@
 * * 2) Redistributions in binary form must reproduce the above copyright
 * *    notice, this list of conditions and the following disclaimer in the
 * *    documentation and/or other materials provided with the distribution.
-* * 3) Neither the name of Huawei nor the names of its contributors may 
-* *    be used to endorse or promote products derived from this software 
+* * 3) Neither the name of Huawei nor the names of its contributors may
+* *    be used to endorse or promote products derived from this software
 * *    without specific prior written permission.
-* 
+*
 * * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -107,7 +107,7 @@ AT_CAGPS_CMD_OPT_TLB_STRU  g_astAtCagpsCmdOptTbl[] =
 
 VOS_UINT32 At_SetAgpsDataCallStatus(VOS_UINT8 ucIndex)
 {
-    AT_XPDS_AP_DATA_CALL_STATUS_IND_STRU                   *pstDataCallInd;
+    AT_XPDS_AP_DATA_CALL_STATUS_IND_STRU                   *pstDataCallInd = VOS_NULL_PTR;
     VOS_UINT32                                              ulMsgLength;
 
     /* 参数检查 */
@@ -376,11 +376,11 @@ VOS_UINT32 AT_RcvXpdsAgpsReverseDataInd(
 )
 {
     VOS_UINT8                           ucIndex;
-    XPDS_AT_AP_REVERSE_DATA_IND_STRU   *pstMsgDataInd;
+    XPDS_AT_AP_REVERSE_DATA_IND_STRU   *pstMsgDataInd = VOS_NULL_PTR;
     VOS_UINT32                          ulCurNum;
     VOS_UINT32                          ulTotalNum;
     VOS_UINT32                          ulOffset;
-    VOS_UINT8                          *pucSrc;
+    VOS_UINT8                          *pucSrc = VOS_NULL_PTR;
     VOS_UINT32                          ulOutputLen;
     VOS_UINT32                          ulRemainLen;
     VOS_UINT16                          usLength;
@@ -588,7 +588,7 @@ VOS_UINT32 AT_SetCagpsStop(
     VOS_UINT8                           ucIndex
 )
 {
-    AT_XPDS_GPS_STOP_REQ_STRU          *pstMsgStopReq;
+    AT_XPDS_GPS_STOP_REQ_STRU          *pstMsgStopReq = VOS_NULL_PTR;
     VOS_UINT32                          ulMsgLength;
 
     /* 参数检查 */
@@ -677,7 +677,7 @@ VOS_UINT32 AT_SetCagpsQryRefloc(
 )
 {
     VOS_UINT32                                              ulMsgLength;
-    AT_XPDS_GPS_QRY_REFLOC_INFO_REQ_STRU                   *pstMsgQryRefLoc;
+    AT_XPDS_GPS_QRY_REFLOC_INFO_REQ_STRU                   *pstMsgQryRefLoc = VOS_NULL_PTR;
 
     /* 参数检查 */
     if (AT_CMD_OPT_SET_CMD_NO_PARA != g_stATParseCmd.ucCmdOptType)

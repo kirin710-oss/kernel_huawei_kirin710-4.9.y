@@ -523,7 +523,7 @@ VOS_VOID ADS_DL_FreeIpfUsedAd0(VOS_VOID)
         /* 释放ADQ0的内存 */
         for (i = 0; i < PS_MIN(ulAdNum, IPF_DLAD0_DESC_SIZE); i++)
         {
-            IMM_ZcFreeAny((IMM_ZC_STRU *)phys_to_virt((unsigned long)pstAdDesc[i].OutPtr1));
+            IMM_ZcFreeAny((IMM_ZC_STRU *)phys_to_virt((VOS_UINT_PTR)pstAdDesc[i].OutPtr1));
         }
     }
     else
@@ -564,7 +564,7 @@ VOS_VOID ADS_DL_FreeIpfUsedAd1(VOS_VOID)
         /* 释放ADQ1的内存 */
         for (i = 0; i < PS_MIN(ulAdNum, IPF_DLAD1_DESC_SIZE); i++)
         {
-            IMM_ZcFreeAny((IMM_ZC_STRU *)phys_to_virt((unsigned long)pstAdDesc[i].OutPtr1));
+            IMM_ZcFreeAny((IMM_ZC_STRU *)phys_to_virt((VOS_UINT_PTR)pstAdDesc[i].OutPtr1));
         }
     }
     else

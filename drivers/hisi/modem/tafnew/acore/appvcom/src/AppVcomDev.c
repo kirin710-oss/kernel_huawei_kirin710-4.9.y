@@ -102,7 +102,7 @@ APPVCOM8       4K      工程菜单/HIDP         是         MODEM1          Y
 APPVCOM9      20K      AGPS                  是         MODEM0          Y
 APPVCOM10      4K      RIL                   是         MODEM0          Y
 APPVCOM11      4K      ISDB                  是         MODEM0          UnCertain
-APPVCOM12      4K      AGPS                  是         MODEM1          Y
+APPVCOM12     20K      AGPS                  是         MODEM1          Y
 APPVCOM13      4K      RIL(查询)             是         MODEM0          Y
 APPVCOM14      4K      RIL(查询)             是         MODEM1          Y
 APPVCOM15      4K      RIL                   是         MODEM1          Y
@@ -171,7 +171,7 @@ const APP_VCOM_DEV_CONFIG_STRU g_astAppVcomCogfigTab[] =
     {APP_VCOM_DEV_NAME_9, APP_VCOM_SEM_NAME_9, 0x5000, 0},                      /* APPVCOM9 */
     {APP_VCOM_DEV_NAME_10, APP_VCOM_SEM_NAME_10, 0x1000, 0},                    /* APPVCOM10 */
     {APP_VCOM_DEV_NAME_11, APP_VCOM_SEM_NAME_11, 0x1000, 0},                    /* APPVCOM11 */
-    {APP_VCOM_DEV_NAME_12, APP_VCOM_SEM_NAME_12, 0x1000, 0},                    /* APPVCOM12 */
+    {APP_VCOM_DEV_NAME_12, APP_VCOM_SEM_NAME_12, 0x5000, 0},                    /* APPVCOM12 */
     {APP_VCOM_DEV_NAME_13, APP_VCOM_SEM_NAME_13, 0x1000, 0},                    /* APPVCOM13 */
     {APP_VCOM_DEV_NAME_14, APP_VCOM_SEM_NAME_14, 0x1000, 0},                    /* APPVCOM14 */
     {APP_VCOM_DEV_NAME_15, APP_VCOM_SEM_NAME_15, 0x1000, 0},                    /* APPVCOM15 */
@@ -428,13 +428,10 @@ VOS_INT __init APP_VCOM_Init(VOS_VOID)
     VOS_INT                             iResult2;
     dev_t                               ulDevno;
     VOS_UINT8                           ucIndex;
-    APP_VCOM_DEV_CTX_STRU              *pstVcomCtx;
-    APP_VCOM_DEV_ENTITY_STRU           *pstVcomDevp;
+    APP_VCOM_DEV_CTX_STRU              *pstVcomCtx = VOS_NULL_PTR;
+    APP_VCOM_DEV_ENTITY_STRU           *pstVcomDevp = VOS_NULL_PTR;
 
     APP_VCOM_PR_LOGI("entry,%u",VOS_GetSlice());
-
-    pstVcomCtx = VOS_NULL_PTR;
-    pstVcomDevp  = VOS_NULL_PTR;
 
     /* 初始化可维可测全局变量 */
     TAF_MEM_SET_S(&g_stAppVcomDebugInfo, sizeof(g_stAppVcomDebugInfo), 0x00, sizeof(g_stAppVcomDebugInfo));
@@ -549,7 +546,7 @@ int APP_VCOM_Release(
 
     if (ucIndex >= APP_VCOM_MAX_NUM)
     {
-        APP_VCOM_TRACE_ERR(ucIndex, "APP_VCOM_Release ucIndex is error. ");
+        APP_VCOM_ERR_LOG(ucIndex, "APP_VCOM_Release ucIndex is error. ");
         return VOS_ERROR;
     }
 
@@ -620,7 +617,7 @@ int APP_VCOM_Open(
 
     if (ucIndex >= APP_VCOM_MAX_NUM)
     {
-        APP_VCOM_TRACE_ERR(ucIndex, "APP_VCOM_Open ucIndex is error. ");
+        APP_VCOM_ERR_LOG(ucIndex, "APP_VCOM_Open ucIndex is error. ");
         return VOS_ERROR;
     }
 
@@ -794,7 +791,7 @@ ssize_t APP_VCOM_Write(
 
     if(ucIndex >= APP_VCOM_MAX_NUM)
     {
-        APP_VCOM_TRACE_ERR(ucIndex, "APP_VCOM_Write, ucIndex fail. ");
+        APP_VCOM_ERR_LOG(ucIndex, "APP_VCOM_Write, ucIndex fail. ");
         return APP_VCOM_ERROR;
     }
 
@@ -910,7 +907,7 @@ VOS_UINT32  APP_VCOM_Send (
     if (enDevIndex >= APP_VCOM_MAX_NUM)
     {
         g_stAppVcomDebugInfo.ulDevIndexErr++;
-        APP_VCOM_TRACE_ERR(enDevIndex, "APP_VCOM_Send, enDevIndex is error. ");
+        APP_VCOM_ERR_LOG(enDevIndex, "APP_VCOM_Send, enDevIndex is error. ");
         return VOS_ERR;
     }
 

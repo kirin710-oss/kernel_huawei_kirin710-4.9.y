@@ -304,11 +304,19 @@
 
 #include "jdn2_v1_auo_otm1901a_5p2_1080p_video_default_1.h"
 
+#include "jdn2_v2_boe_v2_hx8279_8p0_1200p_video.h"
+
+#include "jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video.h"
+
 #include "jdn2_v2_boe_v2_nt51021_8p0_1200p_video.h"
 
 #include "jdn2_v2_truly_v2_nt51021_8p0_1200p_video.h"
 
 #include "jdn2_v2_auo_otm1901a_5p2_1080p_video_default_1.h"
+
+#include "jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video.h"
+
+#include "jdn2_vn2_boe_v2_hx8279_8p0_1200p_video.h"
 
 #include "jdn2_vn2_boe_v2_nt51021_8p0_1200p_video.h"
 
@@ -514,9 +522,13 @@ JDN2_AUO_OTM1901A_5P2_1080P_VIDEO_DEFAULT_1_PANEL,
 JDN2_V1_AUO1_NT51021_8P0_1200P_VIDEO_PANEL,
 JDN2_V1_INX_NT51021_8P0_1200P_VIDEO_PANEL,
 JDN2_V1_AUO_OTM1901A_5P2_1080P_VIDEO_DEFAULT_1_PANEL,
+JDN2_V2_BOE_V2_HX8279_8P0_1200P_VIDEO_PANEL,
+JDN2_V2_BOE_V2_HX8279_NEW_8P0_1200P_VIDEO_PANEL,
 JDN2_V2_BOE_V2_NT51021_8P0_1200P_VIDEO_PANEL,
 JDN2_V2_TRULY_V2_NT51021_8P0_1200P_VIDEO_PANEL,
 JDN2_V2_AUO_OTM1901A_5P2_1080P_VIDEO_DEFAULT_1_PANEL,
+JDN2_VN2_BOE_V2_HX8279_NEW_8P0_1200P_VIDEO_PANEL,
+JDN2_VN2_BOE_V2_HX8279_8P0_1200P_VIDEO_PANEL,
 JDN2_VN2_BOE_V2_NT51021_8P0_1200P_VIDEO_PANEL,
 JDN2_VN2_TRULY_V2_NT51021_8P0_1200P_VIDEO_PANEL,
 JDN2_VN2_AUO_OTM1901A_5P2_1080P_VIDEO_DEFAULT_1_PANEL,
@@ -705,9 +717,13 @@ static struct lcdkit_board_map lcdkit_map[] = {
     {JDN2_V1_AUO1_NT51021_8P0_1200P_VIDEO_PANEL, "auo1_nt51021_8p0_1200p_video", 9001},
     {JDN2_V1_INX_NT51021_8P0_1200P_VIDEO_PANEL, "inx_nt51021_8p0_1200p_video", 9001},
     {JDN2_V1_AUO_OTM1901A_5P2_1080P_VIDEO_DEFAULT_1_PANEL, "auo_otm1901a_5p2_1080p_video_default_1", 9001},
+    {JDN2_V2_BOE_V2_HX8279_8P0_1200P_VIDEO_PANEL, "boe-v2-HX8279-8p0-1200p-video", 9002},
+    {JDN2_V2_BOE_V2_HX8279_NEW_8P0_1200P_VIDEO_PANEL, "boe-v2-HX8279-new-8p0-1200p-video", 9002},
     {JDN2_V2_BOE_V2_NT51021_8P0_1200P_VIDEO_PANEL, "boe_v2_nt51021_8p0_1200p_video", 9002},
     {JDN2_V2_TRULY_V2_NT51021_8P0_1200P_VIDEO_PANEL, "truly_v2_nt51021_8p0_1200p_video", 9002},
     {JDN2_V2_AUO_OTM1901A_5P2_1080P_VIDEO_DEFAULT_1_PANEL, "auo_otm1901a_5p2_1080p_video_default_1", 9002},
+    {JDN2_VN2_BOE_V2_HX8279_NEW_8P0_1200P_VIDEO_PANEL, "boe-v2-HX8279-new-8p0-1200p-video", 9003},
+    {JDN2_VN2_BOE_V2_HX8279_8P0_1200P_VIDEO_PANEL, "boe-v2-HX8279-8p0-1200p-video", 9003},
     {JDN2_VN2_BOE_V2_NT51021_8P0_1200P_VIDEO_PANEL, "boe_v2_nt51021_8p0_1200p_video", 9003},
     {JDN2_VN2_TRULY_V2_NT51021_8P0_1200P_VIDEO_PANEL, "truly_v2_nt51021_8p0_1200p_video", 9003},
     {JDN2_VN2_AUO_OTM1901A_5P2_1080P_VIDEO_DEFAULT_1_PANEL, "auo_otm1901a_5p2_1080p_video_default_1", 9003},
@@ -8583,6 +8599,112 @@ static void lcdkit_effect_get_data(uint8_t panel_id, struct hisi_panel_info* pin
             pinfo->xcc_table_len = ARRAY_SIZE(jdn2_v1_auo_otm1901a_5p2_1080p_video_default_1_xcc_table);
         }
         break;
+    case JDN2_V2_BOE_V2_HX8279_8P0_1200P_VIDEO_PANEL:
+        if (pinfo->acm_support == 1)
+        {
+            pinfo->acm_lut_hue_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_hue_table;
+            pinfo->acm_lut_hue_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_hue_table);
+            pinfo->acm_lut_sata_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_sata_table;
+            pinfo->acm_lut_sata_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_sata_table);
+            pinfo->acm_lut_satr_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr_table;
+            pinfo->acm_lut_satr_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr_table);
+            pinfo->acm_lut_satr0_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr0_table;
+            pinfo->acm_lut_satr0_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr0_table);
+            pinfo->acm_lut_satr1_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr1_table;
+            pinfo->acm_lut_satr1_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr1_table);
+            pinfo->acm_lut_satr2_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr2_table;
+            pinfo->acm_lut_satr2_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr2_table);
+            pinfo->acm_lut_satr3_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr3_table;
+            pinfo->acm_lut_satr3_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr3_table);
+            pinfo->acm_lut_satr4_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr4_table;
+            pinfo->acm_lut_satr4_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr4_table);
+            pinfo->acm_lut_satr5_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr5_table;
+            pinfo->acm_lut_satr5_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr5_table);
+            pinfo->acm_lut_satr6_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr6_table;
+            pinfo->acm_lut_satr6_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr6_table);
+            pinfo->acm_lut_satr7_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr7_table;
+            pinfo->acm_lut_satr7_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr7_table);
+            pinfo->video_acm_lut_hue_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_hue_table;
+            pinfo->video_acm_lut_sata_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_sata_table;
+            pinfo->video_acm_lut_satr0_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr0_table;
+            pinfo->video_acm_lut_satr1_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr1_table;
+            pinfo->video_acm_lut_satr2_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr2_table;
+            pinfo->video_acm_lut_satr3_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr3_table;
+            pinfo->video_acm_lut_satr4_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr4_table;
+            pinfo->video_acm_lut_satr5_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr5_table;
+            pinfo->video_acm_lut_satr6_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr6_table;
+            pinfo->video_acm_lut_satr7_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr7_table;
+        }
+        if (pinfo->gamma_support == 1)
+        {
+            pinfo->gamma_lut_table_R = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_gamma_lut_table_R;
+            pinfo->gamma_lut_table_G = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_gamma_lut_table_G;
+            pinfo->gamma_lut_table_B = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_gamma_lut_table_B;
+            pinfo->gamma_lut_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_gamma_lut_table_R);
+            pinfo->igm_lut_table_R = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_igm_lut_table_R;
+            pinfo->igm_lut_table_G = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_igm_lut_table_G;
+            pinfo->igm_lut_table_B = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_igm_lut_table_B;
+            pinfo->igm_lut_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_igm_lut_table_R);
+            pinfo->gmp_lut_table_low32bit = &jdn2_v2_boe_v2_hx8279_8p0_1200p_video_gmp_lut_table_low32bit[0][0][0];
+            pinfo->gmp_lut_table_high4bit = &jdn2_v2_boe_v2_hx8279_8p0_1200p_video_gmp_lut_table_high4bit[0][0][0];
+            pinfo->gmp_lut_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_gmp_lut_table_low32bit);
+            pinfo->xcc_table = jdn2_v2_boe_v2_hx8279_8p0_1200p_video_xcc_table;
+            pinfo->xcc_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_8p0_1200p_video_xcc_table);
+        }
+        break;
+    case JDN2_V2_BOE_V2_HX8279_NEW_8P0_1200P_VIDEO_PANEL:
+        if (pinfo->acm_support == 1)
+        {
+            pinfo->acm_lut_hue_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_hue_table;
+            pinfo->acm_lut_hue_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_hue_table);
+            pinfo->acm_lut_sata_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_sata_table;
+            pinfo->acm_lut_sata_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_sata_table);
+            pinfo->acm_lut_satr_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr_table;
+            pinfo->acm_lut_satr_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr_table);
+            pinfo->acm_lut_satr0_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr0_table;
+            pinfo->acm_lut_satr0_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr0_table);
+            pinfo->acm_lut_satr1_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr1_table;
+            pinfo->acm_lut_satr1_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr1_table);
+            pinfo->acm_lut_satr2_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr2_table;
+            pinfo->acm_lut_satr2_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr2_table);
+            pinfo->acm_lut_satr3_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr3_table;
+            pinfo->acm_lut_satr3_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr3_table);
+            pinfo->acm_lut_satr4_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr4_table;
+            pinfo->acm_lut_satr4_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr4_table);
+            pinfo->acm_lut_satr5_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr5_table;
+            pinfo->acm_lut_satr5_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr5_table);
+            pinfo->acm_lut_satr6_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr6_table;
+            pinfo->acm_lut_satr6_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr6_table);
+            pinfo->acm_lut_satr7_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr7_table;
+            pinfo->acm_lut_satr7_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr7_table);
+            pinfo->video_acm_lut_hue_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_hue_table;
+            pinfo->video_acm_lut_sata_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_sata_table;
+            pinfo->video_acm_lut_satr0_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr0_table;
+            pinfo->video_acm_lut_satr1_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr1_table;
+            pinfo->video_acm_lut_satr2_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr2_table;
+            pinfo->video_acm_lut_satr3_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr3_table;
+            pinfo->video_acm_lut_satr4_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr4_table;
+            pinfo->video_acm_lut_satr5_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr5_table;
+            pinfo->video_acm_lut_satr6_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr6_table;
+            pinfo->video_acm_lut_satr7_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr7_table;
+        }
+        if (pinfo->gamma_support == 1)
+        {
+            pinfo->gamma_lut_table_R = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_gamma_lut_table_R;
+            pinfo->gamma_lut_table_G = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_gamma_lut_table_G;
+            pinfo->gamma_lut_table_B = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_gamma_lut_table_B;
+            pinfo->gamma_lut_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_gamma_lut_table_R);
+            pinfo->igm_lut_table_R = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_igm_lut_table_R;
+            pinfo->igm_lut_table_G = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_igm_lut_table_G;
+            pinfo->igm_lut_table_B = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_igm_lut_table_B;
+            pinfo->igm_lut_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_igm_lut_table_R);
+            pinfo->gmp_lut_table_low32bit = &jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_gmp_lut_table_low32bit[0][0][0];
+            pinfo->gmp_lut_table_high4bit = &jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_gmp_lut_table_high4bit[0][0][0];
+            pinfo->gmp_lut_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_gmp_lut_table_low32bit);
+            pinfo->xcc_table = jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_xcc_table;
+            pinfo->xcc_table_len = ARRAY_SIZE(jdn2_v2_boe_v2_hx8279_new_8p0_1200p_video_xcc_table);
+        }
+        break;
     case JDN2_V2_BOE_V2_NT51021_8P0_1200P_VIDEO_PANEL:
         if (pinfo->acm_support == 1)
         {
@@ -8740,6 +8862,112 @@ static void lcdkit_effect_get_data(uint8_t panel_id, struct hisi_panel_info* pin
             pinfo->gmp_lut_table_len = ARRAY_SIZE(jdn2_v2_auo_otm1901a_5p2_1080p_video_default_1_gmp_lut_table_low32bit);
             pinfo->xcc_table = jdn2_v2_auo_otm1901a_5p2_1080p_video_default_1_xcc_table;
             pinfo->xcc_table_len = ARRAY_SIZE(jdn2_v2_auo_otm1901a_5p2_1080p_video_default_1_xcc_table);
+        }
+        break;
+    case JDN2_VN2_BOE_V2_HX8279_NEW_8P0_1200P_VIDEO_PANEL:
+        if (pinfo->acm_support == 1)
+        {
+            pinfo->acm_lut_hue_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_hue_table;
+            pinfo->acm_lut_hue_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_hue_table);
+            pinfo->acm_lut_sata_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_sata_table;
+            pinfo->acm_lut_sata_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_sata_table);
+            pinfo->acm_lut_satr_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr_table;
+            pinfo->acm_lut_satr_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr_table);
+            pinfo->acm_lut_satr0_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr0_table;
+            pinfo->acm_lut_satr0_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr0_table);
+            pinfo->acm_lut_satr1_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr1_table;
+            pinfo->acm_lut_satr1_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr1_table);
+            pinfo->acm_lut_satr2_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr2_table;
+            pinfo->acm_lut_satr2_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr2_table);
+            pinfo->acm_lut_satr3_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr3_table;
+            pinfo->acm_lut_satr3_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr3_table);
+            pinfo->acm_lut_satr4_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr4_table;
+            pinfo->acm_lut_satr4_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr4_table);
+            pinfo->acm_lut_satr5_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr5_table;
+            pinfo->acm_lut_satr5_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr5_table);
+            pinfo->acm_lut_satr6_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr6_table;
+            pinfo->acm_lut_satr6_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr6_table);
+            pinfo->acm_lut_satr7_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr7_table;
+            pinfo->acm_lut_satr7_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_acm_lut_satr7_table);
+            pinfo->video_acm_lut_hue_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_hue_table;
+            pinfo->video_acm_lut_sata_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_sata_table;
+            pinfo->video_acm_lut_satr0_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr0_table;
+            pinfo->video_acm_lut_satr1_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr1_table;
+            pinfo->video_acm_lut_satr2_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr2_table;
+            pinfo->video_acm_lut_satr3_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr3_table;
+            pinfo->video_acm_lut_satr4_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr4_table;
+            pinfo->video_acm_lut_satr5_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr5_table;
+            pinfo->video_acm_lut_satr6_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr6_table;
+            pinfo->video_acm_lut_satr7_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_video_acm_lut_satr7_table;
+        }
+        if (pinfo->gamma_support == 1)
+        {
+            pinfo->gamma_lut_table_R = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_gamma_lut_table_R;
+            pinfo->gamma_lut_table_G = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_gamma_lut_table_G;
+            pinfo->gamma_lut_table_B = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_gamma_lut_table_B;
+            pinfo->gamma_lut_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_gamma_lut_table_R);
+            pinfo->igm_lut_table_R = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_igm_lut_table_R;
+            pinfo->igm_lut_table_G = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_igm_lut_table_G;
+            pinfo->igm_lut_table_B = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_igm_lut_table_B;
+            pinfo->igm_lut_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_igm_lut_table_R);
+            pinfo->gmp_lut_table_low32bit = &jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_gmp_lut_table_low32bit[0][0][0];
+            pinfo->gmp_lut_table_high4bit = &jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_gmp_lut_table_high4bit[0][0][0];
+            pinfo->gmp_lut_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_gmp_lut_table_low32bit);
+            pinfo->xcc_table = jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_xcc_table;
+            pinfo->xcc_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_new_8p0_1200p_video_xcc_table);
+        }
+        break;
+    case JDN2_VN2_BOE_V2_HX8279_8P0_1200P_VIDEO_PANEL:
+        if (pinfo->acm_support == 1)
+        {
+            pinfo->acm_lut_hue_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_hue_table;
+            pinfo->acm_lut_hue_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_hue_table);
+            pinfo->acm_lut_sata_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_sata_table;
+            pinfo->acm_lut_sata_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_sata_table);
+            pinfo->acm_lut_satr_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr_table;
+            pinfo->acm_lut_satr_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr_table);
+            pinfo->acm_lut_satr0_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr0_table;
+            pinfo->acm_lut_satr0_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr0_table);
+            pinfo->acm_lut_satr1_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr1_table;
+            pinfo->acm_lut_satr1_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr1_table);
+            pinfo->acm_lut_satr2_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr2_table;
+            pinfo->acm_lut_satr2_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr2_table);
+            pinfo->acm_lut_satr3_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr3_table;
+            pinfo->acm_lut_satr3_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr3_table);
+            pinfo->acm_lut_satr4_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr4_table;
+            pinfo->acm_lut_satr4_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr4_table);
+            pinfo->acm_lut_satr5_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr5_table;
+            pinfo->acm_lut_satr5_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr5_table);
+            pinfo->acm_lut_satr6_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr6_table;
+            pinfo->acm_lut_satr6_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr6_table);
+            pinfo->acm_lut_satr7_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr7_table;
+            pinfo->acm_lut_satr7_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_acm_lut_satr7_table);
+            pinfo->video_acm_lut_hue_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_hue_table;
+            pinfo->video_acm_lut_sata_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_sata_table;
+            pinfo->video_acm_lut_satr0_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr0_table;
+            pinfo->video_acm_lut_satr1_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr1_table;
+            pinfo->video_acm_lut_satr2_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr2_table;
+            pinfo->video_acm_lut_satr3_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr3_table;
+            pinfo->video_acm_lut_satr4_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr4_table;
+            pinfo->video_acm_lut_satr5_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr5_table;
+            pinfo->video_acm_lut_satr6_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr6_table;
+            pinfo->video_acm_lut_satr7_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_video_acm_lut_satr7_table;
+        }
+        if (pinfo->gamma_support == 1)
+        {
+            pinfo->gamma_lut_table_R = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_gamma_lut_table_R;
+            pinfo->gamma_lut_table_G = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_gamma_lut_table_G;
+            pinfo->gamma_lut_table_B = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_gamma_lut_table_B;
+            pinfo->gamma_lut_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_gamma_lut_table_R);
+            pinfo->igm_lut_table_R = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_igm_lut_table_R;
+            pinfo->igm_lut_table_G = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_igm_lut_table_G;
+            pinfo->igm_lut_table_B = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_igm_lut_table_B;
+            pinfo->igm_lut_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_igm_lut_table_R);
+            pinfo->gmp_lut_table_low32bit = &jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_gmp_lut_table_low32bit[0][0][0];
+            pinfo->gmp_lut_table_high4bit = &jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_gmp_lut_table_high4bit[0][0][0];
+            pinfo->gmp_lut_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_gmp_lut_table_low32bit);
+            pinfo->xcc_table = jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_xcc_table;
+            pinfo->xcc_table_len = ARRAY_SIZE(jdn2_vn2_boe_v2_hx8279_8p0_1200p_video_xcc_table);
         }
         break;
     case JDN2_VN2_BOE_V2_NT51021_8P0_1200P_VIDEO_PANEL:

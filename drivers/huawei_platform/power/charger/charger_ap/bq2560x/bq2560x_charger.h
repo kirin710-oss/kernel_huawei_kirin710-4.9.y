@@ -182,6 +182,8 @@ struct bq2560x_device_info {
 #define BQ2560X_REG_CTTC_CHG_TIMER_SHIFT             (2)
 #define REG05_CHG_TIMER_5HOURS                       (0)
 #define REG05_CHG_TIMER_10HOURS                      (1)
+#define SAFE_TIME_RESET                              (18000) /* 5h */
+#define ENABLE_TIMES                                 (3)
 
 #define BQ2560X_REG_CTTC_TREG_MASK                   (0x02)
 #define BQ2560X_REG_CTTC_TREG_SHIFT                  (1)
@@ -371,6 +373,7 @@ struct bq2560x_device_info {
 #define BQ2560X_REG_VPRS_DEV_REV_SHIFT               (0)
 
 #define VENDOR_ID                                    (0x2)
+#define SGM41511H_VENDOR_ID                          (0x1)
 
 #define BQ2560x_REG_SS_VBUS_PLUGGED                  (1)
 

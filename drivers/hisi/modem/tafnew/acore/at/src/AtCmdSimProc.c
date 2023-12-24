@@ -474,6 +474,7 @@ VOS_UINT32 At_SetSilentPinInfo(
 }
 
 
+
 VOS_UINT32 At_QryHvsstPara(
     VOS_UINT8                           ucIndex
 )
@@ -601,7 +602,7 @@ VOS_UINT32 At_SetSciChgPara(
     gastAtParaList[2].ulParaValue = SI_PIH_CARD_SLOT_2;
 
     /* 任意两个Modem不能同时配置为同一卡槽 */
-    if ((gastAtParaList[0].ulParaValue == gastAtParaList[1].ulParaValue))
+    if (gastAtParaList[0].ulParaValue == gastAtParaList[1].ulParaValue)
     {
         return AT_CME_INCORRECT_PARAMETERS;
     }
@@ -1881,6 +1882,14 @@ TAF_UINT32 AT_SetPrfApp(
         return AT_ERROR;
     }
 
+    /* 防止NV数据异常导致越界访问 */
+    if (stAppInfo.ucAppNum > AT_ARRAY_SIZE(stAppInfo.aenAppList))
+    {
+        AT_WARN_LOG("AT_SetPrfApp: Get en_NV_Item_Usim_App_Priority_Cfg success, but ucAppNum invalid.");
+
+        return AT_ERROR;
+    }
+
     /* 设置CDMA应用优先 */
     for (i = 0; i < stAppInfo.ucAppNum; i++)
     {
@@ -2004,6 +2013,14 @@ TAF_UINT32 At_QryPrfAppPara(TAF_UINT8 ucIndex)
         return AT_ERROR;
     }
 
+    /* 防止NV数据异常导致越界访问 */
+    if (stAppInfo.ucAppNum > AT_ARRAY_SIZE(stAppInfo.aenAppList))
+    {
+        AT_WARN_LOG("At_QryPrfAppPara: Get en_NV_Item_Usim_App_Priority_Cfg success, but ucAppNum invalid.");
+
+        stAppInfo.ucAppNum = AT_ARRAY_SIZE(stAppInfo.aenAppList);
+    }
+
     ulCdmaHit = VOS_FALSE;
     ulGutlHit = VOS_FALSE;
 
@@ -2095,6 +2112,14 @@ TAF_UINT32 AT_SetUiccPrfApp(
     if (NV_OK != ulRslt)
     {
         AT_ERR_LOG("AT_SetUiccPrfApp: Get en_NV_Item_Usim_Uicc_App_Priority_Cfg fail.");
+
+        return AT_ERROR;
+    }
+
+    /* 防止NV数据异常导致越界访问 */
+    if (stAppInfo.ucAppNum > AT_ARRAY_SIZE(stAppInfo.aenAppList))
+    {
+        AT_WARN_LOG("AT_SetUiccPrfApp: Get en_NV_Item_Usim_Uicc_App_Priority_Cfg success, but ucAppNum invalid.");
 
         return AT_ERROR;
     }
@@ -2220,6 +2245,14 @@ TAF_UINT32 At_QryUiccPrfAppPara(TAF_UINT8 ucIndex)
         AT_ERR_LOG("At_QryUiccPrfAppPara: Get en_NV_Item_Usim_Uicc_App_Priority_Cfg fail.");
 
         return AT_ERROR;
+    }
+
+    /* 防止NV数据异常导致越界访问 */
+    if (stAppInfo.ucAppNum > AT_ARRAY_SIZE(stAppInfo.aenAppList))
+    {
+        AT_WARN_LOG("At_QryUiccPrfAppPara: Get en_NV_Item_Usim_Uicc_App_Priority_Cfg success, but ucAppNum invalid.");
+
+        stAppInfo.ucAppNum = AT_ARRAY_SIZE(stAppInfo.aenAppList);
     }
 
     ulCdmaHit = VOS_FALSE;

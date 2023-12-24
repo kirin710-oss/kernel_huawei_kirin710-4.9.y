@@ -319,7 +319,7 @@ VOS_UINT32 TAF_STD_ConvertStrToDecInt(
 {
     VOS_UINT32                          ulTmp;
     VOS_UINT32                          ultotal;
-    VOS_UINT8                           ulLength;
+    VOS_UINT32                          ulLength;
 
     ulTmp       = 0;
     ultotal     = 0;

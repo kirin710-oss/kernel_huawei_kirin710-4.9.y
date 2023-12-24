@@ -545,6 +545,16 @@ OAL_STATIC oal_uint32  wal_cfgvendor_blacklist_del(oal_net_device_stru *pst_net_
     return OAL_SUCC;
 }
 
+OAL_STATIC oal_void wal_cfgvendor_set_bssid_blacklist_info(wal_wifi_bssid_params *pst_bssid_info)
+{
+    OAM_WARNING_LOG3(0, OAM_SF_ANY, "{wal_cfgvendor_set_bssid_blacklist::bssid[0]=xx:xx:xx:%02x:%02x:%02x}\r\n",
+                     pst_bssid_info->bssids[0][3], pst_bssid_info->bssids[0][4], pst_bssid_info->bssids[0][5]);
+    OAM_WARNING_LOG3(0, OAM_SF_ANY, "{wal_cfgvendor_set_bssid_blacklist::bssid[1]=xx:xx:xx:%02x:%02x:%02x}\r\n",
+                     pst_bssid_info->bssids[1][3], pst_bssid_info->bssids[1][4], pst_bssid_info->bssids[1][5]);
+    OAM_WARNING_LOG3(0, OAM_SF_ANY, "{wal_cfgvendor_set_bssid_blacklist::bssid[2]=xx:xx:xx:%02x:%02x:%02x}\r\n",
+                     pst_bssid_info->bssids[2][3], pst_bssid_info->bssids[2][4], pst_bssid_info->bssids[2][5]);
+}
+
 
 OAL_STATIC oal_int32 wal_cfgvendor_set_bssid_blacklist(oal_wiphy_stru *pst_wiphy,
                                                        oal_wireless_dev_stru *pst_wdev,
@@ -602,6 +612,11 @@ OAL_STATIC oal_int32 wal_cfgvendor_set_bssid_blacklist(oal_wiphy_stru *pst_wiphy
     }
     else /* set BSSID Blacklist */
     {
+        if (st_bssid_info.num_bssid > MAX_BLACKLIST_BSSID) { // 防止后续作为循环边界拷贝发生栈溢出以及写越界
+            OAM_ERROR_LOG1(0, OAM_SF_ANY, "{wal_cfgvendor_set_bssid_blacklist::num_bssid[%d] overrun!}",
+                st_bssid_info.num_bssid);
+            return -OAL_EFAIL;
+        }
         for (i = 0; i < st_bssid_info.num_bssid; i++) {
             l_type = oal_nla_type(pst_nla);
             if (GSCAN_ATTRIBUTE_BLACKLIST_BSSID == l_type)
@@ -615,12 +630,7 @@ OAL_STATIC oal_int32 wal_cfgvendor_set_bssid_blacklist(oal_wiphy_stru *pst_wiphy
             wal_cfgvendor_blacklist_add(pst_wdev->netdev, st_bssid_info.bssids[i]);
         }
 
-        OAM_WARNING_LOG3(0, OAM_SF_ANY, "{wal_cfgvendor_set_bssid_blacklist::bssid[0]=xx:xx:xx:%02x:%02x:%02x}\r\n",
-                         st_bssid_info.bssids[0][3], st_bssid_info.bssids[0][4], st_bssid_info.bssids[0][5]);
-        OAM_WARNING_LOG3(0, OAM_SF_ANY, "{wal_cfgvendor_set_bssid_blacklist::bssid[1]=xx:xx:xx:%02x:%02x:%02x}\r\n",
-                         st_bssid_info.bssids[1][3], st_bssid_info.bssids[1][4], st_bssid_info.bssids[1][5]);
-        OAM_WARNING_LOG3(0, OAM_SF_ANY, "{wal_cfgvendor_set_bssid_blacklist::bssid[2]=xx:xx:xx:%02x:%02x:%02x}\r\n",
-                         st_bssid_info.bssids[2][3], st_bssid_info.bssids[2][4], st_bssid_info.bssids[2][5]);
+        wal_cfgvendor_set_bssid_blacklist_info(&st_bssid_info);
     }
 
     return OAL_SUCC;

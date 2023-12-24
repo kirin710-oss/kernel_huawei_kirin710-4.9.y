@@ -46,6 +46,7 @@
 #endif
 
 #define BASP_BASIC_INFO_MAX_LEN 32
+#define BATT_MODE_MAX_LEN 3
 
 #define BATT_BRAND_STRING_MAX 32
 #define TIMESTAMP_STR_SIZE    32

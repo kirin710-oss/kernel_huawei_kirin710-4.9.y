@@ -482,6 +482,10 @@ struct thp_core_data {
 	struct mutex thp_wrong_touch_lock;
 	u16 frame_data_addr;
 	unsigned char sleep_mode; /* for record the switch command from framework */
+	u32 support_vendor_ic_type;
+	u32 cmd_gesture_mode;
+	u32 support_reuse_ic_type;
+	u32 change_vendor_name;
 };
 
 

@@ -1688,7 +1688,7 @@ void sdhci_dsm_handle(struct sdhci_host *host, struct mmc_request *mrq)
 		sdhci_mshc->cmd_data_status = 0;
 		sdhci_dsm_host_error_filter(host, mrq, &error_bits);
 		if (error_bits) {
-			sdhci_mshc->para = (((u64)error_bits << 16) | ((mrq->cmd ? mrq->cmd->opcode : 0) & 0x3f));/*lint !e647*/
+			sdhci_mshc->para = (((u64)error_bits << 16) | ((mrq->cmd ? mrq->cmd->opcode : 0) & 0x3f));
 			queue_work(system_freezable_wq, &sdhci_mshc->dsm_work);
 		}
 	}

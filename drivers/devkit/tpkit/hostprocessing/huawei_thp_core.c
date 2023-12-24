@@ -922,9 +922,10 @@ static unsigned int  thp_get_spi_msg_lens(
 		THP_LOG_ERR("%s:invalid input\n", __func__);
 		return 0;
 	}
-	for (i = 0; i < xfer_num ; i++) {
-		if (!spi_data[i].len) {
-			THP_LOG_ERR("%s:spi_data[i].len = 0\n", __func__);
+	for (i = 0; i < xfer_num; i++) {
+		if ((spi_data[i].len == 0) ||
+			(spi_data[i].len > THP_MAX_FRAME_SIZE)) {
+			THP_LOG_ERR("%s:spi_data[i].len invalid\n", __func__);
 			return 0;
 		}
 		length += spi_data[i].len;
@@ -2738,7 +2739,26 @@ EXPORT_SYMBOL(thp_parse_trigger_config);
 		cd->support_oem_info = value;
 		THP_LOG_INFO("%s:support_oem_info %d\n", __func__, value);
 	}
-
+	cd->support_vendor_ic_type = 0;
+	rc = of_property_read_u32(thp_node, "support_vendor_ic_type", &value);
+	if (!rc) {
+		cd->support_vendor_ic_type = value;
+		THP_LOG_INFO("%s:support_vendor_ic_type %u\n", __func__, value);
+	}
+	cd->support_reuse_ic_type = 0;
+	rc = of_property_read_u32(thp_node, "support_reuse_ic_type", &value);
+	if (!rc) {
+		cd->support_reuse_ic_type = value;
+		THP_LOG_INFO("%s:support_reuse_ic_type %u\n", __func__, value);
+	}
+	cd->change_vendor_name = 0;
+	rc = of_property_read_u32(thp_node, "change_vendor_name",
+		&value);
+	if (!rc) {
+		cd->change_vendor_name = value;
+		THP_LOG_INFO("%s: change_vendor_name %u\n",
+			__func__, value);
+	}
 	return  0;
 }
 EXPORT_SYMBOL(thp_parse_feature_config);

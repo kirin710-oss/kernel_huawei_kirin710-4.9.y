@@ -13,7 +13,7 @@
 
 #include "hisi_overlay_utils.h"
 #include <linux/hisi/hisi_drmdriver.h>
-#include "tui.h"
+// #include "tui.h"
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeclaration-after-statement"
@@ -52,7 +52,7 @@ static void hisifb_secure_ctrl_wq_handler(struct work_struct *work)
 	down(&hisifd->blank_sem);
 	if (hisifd->panel_info.bl_set_type & BL_SET_BY_MIPI) {
 		if (!is_readly && (DSS_SEC_ENABLE == secure_ctrl->secure_event)) {
-			send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
+			//send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
 			secure_ctrl->secure_event = DSS_SEC_DISABLE;
 			HISI_FB_INFO("backlight isn't set!");
 			up(&hisifd->blank_sem);
@@ -60,7 +60,7 @@ static void hisifb_secure_ctrl_wq_handler(struct work_struct *work)
 		}
 	}
 	if (!hisifd->panel_power_on && (DSS_SEC_ENABLE == secure_ctrl->secure_event)) {
-		send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
+		//send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
 		secure_ctrl->secure_event = DSS_SEC_DISABLE;
 		HISI_FB_INFO("fb%d, panel is power off!", hisifd->index);
 		up(&hisifd->blank_sem);
@@ -77,11 +77,11 @@ static void hisifb_secure_ctrl_wq_handler(struct work_struct *work)
 		&& (secure_ctrl->tui_need_switch)) {
 		hisifb_activate_vsync(hisifd);
 		if (hisifd->secure_ctrl.secure_blank_flag) {
-			send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
+			//send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
 			secure_ctrl->secure_event = DSS_SEC_DISABLE;
 			HISI_FB_INFO("TUI blank switch to DSS_SEC_RUNNING failed !\n");
 		} else {
-			send_tui_msg_config(TUI_POLL_CFG_OK, 0, "DSS");
+			//send_tui_msg_config(TUI_POLL_CFG_OK, 0, "DSS");
 			HISI_FB_INFO("TUI switch to DSS_SEC_RUNNING succ !\n");
 		}
 		secure_ctrl->tui_need_switch = 0;
@@ -112,7 +112,7 @@ static int notify_dss_tui_request(void *data, int secure)
 
 	if (!secure_ctrl->secure_created) {
 		if (secure) {
-			send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
+			//send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
 			secure_ctrl->secure_event = DSS_SEC_DISABLE;
 		}
 		HISI_FB_ERR("fb%d, secure is not created yet!\n", hisifd->index);
@@ -122,7 +122,7 @@ static int notify_dss_tui_request(void *data, int secure)
 	down(&hisifd->blank_sem);
 	if (!hisifd->panel_power_on) {
 		if (secure) {
-			send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
+			//send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
 			secure_ctrl->secure_event = DSS_SEC_DISABLE;
 		}
 		HISI_FB_INFO("fb%d, panel is power off!", hisifd->index);
@@ -136,7 +136,7 @@ static int notify_dss_tui_request(void *data, int secure)
 
 	if (secure_ctrl->secure_status == tui_request) {
 		if (secure) {
-			send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
+			//send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
 			secure_ctrl->secure_event = DSS_SEC_DISABLE;
 		}
 		HISI_FB_INFO("secure_status is not changed, secure_status = %d,---!\n", secure_ctrl->secure_status);
@@ -646,7 +646,7 @@ void hisifb_secure_register(struct platform_device *pdev)
 
 	if (hisifd->index == PRIMARY_PANEL_IDX) {
 		/* register dss tui process function to sw */
-		register_tui_driver(notify_dss_tui_request, "DSS", hisifd);
+		//register_tui_driver(notify_dss_tui_request, "DSS", hisifd);
 	}
 	secure_ctrl->notify_secure_switch = hisifd_notify_secure_switch;
 	secure_ctrl->set_reg = NULL;

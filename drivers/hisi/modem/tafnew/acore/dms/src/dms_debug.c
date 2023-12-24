@@ -184,7 +184,7 @@ VOS_VOID DMS_ShowVcomStats(VOS_VOID)
         pstTable[DMS_SDM_VCOM_CLOSE_ERR_PCUI2].ulCalledNum,
         pstTable[DMS_SDM_VCOM_CLOSE_ERR_PCUI2].ulRserved1);
 
-    PS_PRINTF("*------------WRITE_异步写-------------------\n");
+    PS_PRINTF("*------------WRITE_ASYNCHRONOUS-------------------\n");
     PS_PRINTF("VCOM_AT write counts  : %d \n VCOM_AT write OK counts  : %d \n  VCOM_AT Last write OK len : %d\n\n",
         pstTable[DMS_SDM_VCOM_WRT_PCUI].ulCalledNum,
         pstTable[DMS_SDM_VCOM_WRT_SUSS_PCUI].ulCalledNum,
@@ -227,7 +227,7 @@ VOS_VOID DMS_ShowVcomStats(VOS_VOID)
         pstTable[DMS_SDM_VCOM_EVT_PCUI2].ulRserved1);
 
     PS_PRINTF("*------------NCM SEND TO DRV INFO------------------\n");
-    PS_PRINTF("发送到驱动次数   : %d\n 发送buf: %x\n 发送长度:%d\n 驱动返回成功次数  : %d \n\n",
+    PS_PRINTF("times of sending to drv: %d\n send_buf: %x\n send_length:%d\n times of success return: %d \n",
         pstTable[DMS_SDM_VCOM_WRT_NCM].ulCalledNum,
         pstTable[DMS_SDM_VCOM_WRT_NCM].ulRserved1,
         pstTable[DMS_SDM_VCOM_WRT_NCM].ulRserved2,
@@ -290,7 +290,7 @@ VOS_VOID DMS_ShowNlkDlStats(VOS_VOID)
 VOS_VOID DMS_Help(VOS_VOID)
 {
     PS_PRINTF("****************************************************\n");
-    PS_PRINTF("DMS软调信息                                         \n");
+    PS_PRINTF("DMS Debug Info                                      \n");
     PS_PRINTF("****************************************************\n");
     PS_PRINTF("DMS_SetLogLevel                                     \n");
     PS_PRINTF("DMS_ShowDebugInfo                                   \n");

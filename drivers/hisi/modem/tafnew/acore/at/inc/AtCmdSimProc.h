@@ -46,7 +46,7 @@
 *
 */
 
-#ifndef __ATCMDSIMROC_H__
+#ifndef __ATCMDSIMPROC_H__
 #define __ATCMDSIMPROC_H__
 
 /*****************************************************************************
@@ -56,7 +56,9 @@
 #include "AtParse.h"
 #include "ATCmdProc.h"
 #include "siapppih.h"
-
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+#include "si_app_emat.h"
+#endif
 #ifdef __cplusplus
 #if __cplusplus
 extern "C" {
@@ -307,6 +309,12 @@ extern TAF_UINT16 At_CardIccidInfoInd(
     TAF_UINT8                           ucIndex,
     SI_PIH_EVENT_INFO_STRU             *pstEvent
 );
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+TAF_UINT16 At_CardStatusInd(
+    TAF_UINT8                           ucIndex,
+    SI_PIH_EVENT_INFO_STRU             *pstEvent
+);
+#endif
 #if ((FEATURE_ON == FEATURE_VSIM)&&(FEATURE_ON == FEATURE_VSIM_ICC_SEC_CHANNEL))
 extern VOS_UINT16 At_Hex2Base16(VOS_UINT32 MaxLength,VOS_CHAR *headaddr,VOS_CHAR *pucDst,VOS_UINT8 *pucSrc,VOS_UINT16 usSrcLen);
 

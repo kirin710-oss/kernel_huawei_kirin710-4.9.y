@@ -378,7 +378,11 @@ VOS_UINT32 AT_Ipv4AddrAtoi(
 
             /* 统计'.'的个数 */
             ulDotNum++;
-
+            if (ulDotNum >= TAF_IPV4_ADDR_LEN)
+            {
+                AT_NORM_LOG("AT_Ipv4AddrAtoi: dot num is more than 3, return ERROR");
+                return VOS_ERR;
+            }
             continue;
         }
         else
@@ -512,6 +516,10 @@ VOS_UINT32 AT_Ipv6AddrAtoi(
 
             /* 统计'.'的个数 */
             ulDotNum++;
+            if (ulDotNum >= TAF_IPV6_ADDR_LEN)
+            {
+                return VOS_ERR;
+            }
 
             continue;
         }
@@ -6577,7 +6585,7 @@ TAF_UINT32 At_RcvPppReleaseInd(
 )
 {
     TAF_UINT8                           aucEventInfo[4];
-    AT_PPP_RELEASE_IND_MSG_STRU        *pMsg;
+    AT_PPP_RELEASE_IND_MSG_STRU        *pMsg = VOS_NULL_PTR;
     VOS_UINT32                          ulLength;
 
     if (AT_MAX_CLIENT_NUM <= usPppId)
@@ -15133,7 +15141,7 @@ VOS_VOID AT_PS_ProcWlanMsgPdnDeactiveCnf (
     WLAN_AT_PDN_DEACTIVATE_CNF_STRU    *pstWlanPdnDeActivateCnf
 )
 {
-    AT_PS_CALL_ENTITY_STRU             *pstCallEntity;
+    AT_PS_CALL_ENTITY_STRU             *pstCallEntity = VOS_NULL_PTR;
     VOS_UINT32                          ulTmrName;
     VOS_UINT8                           ucCallId;
 
@@ -15170,7 +15178,7 @@ VOS_VOID AT_PS_ProcWlanMsgPdnDeactiveInd (
     WLAN_AT_PDN_DEACTIVATE_IND_STRU    *pstWlanPdnDeActivateInd
 )
 {
-    AT_PS_CALL_ENTITY_STRU             *pstCallEntity;
+    AT_PS_CALL_ENTITY_STRU             *pstCallEntity = VOS_NULL_PTR;
     VOS_UINT32                          ulTmrName;
     VOS_UINT8                           ucCallId;
 

@@ -168,7 +168,7 @@ extern "C" {
 //#define LPS_ASSERT vos_assert(__FILE__, __LINE__)
 #define LPS_ASSERT  vos_printf("Assert, File: %s, Line:%d\n", __FILE__,__LINE__)
 #else
-#define LPS_ASSERT (VOS_VOID)LogPrint6("Assert, File: %s, Line: %d\n", (VOS_INT)__FILE__, __LINE__, 0, 0, 0, 0)
+#define LPS_ASSERT (VOS_VOID)LogPrint6("Assert, File: %s, Line: %d\n", (VOS_INT)(VOS_UINT_PTR)__FILE__, __LINE__, 0, 0, 0, 0)
 #endif
 
 

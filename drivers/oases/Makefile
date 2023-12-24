@@ -43,7 +43,7 @@ $(OASES_OBJ)/inlinehook_data.o: $(OASES_SRCTREE)/inlinehook_data.S
 	$(CC) -c -o $@ -Wa,-I$(OASES_OBJ) $<
 
 $(OASES_OBJ)/inlinehook_%.bin: $(OASES_OBJ)/inlinehook_%.oas
-	$(OBJCOPY) -O binary $< $@
+	$(OBJCOPY) -I elf64-littleaarch64 -O binary $< $@
 
 $(OASES_OBJ)/inlinehook_%.oas: $(OASES_SRCTREE)/inlinehook_%.S FORCE
 	$(CC) -c -o $@ $<

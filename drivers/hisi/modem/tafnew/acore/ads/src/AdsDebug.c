@@ -127,7 +127,7 @@ VOS_VOID ADS_ShowEntityStats(VOS_VOID)
         }
     }
 
-    PS_PRINTF("ADS上行正在发送标识              %d\n",g_stAdsCtx.stAdsIpfCtx.ucSendingFlg);
+    PS_PRINTF("ADS UL is sending flag, SendingFlg = %d\n",g_stAdsCtx.stAdsIpfCtx.ucSendingFlg);
     PS_PRINTF("\r\n");
 
     return;
@@ -331,18 +331,18 @@ VOS_VOID ADS_Help(VOS_VOID)
     PS_PRINTF("=================================================\n");
     PS_PRINTF("ADS DEBUG ENTRY                                  \n");
     PS_PRINTF("=================================================\n");
-    PS_PRINTF("ADS_ShowEntityStats          显示实体信息\n");
-    PS_PRINTF("ADS_ShowEventProcStats       显示事件统计信息\n");
-    PS_PRINTF("ADS_ShowULPktProcStats       显示上行数据统计信息\n");
-    PS_PRINTF("ADS_ShowULBdProcStats        显示上行BD统计信息\n");
-    PS_PRINTF("ADS_ShowDLInfoStats          显示下行所有统计信息\n");
-    PS_PRINTF("ADS_ShowDLPktProcStats       显示下行数据统计信息\n");
-    PS_PRINTF("ADS_ShowDLRdProcStats        显示下行RD统计信息\n");
-    PS_PRINTF("ADS_ShowDLAdProcStats        显示下行AD统计信息\n");
-    PS_PRINTF("ADS_ShowDLMemStats           显示下行内存统计信息\n");
-    PS_PRINTF("ADS_ShowResetProcStats       显示C核复位统计信息\n");
-    PS_PRINTF("ADS_ShowFeatureState         显示特性状态\n");
-    PS_PRINTF("ADS_ResetDebugInfo           重置统计信息\n");
+    PS_PRINTF("ADS_ShowEntityStats          \n");
+    PS_PRINTF("ADS_ShowEventProcStats       \n");
+    PS_PRINTF("ADS_ShowULPktProcStats       \n");
+    PS_PRINTF("ADS_ShowULBdProcStats        \n");
+    PS_PRINTF("ADS_ShowDLInfoStats          \n");
+    PS_PRINTF("ADS_ShowDLPktProcStats       \n");
+    PS_PRINTF("ADS_ShowDLRdProcStats        \n");
+    PS_PRINTF("ADS_ShowDLAdProcStats        \n");
+    PS_PRINTF("ADS_ShowDLMemStats           \n");
+    PS_PRINTF("ADS_ShowResetProcStats       \n");
+    PS_PRINTF("ADS_ShowFeatureState         \n");
+    PS_PRINTF("ADS_ResetDebugInfo           \n");
     PS_PRINTF("\r\n");
 
     return;

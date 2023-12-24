@@ -91,7 +91,7 @@ VOS_VOID AT_ReadPlatformNV(VOS_VOID)
 {
     MODEM_ID_ENUM_UINT16                enModemID;
     PLATAFORM_RAT_CAPABILITY_STRU       stPlatFormRat;
-    VOS_UINT8                           ucRatIndex;
+    VOS_UINT32                          ulRatIndex;
     AT_MODEM_SPT_RAT_STRU              *pstAtSptRatList = VOS_NULL_PTR;
 
     TAF_MEM_SET_S(&stPlatFormRat, sizeof(stPlatFormRat), 0x00, sizeof(PLATAFORM_RAT_CAPABILITY_STRU));
@@ -112,26 +112,26 @@ VOS_VOID AT_ReadPlatformNV(VOS_VOID)
             pstAtSptRatList->ucPlatformSptUtralTDD   = VOS_FALSE;
 
 
-            for (ucRatIndex = 0; ucRatIndex < stPlatFormRat.usRatNum; ucRatIndex++)
+            for (ulRatIndex = 0; ulRatIndex < stPlatFormRat.usRatNum; ulRatIndex++)
             {
                 /* 平台支持LTE */
-                if (PLATFORM_RAT_LTE == stPlatFormRat.aenRatList[ucRatIndex])
+                if (PLATFORM_RAT_LTE == stPlatFormRat.aenRatList[ulRatIndex])
                 {
                     pstAtSptRatList->ucPlatformSptLte = VOS_TRUE;
                 }
                 /* 平台支持WCDMA */
-                if (PLATFORM_RAT_WCDMA == stPlatFormRat.aenRatList[ucRatIndex])
+                if (PLATFORM_RAT_WCDMA == stPlatFormRat.aenRatList[ulRatIndex])
                 {
                     pstAtSptRatList->ucPlatformSptWcdma = VOS_TRUE;
                 }
 
                 /* 平台支持TDS*/
-                if (PLATFORM_RAT_TDS == stPlatFormRat.aenRatList[ucRatIndex])
+                if (PLATFORM_RAT_TDS == stPlatFormRat.aenRatList[ulRatIndex])
                 {
                     pstAtSptRatList->ucPlatformSptUtralTDD = VOS_TRUE;
                 }
                 /* 平台支持GSM */
-                if (PLATFORM_RAT_GSM == stPlatFormRat.aenRatList[ucRatIndex])
+                if (PLATFORM_RAT_GSM == stPlatFormRat.aenRatList[ulRatIndex])
                 {
                     pstAtSptRatList->ucPlatformSptGsm = VOS_TRUE;
                 }
@@ -147,9 +147,9 @@ VOS_VOID AT_ReadPlatformNV(VOS_VOID)
 VOS_VOID AT_ReadClientConfigNV(VOS_VOID)
 {
     TAF_AT_NVIM_AT_CLIENT_CFG_STRU      stAtClientCfg;
-    AT_CLINET_CONFIG_DESC_STRU         *pstCfgDesc;
-    AT_CLIENT_CONFIGURATION_STRU       *pstClientCfg;
-    AT_CLIENT_CFG_MAP_TAB_STRU         *pstCfgMapTbl;
+    AT_CLINET_CONFIG_DESC_STRU         *pstCfgDesc = VOS_NULL_PTR;
+    AT_CLIENT_CONFIGURATION_STRU       *pstClientCfg = VOS_NULL_PTR;
+    AT_CLIENT_CFG_MAP_TAB_STRU         *pstCfgMapTbl = VOS_NULL_PTR;
     VOS_UINT8                           i;
 
     TAF_MEM_SET_S(&stAtClientCfg, sizeof(stAtClientCfg), 0x00, sizeof(TAF_AT_NVIM_AT_CLIENT_CFG_STRU));
@@ -488,7 +488,7 @@ VOS_VOID  AT_ReadSystemAppConfigNV(VOS_VOID)
 
 VOS_VOID AT_ReadAtDislogPwdNV(VOS_VOID)
 {
-    VOS_UINT8                          *pucSystemAppConfig;
+    VOS_UINT8                          *pucSystemAppConfig = VOS_NULL_PTR;
     TAF_AT_NVIM_DISLOG_PWD_NEW_STRU     stDislogPwdNew;
 
     /* 按D25的做法  不保存权限标志, 则不用从NV中读取权限, 默认无权限 */

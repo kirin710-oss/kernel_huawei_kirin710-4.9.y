@@ -342,11 +342,11 @@ typedef VOS_UINT8 AT_CGREG_TYPE;
 /* 将port对应的位设置为1 */
 #define AT_SET_BIT32(n)       ((VOS_UINT32)1 << (n))
 
-#define AT_SET_BIT32_SELECT0(n)                (((n) < 32) ? AT_SET_BIT32(n):0)
+#define AT_SET_BIT32_SELECT0(n) (((n) < 32) ? AT_SET_BIT32((n) % 32) : 0)
 
-#define AT_SET_BIT32_SELECT1(n)                ((((n) >= 32)&&((n) < 64)) ? AT_SET_BIT32(n - 32):0)
+#define AT_SET_BIT32_SELECT1(n) ((((n) >= 32) && ((n) < 64)) ? AT_SET_BIT32((n) % 32) : 0)
 
-#define AT_SET_BIT32_SELECT2(n)                ((((n) >= 64)&&((n) < 96)) ? AT_SET_BIT32(n - 64):0)
+#define AT_SET_BIT32_SELECT2(n) ((((n) >= 64) && ((n) < 96)) ? AT_SET_BIT32((n) % 32) : 0)
 
 #define AT_CLIENT_CFG_ELEMENT(port) \
             { AT_CLIENT_ID_##port, TAF_NV_CLIENT_CFG_##port, #port, \

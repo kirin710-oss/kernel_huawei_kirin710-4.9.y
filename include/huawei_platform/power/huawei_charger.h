@@ -109,6 +109,9 @@
 #define BATTERY_TEMPERATURE_0_C             (0)
 #define BATTERY_TEMPERATURE_5_C             (5)
 
+#define BATT_BRAND_STRING_MAX                32
+#define BATT_BRAND_NUM_MAX                   5
+
 #define CHARGING_WORK_TIMEOUT                (30000)
 #define CHARGING_WORK_PDTOSCP_TIMEOUT        1000
 #define MIN_CHARGING_CURRENT_OFFSET          (-10)

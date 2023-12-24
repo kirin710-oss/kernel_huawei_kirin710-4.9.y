@@ -73,6 +73,10 @@ static int g_cv_flag;
 static int g_cv_policy;
 static int g_bq2560x_cv;
 static bool g_shutdown_flag;
+static int g_safe_time_cnt;
+static time64_t g_safe_pre_time = SAFE_TIME_RESET;
+static time64_t g_boot_time;
+static int g_sgm41511_exist;
 
 #define TERM_CURR                    (840)
 #define LIMIT_CURR                   (840)
@@ -89,6 +93,7 @@ static bool g_shutdown_flag;
 #define DELAY_1500MS                 1500
 #define RETRY_MAX3                   3
 #define MIN_CV                       4350
+#define RETRY_TIMES                  3
 
 static int bq2560x_fcp_reset(void);
 
@@ -416,6 +421,27 @@ static int bq2560x_device_check(void)
 	return CHARGE_IC_BAD;
 }
 
+static int sgm41511_device_check(void)
+{
+	u8 reg = 0;
+	int ret;
+
+	ret = bq2560x_read_byte(BQ2560X_REG_VPRS, &reg);
+	if (ret)
+		return 0;
+
+	hwlog_info("device_check %x = 0x%x\n", BQ2560X_REG_VPRS, reg);
+
+	if (((reg & BQ2560X_REG_VPRS_PART_MASK) >>
+		BQ2560X_REG_VPRS_PART_SHIFT) == SGM41511H_VENDOR_ID) {
+		hwlog_info("device exists\n");
+		return 1;
+	}
+
+	hwlog_err("device not exists\n");
+	return 0;
+}
+
 static int bq2560x_5v_chip_init(struct bq2560x_device_info *di)
 {
 	int ret = 0;
@@ -451,10 +477,18 @@ static int bq2560x_chip_init(struct chip_init_crit *init_crit)
 {
 	int ret = -1;
 	struct bq2560x_device_info *di = g_bq2560x_dev;
+	struct timespec64 ts = { 0 };
 
 	if (di == NULL || init_crit == NULL) {
 		hwlog_err("di or init_crit is null\n");
 		return -ENOMEM;
+	}
+
+	if (g_sgm41511_exist) {
+		g_safe_time_cnt = 0;
+		g_safe_pre_time = SAFE_TIME_RESET;
+		get_monotonic_boottime64(&ts);
+		g_boot_time = ts.tv_sec;
 	}
 
 	switch (init_crit->vbus) {
@@ -713,8 +747,47 @@ static int bq2560x_get_charge_state(unsigned int *state)
 	return ret;
 }
 
+static void sgm41511h_set_safe_time_enable(bool enable)
+{
+	int ret;
+	int retry;
+
+	for (retry = 0; retry < RETRY_TIMES; retry++) {
+		ret = bq2560x_write_mask(BQ2560X_REG_CTTC,
+			BQ2560X_REG_CTTC_EN_TIMER_MASK,
+			BQ2560X_REG_CTTC_EN_TIMER_SHIFT, enable);
+		if (ret == 0)
+			break;
+	}
+	if (ret != 0)
+		hwlog_err("set safe time enable fail\n");
+
+	hwlog_info("set safe time en = %d, retry = %d\n", enable, retry);
+}
+
+static void sgm41511h_reset_for_safe_time(void)
+{
+	struct timespec64 ts = { 0 };
+
+	if (g_safe_time_cnt < ENABLE_TIMES) {
+		get_monotonic_boottime64(&ts);
+		if ((ts.tv_sec - g_boot_time) > g_safe_pre_time) {
+			g_safe_time_cnt++;
+			g_safe_pre_time += SAFE_TIME_RESET;
+			sgm41511h_set_safe_time_enable(false);
+			msleep(5); /* delay 5ms for set reg */
+			sgm41511h_set_safe_time_enable(true);
+			hwlog_info("safety timer,cnt=%d, safe_time=%d\n",
+				g_safe_time_cnt, g_safe_pre_time);
+		}
+	}
+}
+
 static int bq2560x_reset_watchdog_timer(void)
 {
+	if (g_sgm41511_exist)
+		sgm41511h_reset_for_safe_time();
+
 	return bq2560x_write_mask(BQ2560X_REG_POC,
 			BQ2560X_REG_POC_WDT_RESET_MASK,
 			BQ2560X_REG_POC_WDT_RESET_SHIFT,
@@ -1243,6 +1316,9 @@ static int bq2560x_probe(struct i2c_client *client,
 		ret = -EINVAL;
 		goto bq2560x_fail_0;
 	}
+
+	if (sgm41511_device_check())
+		g_sgm41511_exist = 1;
 
 	ret = of_property_read_u32(np, "hiz_iin_limit", &(di->hiz_iin_limit));
 	if (ret) {

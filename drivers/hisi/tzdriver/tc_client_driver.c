@@ -2628,12 +2628,12 @@ static int TC_NS_tui_event(TC_NS_DEV_File *dev_file, void *argp)
 
 	notch = tui_param.value;
 
-	if (TUI_POLL_CANCEL == tui_param.event_type || TUI_POLL_NOTCH == tui_param.event_type) {
+	/*if (TUI_POLL_CANCEL == tui_param.event_type || TUI_POLL_NOTCH == tui_param.event_type) {
 		ret = tui_send_event(tui_param.event_type, notch);
 	} else {
 		TCERR("no permission to send event\n");
 		ret = -1;
-	}
+	}*/
 	return ret;
 }
 static int paramcheck(TC_NS_DEV_File *dev_file, void *argp)
@@ -2816,10 +2816,10 @@ static int tc_client_close(struct inode *inode, struct file *file)
 	int ret = TEEC_ERROR_GENERIC;
 	TC_NS_DEV_File *dev = file->private_data;
 
-	/* release tui resource */
+	/* release tui resource 
 	if (dev->dev_file_id == tui_attach_device())
 		tui_send_event(TUI_POLL_CANCEL, 0);
-
+	*/
 	if ((g_teecd_task == current->group_leader) && (!TC_NS_get_uid())) {
 		/*for teecd close fd*/
 		if (g_teecd_task->flags & PF_EXITING

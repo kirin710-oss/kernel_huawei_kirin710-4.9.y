@@ -50,6 +50,7 @@
 #define RX_VRECT_LOW_IOUT_MIN       300
 #define RX_VRECT_LOW_CNT            3
 #define RX_VOUT_ERR_CHECK_TIME      1000
+#define RX_BST_DELAY_TIME           3000 /* 3s */
 
 #define TX_ID_HW                    0x8866
 
@@ -378,6 +379,7 @@ struct wireless_charge_device_ops {
 	int (*send_msg_rx_boost_succ)(void);
 	void (*pmic_vbus_handler)(bool);
 	char* (*read_nvm_info)(int);
+	int (*get_bst_delay_time)(void);
 #ifdef WIRELESS_CHARGER_FACTORY_VERSION
 	int (*check_is_otp_exist)(void);
 	int (*rx_program_otp)(void);

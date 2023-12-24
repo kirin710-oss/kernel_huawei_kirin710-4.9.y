@@ -712,6 +712,8 @@ void asw_protect_charge_done(struct smartstar_coul_device *di,
 
 	if (di->hw_nv_info.asw_protect_voltage ==
 			NORMAL_SCENE_ASW_PROTECT_VOLT) {
+		hwlog_info("Vdec canceled, asw protect shutdown\n");
+		g_asw_protect_support = 0;
 		di->hw_nv_info.asw_protect_status = ASW_PROTECT_FLAG_DEFAULT;
 		if (asw_hw_coul_fcc_operate(di, batt_backup_nv_info,
 			NV_READ_TYPE) == NV_OPERATE_SUCC) {
@@ -759,6 +761,8 @@ void asw_protect_do(struct smartstar_coul_device *di, long value)
 		return;
 	}
 
+	cancel_delayed_work(&di->asw_protect_do_delayed_work);
+
 	if (strstr(saved_command_line, ANDROID_BOOT_FACTORY)) {
 		hwlog_info("factory_version, asw protect do nothing\n");
 		return;
@@ -791,7 +795,6 @@ void asw_protect_do(struct smartstar_coul_device *di, long value)
 
 	di->hw_nv_info.asw_protect_status = ASW_PROTECT_FLAG_START;
 	di->hw_nv_info.asw_protect_voltage = value;
-	di->batt_data->vbatt_max = di->batt_data->vbatt_max_backup - value;
 
 	hwlog_info("asw do, status = %d, voltage = %d, flag = %d; vbatt_max = %d\n",
 		di->hw_nv_info.asw_protect_status,
@@ -825,24 +828,26 @@ void asw_protect_do_work(struct work_struct *work)
 		return;
 	}
 
-
 	voltage = hisi_battery_voltage();
-	if (voltage >= (di->batt_data->vbatt_max -
-			ASW_PROTECT_DELTA_VOLT)) {
+
+	/* left vlotage gap 300mV to generate chargeDone event */
+	if (voltage < di->batt_data->vbatt_max_backup -
+		di->hw_nv_info.asw_protect_voltage - ASW_PROTECT_DELTA_VOLT) {
+		di->hw_nv_info.asw_protect_status = ASW_PROTECT_FLAG_DO;
+		di->batt_data->vbatt_max = di->batt_data->vbatt_max_backup -
+			di->hw_nv_info.asw_protect_voltage;
+		asw_protect_save_info_to_nv(di);
+		asw_set_iin_limit(ASW_PROTECT_IIN_LIMIT_NO);
+	} else {
 		di->hw_nv_info.asw_protect_status = ASW_PROTECT_FLAG_START;
 		if (g_is_nv_need_save) {
 			asw_protect_save_info_to_nv(di);
 			g_is_nv_need_save = 0;
 		}
-		asw_set_iin_limit(ASW_PROTECT_IIN_LIMIT);
 		queue_delayed_work(system_power_efficient_wq,
 			&di->asw_protect_do_delayed_work,
 			round_jiffies_relative(msecs_to_jiffies(
 			ASW_PROTECT_CHECK_TIME_MS)));
-	} else {
-		di->hw_nv_info.asw_protect_status = ASW_PROTECT_FLAG_DO;
-		asw_protect_save_info_to_nv(di);
-		asw_set_iin_limit(ASW_PROTECT_IIN_LIMIT_NO);
 	}
 
 	hwlog_info("asw do work, status = %d, iin = %d, bat_vol = %d, vbatt_max = %d\n",
@@ -885,14 +890,13 @@ void asw_protect_check(struct smartstar_coul_device *di)
 
 	switch (di->hw_nv_info.asw_protect_status) {
 	case ASW_PROTECT_FLAG_DEFAULT:
-		hwlog_info("use default batt_data\n");
+		hwlog_info("default status, shutdown asw_protect\n");
+		g_asw_protect_support = 0;
 		break;
 	/* asw protect happened , but battery not chargedone yet*/
 	case ASW_PROTECT_FLAG_START:
 	case ASW_PROTECT_FLAG_DO:
 		hwlog_info("asw protect happened, but not chargedone yet\n");
-		di->batt_data->vbatt_max = di->batt_data->vbatt_max_backup -
-			di->hw_nv_info.asw_protect_voltage;
 		queue_delayed_work(system_power_efficient_wq,
 			&di->asw_protect_do_delayed_work,
 			round_jiffies_relative(msecs_to_jiffies(

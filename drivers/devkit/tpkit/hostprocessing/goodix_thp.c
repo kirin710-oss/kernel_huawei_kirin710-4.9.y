@@ -16,11 +16,13 @@
 #include <linux/syscalls.h>
 
 #define GOODIX_IC_NAME "goodix"
+#define GOODIX_9886_IC_NAME "goodix_9886"
 #define THP_GOODIX_DEV_NODE_NAME "goodix_thp"
 
 #define MODULE_INFO_READ_RETRY       5
 #define FW_INFO_READ_RETRY           3
 #define SEND_COMMAND_RETRY           3
+#define CHECK_COMMAND_RETRY          3
 
 #define GOODIX_FRAME_ADDR_DEFAULT      0x8C05
 #define GOODIX_CMD_ADDR_DEFAULT        0x58BF
@@ -35,12 +37,31 @@
 #define GOODIX_FW_STATUS_LEN_OFFSET    91
 #define GOODIX_FW_STATUS_ADDR_OFFSET   93
 #define GOODIX_CMD_ADDR_OFFSET         102
+/* GT9896 default addr */
+#define GOODIX_FRAME_ADDR_DEFAULT_GT9896 0x4280
+#define GOODIX_CMD_ADDR_DEFAULT_GT9896 0x4168
+#define GOODIX_MODULE_INFO_ADDR_GT9896 0x4018
+#define GOODIX_PROJECT_ID_ADDR_GT9896 0x4114
+#define GOODIX_AFE_INFO_ADDR_GT9896 0x4014
+#define GOODIX_MAX_AFE_LEN_GT9896 300
+#define GOODIX_FRAME_LEN_OFFSET_GT9896 77
+#define GOODIX_FRAME_ADDR_OFFSET_GT9896 79
+#define GOODIX_CMD_ADDR_OFFSET_GT9896 67
+#define GOODIX_READ_WRITE_BYTE_OFFSET_GT9896 5
+#define GOODIX_CMD_ACK_OFFSET_GT9896 5
+#define GOODIX_MASK_ID_FOR_GT9896 "YELSTO"
+#define SPI_ARGS_WRITE_RETRY 5
+#define GOODIX_SPI_TRANSFER_ARGS_ADDR 0x3082
+#define SPI_TRANSFER_ARGS 0x0F
+#define GOODIX_FRAME_LEN_MAX_GT9896 2048
 
 #define CMD_ACK_BUF_OVERFLOW    0x01
 #define CMD_ACK_CHECKSUM_ERROR  0x02
 #define CMD_ACK_BUSY            0x04
 #define CMD_ACK_OK              0x80
 #define CMD_ACK_IDLE            0xFF
+#define CMD_ACK_UNKNOWN 0x00
+#define CMD_ACK_ERROR (-1)
 
 #define CMD_FRAME_DATA          0x90
 #define CMD_HOVER               0x91
@@ -50,6 +71,7 @@
 
 #define CMD_PT_MODE             0x05
 #define CMD_GESTURE_MODE        0xB5
+#define CMD_GESTURE_MODE_GT9896 0xAD
 
 #define IC_STATUS_GESTURE       0x01
 #define IC_STATUS_POWEROF       0x02
@@ -65,6 +87,7 @@
 #define SPI_FLAG_RD             0xF1
 #define MASK_8BIT               0xFF
 #define MASK_1BIT               0x01
+#define MASK_32BIT 0xFFFF
 
 #define GOODIX_MASK_ID           "NOR_G1"
 #define GOODIX_MASK_ID_LEN       6
@@ -104,6 +127,14 @@
 #define GOODIX_SPI_READ_XFER_LEN             2
 #define SPI_WAKEUP_RETRY                     8
 #define GOODIX_LCD_EFFECT_FLAG_POSITION 12
+#define DEBUG_BUF_LEN 160
+#define GET_AFE_BUF_LEN 2
+#define WAIT_FOR_COMMUNICATION_CHECK_DELAY 10
+#define GOODIX_BE_MODE 0
+#define GOODIX_LE_MODE 1
+#define DOUBLE_TAP_FLAG 2
+#define SPI_READ_RETRY_TIME 20
+#define SPI_DELAY_MS 5
 
 #pragma pack(1)
 struct goodix_module_info {
@@ -117,7 +148,24 @@ struct goodix_module_info {
 };
 #pragma pack()
 
+#pragma pack(1)
+struct goodix_module_info_for_gt9896 {
+	u8 mask_id[6]; /* 6 is mask id len */
+	u8 mask_vid[4]; /* 4 is mask vid len */
+	u8 pid[8]; /* 8 is pid len */
+	u8 cid;
+	u8 vid[4]; /* 4 is vid len */
+	u8 sensor_id;
+	u8 reserved[2]; /* 2 is reserved len */
+	u16 checksum;
+};
+#pragma pack()
+enum goodix_ic_type {
+	GT9886,
+	GT9896 = 1,
+};
 struct goodix_module_info module_info;
+struct goodix_module_info_for_gt9896 module_info_for_gt9896;
 static int goodix_frame_addr = GOODIX_FRAME_ADDR_DEFAULT;
 static int goodix_frame_len;
 static int goodix_cmd_addr = GOODIX_CMD_ADDR_DEFAULT;
@@ -141,6 +189,8 @@ static int thp_goodix_spi_read(struct thp_device *tdev, unsigned int addr,
 	struct spi_transfer xfers[GOODIX_SPI_READ_XFER_LEN];
 	struct spi_message spi_msg;
 	int ret;
+	int index = 0;
+	struct thp_core_data *cd = NULL;
 
 	if ((tdev == NULL) || (data == NULL) || (tdev->tx_buff == NULL) ||
 		(tdev->rx_buff == NULL) || (tdev->thp_core == NULL) ||
@@ -155,25 +205,39 @@ static int thp_goodix_spi_read(struct thp_device *tdev, unsigned int addr,
 	spi = tdev->thp_core->sdev;
 	rx_buf = tdev->rx_buff;
 	tx_buf = tdev->tx_buff;
-
+	cd = tdev->thp_core;
 	spi_message_init(&spi_msg);
 	memset(xfers, 0, sizeof(xfers));
 
-	start_cmd_buf[0] = SPI_FLAG_WR; // 0xF0 start write flag
-	start_cmd_buf[1] = (addr >> MOVE_8BIT) & MASK_8BIT;
-	start_cmd_buf[2] = addr & MASK_8BIT;
+	if (cd->support_vendor_ic_type == GT9896) {
+		tx_buf[index++] = SPI_FLAG_RD; /* 0xF1 start read flag */
+		tx_buf[index++] = (addr >> MOVE_8BIT) & MASK_8BIT;
+		tx_buf[index++] = addr & MASK_8BIT;
+		tx_buf[index++] = MASK_8BIT;
+		tx_buf[index++] = MASK_8BIT;
 
-	xfers[0].tx_buf = start_cmd_buf;
-	xfers[0].len = READ_CMD_BUF_LEN;
-	xfers[0].cs_change = 1;
-	spi_message_add_tail(&xfers[0], &spi_msg);
+		xfers[0].tx_buf = tx_buf;
+		xfers[0].rx_buf = rx_buf;
+		xfers[0].len = len + GOODIX_READ_WRITE_BYTE_OFFSET_GT9896;
+		xfers[0].cs_change = 1;
+		spi_message_add_tail(&xfers[0], &spi_msg);
+	} else {
+		start_cmd_buf[0] = SPI_FLAG_WR; // 0xF0 start write flag
+		start_cmd_buf[1] = (addr >> MOVE_8BIT) & MASK_8BIT;
+		start_cmd_buf[2] = addr & MASK_8BIT;
 
-	tx_buf[0] = SPI_FLAG_RD; // 0xF1 start read flag
-	xfers[1].tx_buf = tx_buf;
-	xfers[1].rx_buf = rx_buf;
-	xfers[1].len = len + READ_WRITE_BYTE_OFFSET;
-	xfers[1].cs_change = 1;
-	spi_message_add_tail(&xfers[1], &spi_msg);
+		xfers[0].tx_buf = start_cmd_buf;
+		xfers[0].len = READ_CMD_BUF_LEN;
+		xfers[0].cs_change = 1;
+		spi_message_add_tail(&xfers[0], &spi_msg);
+
+		tx_buf[0] = SPI_FLAG_RD; // 0xF1 start read flag
+		xfers[1].tx_buf = tx_buf;
+		xfers[1].rx_buf = rx_buf;
+		xfers[1].len = len + READ_WRITE_BYTE_OFFSET;
+		xfers[1].cs_change = 1;
+		spi_message_add_tail(&xfers[1], &spi_msg);
+	}
 	ret = thp_bus_lock();
 	if (ret < 0) {
 		THP_LOG_ERR("%s:get lock failed:%d\n", __func__, ret);
@@ -185,7 +249,11 @@ static int thp_goodix_spi_read(struct thp_device *tdev, unsigned int addr,
 		THP_LOG_ERR("Spi transfer error:%d\n", ret);
 		return ret;
 	}
-	memcpy(data, &rx_buf[READ_WRITE_BYTE_OFFSET], len);
+	if (cd->support_vendor_ic_type == GT9896)
+		memcpy(data, &rx_buf[GOODIX_READ_WRITE_BYTE_OFFSET_GT9896],
+			len);
+	else
+		memcpy(data, &rx_buf[READ_WRITE_BYTE_OFFSET], len);
 
 	return ret;
 }
@@ -197,6 +265,7 @@ static int thp_goodix_spi_write(struct thp_device *tdev,
 	u8 *tx_buf = NULL;
 	struct spi_transfer xfers;
 	struct spi_message spi_msg;
+	struct thp_core_data *cd = NULL;
 	int ret;
 
 	if ((tdev == NULL) || (data == NULL) || (tdev->tx_buff == NULL) ||
@@ -207,11 +276,12 @@ static int thp_goodix_spi_write(struct thp_device *tdev,
 	}
 	spi = tdev->thp_core->sdev;
 	tx_buf = tdev->tx_buff;
+	cd = tdev->thp_core;
 
 	spi_message_init(&spi_msg);
 	memset(&xfers, 0, sizeof(xfers));
 
-	if (addr) {
+	if (addr || (cd->support_vendor_ic_type == GT9896)) {
 		tx_buf[0] = SPI_FLAG_WR; // 0xF1 start read flag
 		tx_buf[1] = (addr >> MOVE_8BIT) & MASK_8BIT;
 		tx_buf[2] = addr & MASK_8BIT;
@@ -237,6 +307,83 @@ static int thp_goodix_spi_write(struct thp_device *tdev,
 
 	return ret;
 }
+static int touch_driver_get_cmd_ack(struct thp_device *tdev,
+	unsigned int ack_reg)
+{
+	int ret;
+	int i;
+	u8 cmd_ack = 0;
+
+	for (i = 0; i < CHECK_COMMAND_RETRY; i++) {
+		/* check command result */
+		ret = thp_goodix_spi_read(tdev, ack_reg,
+			&cmd_ack, 1);
+		if (ret < 0) {
+			THP_LOG_ERR("%s: failed read cmd ack info, ret %d\n",
+				__func__, ret);
+			return -EINVAL;
+		}
+		if (cmd_ack != CMD_ACK_OK) {
+			ret = CMD_ACK_ERROR;
+			if (cmd_ack == CMD_ACK_BUF_OVERFLOW) {
+				mdelay(10); /* delay 10 ms */
+				break;
+			} else if ((cmd_ack == CMD_ACK_BUSY) ||
+				(cmd_ack == CMD_ACK_UNKNOWN)) {
+				mdelay(1); /* delay 1 ms */
+				continue;
+			}
+			mdelay(1); /* delay 1 ms */
+			break;
+		}
+		ret = 0;
+		mdelay(SEND_COMMAND_END_DELAY);
+		goto exit;
+	}
+exit:
+	return ret;
+}
+
+#define GOODIX_SWITCH_CMD_BUF_LEN 6
+static int touch_driver_switch_cmd_for_9896(struct thp_device *tdev,
+	u8 cmd, u16 data)
+{
+	int ret;
+	int i;
+	int index = 0;
+	u8 cmd_buf[GOODIX_SWITCH_CMD_BUF_LEN] = {0};
+	u16 checksum = 0;
+
+	checksum += cmd;
+	checksum += data >> MOVE_8BIT;
+	checksum += data & 0xFF;
+	cmd_buf[index++] = cmd;
+	cmd_buf[index++] = (u8)(data >> MOVE_8BIT);
+	cmd_buf[index++] = (u8)(data & 0xFF);
+	cmd_buf[index++] = (u8)(checksum >> MOVE_8BIT);
+	cmd_buf[index++] = (u8)(checksum & 0xFF);
+	cmd_buf[index++] = 0; /* cmd_buf[5] is used to clear cmd ack data */
+
+	for (i = 0; i < SEND_COMMAND_RETRY; i++) {
+		ret = thp_goodix_spi_write(tdev, goodix_cmd_addr, cmd_buf,
+			sizeof(cmd_buf));
+		if (ret < 0) {
+			THP_LOG_ERR("%s: failed send command, ret %d\n",
+				__func__, ret);
+			return -EINVAL;
+		}
+		ret = touch_driver_get_cmd_ack(tdev, goodix_cmd_addr +
+			GOODIX_CMD_ACK_OFFSET_GT9896);
+		if (ret == CMD_ACK_ERROR) {
+			THP_LOG_ERR("%s: cmd ack info is error\n", __func__);
+			continue;
+		} else {
+			break;
+		}
+	}
+	return ret;
+}
+
 #define CMD_ACK_OFFSET 4
 static int thp_goodix_switch_cmd(struct thp_device *tdev,
 		u8 cmd, u8 status)
@@ -245,11 +392,14 @@ static int thp_goodix_switch_cmd(struct thp_device *tdev,
 	int retry = 0;
 	u8 cmd_buf[COMMAND_BUF_LEN];
 	u8 cmd_ack = 0;
-
+	struct thp_core_data *cd = NULL;
 	if (tdev == NULL) {
 		THP_LOG_ERR("%s: tdev null\n", __func__);
 		return -EINVAL;
 	}
+	cd = tdev->thp_core;
+	if (cd->support_vendor_ic_type == GT9896)
+		return touch_driver_switch_cmd_for_9896(tdev, cmd, status);
 	if (thp_goodix_idle_wakeup(tdev)) {
 		THP_LOG_ERR("failed wakeup idle before send command\n");
 		return -EINVAL;
@@ -293,6 +443,20 @@ static int thp_goodix_switch_cmd(struct thp_device *tdev,
 	return ret;
 }
 
+static int thp_parse_feature_ic_config(struct device_node *thp_node,
+	struct thp_core_data *cd)
+{
+	int rc;
+
+	rc = of_property_read_u32(thp_node, "cmd_gesture_mode",
+		&cd->cmd_gesture_mode);
+	if (rc)
+		cd->cmd_gesture_mode = CMD_GESTURE_MODE;
+	THP_LOG_INFO("%s:cd->cmd_gesture_mode = 0x%X, rc = %d\n",
+			__func__, cd->cmd_gesture_mode, rc);
+	return rc;
+}
+
 static int thp_goodix_init(struct thp_device *tdev)
 {
 	int rc;
@@ -307,8 +471,8 @@ static int thp_goodix_init(struct thp_device *tdev)
 	goodix_node = of_get_child_by_name(cd->thp_node,
 					THP_GOODIX_DEV_NODE_NAME);
 
-	THP_LOG_INFO("%s: called\n", __func__);
-
+	THP_LOG_INFO("%s: called, ic_type %d\n", __func__,
+		cd->support_vendor_ic_type);
 	if (!goodix_node) {
 		THP_LOG_INFO("%s: goodix dev not config in dts\n", __func__);
 		return -ENODEV;
@@ -325,6 +489,11 @@ static int thp_goodix_init(struct thp_device *tdev)
 	rc = thp_parse_feature_config(goodix_node, cd);
 	if (rc)
 		THP_LOG_ERR("%s: feature_config fail\n", __func__);
+
+	rc = thp_parse_feature_ic_config(goodix_node, cd);
+	if (rc)
+		THP_LOG_ERR("%s: feature_ic_config fail, use default\n",
+			__func__);
 
 	if (cd->support_gesture_mode) {
 		cd->easy_wakeup_info.sleep_mode = TS_POWER_OFF_MODE;
@@ -349,6 +518,100 @@ static u8 checksum_u8(u8 *data, u32 size)
 	return zero_count == size ? MASK_8BIT : checksum;
 }
 
+static u16 checksum16_cmp(u8 *data, u32 size, int mode)
+{
+	u16 cal_checksum = 0;
+	u16 checksum;
+	u32 i;
+
+	if (size < sizeof(checksum)) {
+		THP_LOG_ERR("%s:inval parm\n", __func__);
+		return 1;
+	}
+	for (i = 0; i < size - sizeof(checksum); i++)
+		cal_checksum += data[i];
+	if (mode == GOODIX_BE_MODE)
+		checksum = (data[size - sizeof(checksum)] << MOVE_8BIT) +
+			data[size - 1];
+	else
+		checksum = data[size - sizeof(checksum)] +
+			(data[size - 1] << MOVE_8BIT);
+
+	return (cal_checksum == checksum) ? 0 : 1;
+}
+
+
+static int touch_driver_communication_check_for_9896(
+	struct thp_device *tdev)
+{
+	int ret;
+	int len;
+	int retry;
+	u8 temp_buf[GOODIX_MASK_ID_LEN + 1] = {0};
+	u8 wr_val;
+	u8 rd_val;
+
+	len = sizeof(module_info_for_gt9896);
+	memset(&module_info_for_gt9896, 0, len);
+
+	wr_val = SPI_TRANSFER_ARGS;
+	for (retry = 0; retry < SPI_ARGS_WRITE_RETRY; retry++) {
+		ret = thp_goodix_spi_write(tdev,
+			GOODIX_SPI_TRANSFER_ARGS_ADDR, &wr_val, 1);
+		if (ret < 0) {
+			THP_LOG_ERR("%s:  spi write failed, ret %d\n",
+				__func__, ret);
+			return -EINVAL;
+		}
+		ret = thp_goodix_spi_read(tdev, GOODIX_SPI_TRANSFER_ARGS_ADDR,
+			&rd_val, 1);
+		if (ret < 0) {
+			THP_LOG_ERR("%s: spi read fail, ret %d\n",
+				__func__, ret);
+			return -EINVAL;
+		}
+		if (wr_val == rd_val)
+			break;
+		THP_LOG_INFO("%s:wr:0x%X, rd:0x%X", __func__, wr_val, rd_val);
+	}
+	for (retry = 0; retry < MODULE_INFO_READ_RETRY; retry++) {
+		ret = thp_goodix_spi_read(tdev,
+			GOODIX_MODULE_INFO_ADDR_GT9896,
+			(u8 *)&module_info_for_gt9896, len);
+		/* print 32*3 data (rowsize=32,groupsize=3),0:no ascii */
+		print_hex_dump(KERN_INFO, "[I/THP] module info: ",
+			DUMP_PREFIX_NONE, 32, 3,
+			(u8 *)&module_info_for_gt9896, len, 0);
+		if (!ret)
+			break;
+		/* retry need delay 10ms */
+		msleep(WAIT_FOR_COMMUNICATION_CHECK_DELAY);
+	}
+	THP_LOG_INFO("hw info: ret %d, retry %d\n", ret, retry);
+	if (retry == MODULE_INFO_READ_RETRY) {
+		THP_LOG_ERR("%s: failed read module info\n", __func__);
+		return -EINVAL;
+	}
+	if (memcmp(module_info_for_gt9896.mask_id, GOODIX_MASK_ID_FOR_GT9896,
+		GOODIX_MASK_ID_LEN)) {
+		memcpy(temp_buf, module_info_for_gt9896.mask_id,
+			GOODIX_MASK_ID_LEN);
+		THP_LOG_ERR("%s: invalied mask id %s != %s\n", __func__,
+			temp_buf, GOODIX_MASK_ID_FOR_GT9896);
+		return -EINVAL;
+	}
+	THP_LOG_INFO("%s: communication check passed\n", __func__);
+	memcpy(temp_buf, module_info_for_gt9896.mask_id, GOODIX_MASK_ID_LEN);
+	temp_buf[GOODIX_MASK_ID_LEN] = '\0';
+	THP_LOG_INFO("MASK_ID %s : ver %*ph\n", temp_buf,
+		(u32)sizeof(module_info_for_gt9896.mask_vid),
+		module_info_for_gt9896.mask_vid);
+	THP_LOG_INFO("PID %s : ver %*ph\n", module_info_for_gt9896.pid,
+		(u32)sizeof(module_info_for_gt9896.vid),
+		module_info_for_gt9896.vid);
+	return 0;
+}
+
 static int thp_goodix_communication_check(struct thp_device *tdev)
 {
 	int ret = 0;
@@ -356,11 +619,16 @@ static int thp_goodix_communication_check(struct thp_device *tdev)
 	int retry;
 	u8 temp_buf[GOODIX_MASK_ID_LEN + 1] = {0};
 	u8 checksum = 0;
-
+	struct thp_core_data *cd = NULL;
 	if (tdev == NULL) {
 		THP_LOG_ERR("%s: tdev null\n", __func__);
 		return -EINVAL;
 	}
+	cd = tdev->thp_core;
+	THP_LOG_INFO("%s, ic_type %d\n", __func__,
+		cd->support_vendor_ic_type);
+	if (cd->support_vendor_ic_type == GT9896)
+		return touch_driver_communication_check_for_9896(tdev);
 
 	len = sizeof(module_info);
 	memset(&module_info, 0, len);
@@ -441,6 +709,32 @@ static int goodix_power_on(struct thp_device *tdev)
 	return ret;
 }
 
+#define AFTER_VCC_POWERON_DELAY 65
+#define AFTER_FIRST_RESET_GPIO_HIGH_DELAY 40
+static int touch_driver_power_on_for_9896(struct thp_device *tdev)
+{
+	int ret;
+
+	if (tdev == NULL) {
+		THP_LOG_ERR("%s: tdev null\n", __func__);
+		return -EINVAL;
+	}
+	THP_LOG_INFO("%s:called\n", __func__);
+	gpio_set_value(tdev->gpios->cs_gpio, GPIO_HIGH);
+	gpio_set_value(tdev->gpios->rst_gpio, GPIO_LOW);
+	ret = thp_power_supply_ctrl(THP_VCC, THP_POWER_ON, NO_DELAY);
+	if (ret)
+		THP_LOG_ERR("%s:vcc fail\n", __func__);
+	udelay(AFTER_VCC_POWERON_DELAY);
+	ret = thp_power_supply_ctrl(THP_IOVDD, THP_POWER_ON, 3); /* 3ms */
+	if (ret)
+		THP_LOG_ERR("%s:vddio fail\n", __func__);
+
+	THP_LOG_INFO("%s pull up tp ic reset\n", __func__);
+	gpio_set_value(tdev->gpios->rst_gpio, GPIO_HIGH);
+	return ret;
+}
+
 static int goodix_power_off(struct thp_device *tdev)
 {
 	int ret;
@@ -516,6 +810,130 @@ static u32 checksum_32(u8 *data, int size)
 	return non_zero_count ? checksum : MASK_8BIT;
 }
 
+static void touch_driver_show_afe_debug_info(struct thp_device *tdev)
+{
+	u8 debug_buf[DEBUG_BUF_LEN] = {0};
+	int ret;
+
+	ret = thp_goodix_spi_read(tdev,
+		GOODIX_AFE_INFO_ADDR_GT9896,
+		debug_buf, sizeof(debug_buf));
+	if (ret) {
+		THP_LOG_ERR("%s: failed read debug buf, ret %d\n",
+			__func__, ret);
+		return;
+	}
+	THP_LOG_INFO("debug_buf[0-20] %*ph\n",
+		DEBUG_AFE_DATA_BUF_LEN, debug_buf); /* offset 0 */
+	THP_LOG_INFO("debug_buf[20-40] %*ph\n",
+		DEBUG_AFE_DATA_BUF_LEN, debug_buf +
+		DEBUG_AFE_DATA_BUF_OFFSET); /* offset 20 */
+	THP_LOG_INFO("debug_buf[40-60] %*ph\n",
+		DEBUG_AFE_DATA_BUF_LEN, debug_buf +
+		DEBUG_AFE_DATA_BUF_OFFSET * 2); /* offset 40 */
+	THP_LOG_INFO("debug_buf[60-80] %*ph\n",
+		DEBUG_AFE_DATA_BUF_LEN, debug_buf +
+		DEBUG_AFE_DATA_BUF_OFFSET * 3); /* offset 60 */
+	THP_LOG_INFO("debug_buf[80-100] %*ph\n",
+		DEBUG_AFE_DATA_BUF_LEN, debug_buf +
+		DEBUG_AFE_DATA_BUF_OFFSET * 4); /* offset 80 */
+	THP_LOG_INFO("debug_buf[100-120] %*ph\n",
+		DEBUG_AFE_DATA_BUF_LEN, debug_buf +
+		DEBUG_AFE_DATA_BUF_OFFSET * 5); /* offset 100 */
+	THP_LOG_INFO("debug_buf[120-140] %*ph\n",
+		DEBUG_AFE_DATA_BUF_LEN, debug_buf +
+		DEBUG_AFE_DATA_BUF_OFFSET * 6); /* offset 120 */
+	THP_LOG_INFO("debug_buf[140-160] %*ph\n",
+		DEBUG_AFE_DATA_BUF_LEN, debug_buf +
+		DEBUG_AFE_DATA_BUF_OFFSET * 7); /* offset 140 */
+}
+
+static void touch_driver_get_afe_addr(const u8 * const afe_data_buf,
+	unsigned int len)
+{
+	if ((len <= 0) || (len > GOODIX_MAX_AFE_LEN_GT9896)) {
+		THP_LOG_ERR("%s:invalid len:%d\n", __func__, len);
+		return;
+	}
+
+	THP_LOG_INFO("%s: try get useful info from afe data\n",
+		__func__);
+	goodix_frame_addr =
+		(afe_data_buf[GOODIX_FRAME_ADDR_OFFSET_GT9896] <<
+		MOVE_8BIT) +
+		afe_data_buf[GOODIX_FRAME_ADDR_OFFSET_GT9896 + 1];
+	goodix_frame_len =
+		(afe_data_buf[GOODIX_FRAME_LEN_OFFSET_GT9896] <<
+		MOVE_8BIT) +
+		afe_data_buf[GOODIX_FRAME_LEN_OFFSET_GT9896 + 1];
+	goodix_cmd_addr =
+		(afe_data_buf[GOODIX_CMD_ADDR_OFFSET_GT9896] <<
+		MOVE_8BIT) +
+		afe_data_buf[GOODIX_CMD_ADDR_OFFSET_GT9896 + 1];
+
+	THP_LOG_INFO("%s: frame addr 0x%x, len %d, cmd addr 0x%x\n",
+		__func__, goodix_frame_addr,
+		goodix_frame_len, goodix_cmd_addr);
+}
+
+static int touch_driver_get_afe_info_for_9896(struct thp_device *tdev)
+{
+	int ret;
+	int retry;
+	int afe_data_len;
+	u8 buf[GET_AFE_BUF_LEN] = {0};
+	u8 afe_data_buf[GOODIX_MAX_AFE_LEN_GT9896] = {0};
+
+	for (retry = 0; retry < FW_INFO_READ_RETRY; retry++) {
+		ret = thp_goodix_spi_read(tdev, GOODIX_AFE_INFO_ADDR_GT9896,
+			buf, sizeof(buf));
+		if (ret) {
+			THP_LOG_ERR("%s: failed read afe data length, ret %d\n",
+				__func__, ret);
+			goto error;
+		}
+
+		afe_data_len = (buf[0] << MOVE_8BIT) | buf[1];
+		/* data len must be equal or less than GOODIX_MAX_AFE_LEN */
+		if ((afe_data_len == 0) ||
+			(afe_data_len > GOODIX_MAX_AFE_LEN_GT9896)) {
+			THP_LOG_ERR("%s: invalid afe_data_len %d\n",
+				__func__, afe_data_len);
+			mdelay(GET_AFE_INFO_RETRY_DELAY);
+			continue;
+		}
+
+		ret = thp_goodix_spi_read(tdev, GOODIX_AFE_INFO_ADDR_GT9896,
+			afe_data_buf, afe_data_len);
+		if (ret) {
+			THP_LOG_ERR("%s: failed read afe data, ret %d\n",
+				__func__, ret);
+			goto error;
+		}
+		if (!checksum16_cmp(afe_data_buf, afe_data_len,
+				GOODIX_BE_MODE)) {
+			THP_LOG_INFO("%s: successfuly read afe data\n",
+				__func__);
+			break;
+		}
+		THP_LOG_ERR("%s: afe data checksum error\n", __func__);
+		touch_driver_show_afe_debug_info(tdev);
+		mdelay(GET_AFE_INFO_RETRY_DELAY);
+	}
+	if (retry != FW_INFO_READ_RETRY) {
+		touch_driver_get_afe_addr(afe_data_buf,
+			GOODIX_MAX_AFE_LEN_GT9896);
+		return 0;
+	}
+error:
+	THP_LOG_ERR("%s: failed get afe info, use default\n", __func__);
+	goodix_frame_addr = GOODIX_FRAME_ADDR_DEFAULT_GT9896;
+	goodix_frame_len = GOODIX_FRAME_LEN_MAX_GT9896;
+	goodix_cmd_addr = GOODIX_CMD_ADDR_DEFAULT_GT9896;
+	THP_LOG_ERR("%s: afe data checksum error\n", __func__);
+	return -EINVAL;
+}
+
 static int thp_goodix_get_afe_info(struct thp_device *tdev)
 {
 	int ret = 0;
@@ -523,11 +941,14 @@ static int thp_goodix_get_afe_info(struct thp_device *tdev)
 	int afe_data_len = 0;
 	u8 buf[INFO_ADDR_BUF_LEN] = {0};
 	u8 afe_data_buf[GOODIX_MAX_AFE_LEN] = {0};
-
+	struct thp_core_data *cd = NULL;
 	if (tdev == NULL) {
 		THP_LOG_ERR("%s: tdev null\n", __func__);
 		return -EINVAL;
 	}
+	cd = tdev->thp_core;
+	if (cd->support_vendor_ic_type == GT9896)
+		return touch_driver_get_afe_info_for_9896(tdev);
 
 	for (retry = 0; retry < FW_INFO_READ_RETRY; retry++) {
 		ret = thp_goodix_spi_read(tdev, GOODIX_AFE_INFO_ADDR,
@@ -615,15 +1036,19 @@ err_out:
 int thp_goodix_chip_detect(struct thp_device *tdev)
 {
 	int ret;
+	struct thp_core_data *cd = NULL;
 
 	THP_LOG_INFO("%s: called\n", __func__);
 	if (tdev == NULL) {
 		THP_LOG_ERR("%s: tdev null\n", __func__);
 		return -EINVAL;
 	}
-
+	cd = tdev->thp_core;
 	goodix_power_init();
-	ret = goodix_power_on(tdev);
+	if (cd->support_vendor_ic_type == GT9896)
+		ret = touch_driver_power_on_for_9896(tdev);
+	else
+		ret = goodix_power_on(tdev);
 	if (ret)
 		THP_LOG_ERR("%s: power on failed\n", __func__);
 
@@ -632,8 +1057,27 @@ int thp_goodix_chip_detect(struct thp_device *tdev)
 	if (thp_goodix_communication_check(tdev)) {
 		THP_LOG_ERR("%s:communication check fail\n", __func__);
 		goodix_power_off(tdev);
-		goodix_power_release();
-		return -ENODEV;
+		if (cd->support_reuse_ic_type) {
+			cd->support_vendor_ic_type = GT9896;
+			ret = touch_driver_power_on_for_9896(tdev);
+			if (cd->change_vendor_name) {
+				tdev->ic_name = GOODIX_9886_IC_NAME;
+				cd->cmd_gesture_mode = CMD_GESTURE_MODE_GT9896;
+				THP_LOG_INFO("%s: change ic_name\n", __func__);
+			}
+			if (ret)
+				THP_LOG_ERR("%s: power on failed\n", __func__);
+			thp_goodix_timing_work(tdev);
+			if (thp_goodix_communication_check(tdev)) {
+				THP_LOG_ERR("%s:check old fail\n", __func__);
+				goodix_power_off(tdev);
+				goodix_power_release();
+				return -ENODEV;
+			}
+		} else {
+			goodix_power_release();
+			return -ENODEV;
+		}
 	}
 
 	if (thp_goodix_get_afe_info(tdev))
@@ -682,7 +1126,7 @@ static int goodix_wakeup_gesture_enable_switch(
 	}
 
 	if (switch_value) {
-		retval = thp_goodix_switch_cmd(tdev, CMD_GESTURE_MODE,
+		retval = thp_goodix_switch_cmd(tdev, tdev->thp_core->cmd_gesture_mode,
 				FEATURE_ENABLE);
 		retval |= thp_goodix_switch_cmd(tdev, CMD_SCREEN_ON_OFF,
 				FEATURE_ENABLE);
@@ -693,7 +1137,7 @@ static int goodix_wakeup_gesture_enable_switch(
 			THP_LOG_INFO("enable gesture mode\n");
 		}
 	} else {
-		retval =  thp_goodix_switch_cmd(tdev, CMD_GESTURE_MODE,
+		retval =  thp_goodix_switch_cmd(tdev, tdev->thp_core->cmd_gesture_mode,
 				FEATURE_DISABLE);
 		if (retval) {
 			THP_LOG_ERR("failed disable gesture mode\n");
@@ -803,7 +1247,7 @@ err_out:
 	thp_goodix_spi_write(tdev, goodix_frame_addr, &sync_flag, 1);
 	/* resend gesture command */
 	retval =  thp_goodix_switch_cmd(tdev, CMD_SCREEN_ON_OFF, 1);
-	retval |=  thp_goodix_switch_cmd(tdev, CMD_GESTURE_MODE,
+	retval |=  thp_goodix_switch_cmd(tdev, tdev->thp_core->cmd_gesture_mode,
 		FEATURE_ENABLE);
 	work_status |= IC_STATUS_GESTURE;
 	if (retval)
@@ -831,7 +1275,10 @@ static int thp_goodix_resume(struct thp_device *tdev)
 		THP_LOG_INFO("%s: called end\n", __func__);
 		return ret;
 	}
-	ret = goodix_power_on(tdev);
+	if (tdev->thp_core->support_vendor_ic_type == GT9896)
+		ret = touch_driver_power_on_for_9896(tdev);
+	else
+		ret = goodix_power_on(tdev);
 	return ret;
 }
 static int thp_goodix_after_resume(struct thp_device *tdev)
@@ -917,16 +1364,64 @@ static void goodix_get_oem_info(struct thp_device *tdev, char *buff)
 	THP_LOG_INFO("%s:not support oem info\n", __func__);
 }
 
+static int touch_driver_is_valid_project_id(const char *id)
+{
+	int i;
+
+	if (id == NULL)
+		return false;
+	for (i = 0; i < THP_PROJECT_ID_LEN; i++) {
+		if (!isascii(*id) || !isalnum(*id))
+			return false;
+		id++;
+	}
+	return true;
+}
+
+static int touch_driver_get_project_id_for_989x(struct thp_device *tdev,
+	unsigned int addr, char *buf, unsigned int len)
+{
+	char proj_id[THP_PROJECT_ID_LEN + 1] = {0};
+	int ret;
+	struct thp_core_data *cd = NULL;
+
+	cd = tdev->thp_core;
+	ret = thp_goodix_spi_read(tdev, addr, proj_id, THP_PROJECT_ID_LEN);
+	if (ret)
+		THP_LOG_ERR("%s:Project_id Read ERR\n", __func__);
+	proj_id[THP_PROJECT_ID_LEN] = '\0';
+	THP_LOG_INFO("PROJECT_ID[0-9] %*ph\n", THP_PROJECT_ID_LEN, proj_id);
+
+	if (touch_driver_is_valid_project_id(proj_id)) {
+		strncpy(buf, proj_id, len);
+	} else {
+		THP_LOG_ERR("%s:get project id fail\n", __func__);
+		if (cd->project_id_dummy) {
+			THP_LOG_ERR("%s:use dummy prj id\n", __func__);
+			strncpy(buf, cd->project_id_dummy, len);
+			return 0;
+		}
+		return -EIO;
+	}
+	THP_LOG_INFO("%s call end\n", __func__);
+	return 0;
+}
+
 static int goodix_get_project_id(struct thp_device *tdev, char *buf, unsigned int len)
 {
 	int retry;
 	char proj_id[GOODIX_CUSTOME_INFO_LEN + 1] = {0};
 	int ret = 0;
+	struct thp_core_data *cd = NULL;
 
 	if ((tdev == NULL) || (buf == NULL)) {
 		THP_LOG_ERR("%s: tdev null\n", __func__);
 		return -EINVAL;
 	}
+	cd = tdev->thp_core;
+	if (cd->support_vendor_ic_type == GT9896)
+		return touch_driver_get_project_id_for_989x(tdev,
+			GOODIX_PROJECT_ID_ADDR_GT9896, buf, len);
 
 	for (retry = 0; retry < GOODIX_GET_PROJECT_ID_RETRY; retry++) {
 		ret = thp_goodix_spi_read(tdev, GOODIX_PROJECT_ID_ADDR,

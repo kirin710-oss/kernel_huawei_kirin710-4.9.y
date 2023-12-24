@@ -513,7 +513,7 @@ static s32 set_efuse_securitydebug_value(unsigned char *buf,
 	if (ret == OK && efuse_secdebug_is_disabled(*(u32 *)buf) == true) {
 		pr_err("debug efuse set %x start otp\n", (*(u32 *)buf));
 		/* start otp1 flash stask for hisee pinstall task */
-		creat_flash_otp_thread();
+		//creat_flash_otp_thread();
 	}
 	mutex_unlock(&g_efusec.efuse_mutex);
 	pr_info("%s: ret=%d.\n", __func__, ret);
@@ -977,7 +977,7 @@ static s32 __init hisi_efusec_init(void)
 		return ret;
 
 	mutex_init(&g_efusec.efuse_mutex);
-	creat_flash_otp_init();
+	//creat_flash_otp_init();
 
 	g_efusec.is_init_success = EFUSE_MODULE_INIT_SUCCESS;
 

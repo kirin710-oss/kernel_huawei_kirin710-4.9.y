@@ -124,7 +124,6 @@ extern "C" {
 #define CTTF_SENSITIVE_INVALID_VALUE                   (0)
 
 /* 勾包PID范围 */
-#define IS_WUEPS_PID_RABM(x)            ((I0_WUEPS_PID_RABM == x)  || (I1_WUEPS_PID_RABM == x) || (I2_WUEPS_PID_RABM == x))
 #define IS_WUEPS_PID_PDCP(x)            ((I0_WUEPS_PID_PDCP == x)  || (I1_WUEPS_PID_PDCP == x))
 #define IS_WUEPS_PID_RLC(x)             ((I0_WUEPS_PID_RLC == x)   || (I1_WUEPS_PID_RLC == x))
 #define IS_WUEPS_PID_RLCDL(x)           ((I0_WUEPS_PID_RLCDL == x) || (I1_WUEPS_PID_RLCDL == x))
@@ -140,6 +139,12 @@ extern "C" {
 #define IS_UEPS_PID_GPHY(x)             ((I0_DSP_PID_GPHY == x)    || (I1_DSP_PID_GPHY == x) || (I2_DSP_PID_GPHY == x))
 #define IS_UEPS_PID_WPHY(x)             ((I0_DSP_PID_WPHY == x)    || (I1_DSP_PID_WPHY == x))
 #define IS_WUEPS_PID_WAS(x)             ((I0_WUEPS_PID_WRR == x)   || (I1_WUEPS_PID_WRR == x) || (I0_WUEPS_PID_WCOM == x) || (I1_WUEPS_PID_WCOM == x))
+
+#define IS_UEPS_PID_RABM(x)             ((I0_WUEPS_PID_RABM == x)  || (I1_WUEPS_PID_RABM == x) || (I2_WUEPS_PID_RABM == x))
+#define IS_UEPS_PID_TAF(x)              ((I0_WUEPS_PID_TAF == x)  || (I1_WUEPS_PID_TAF == x) || (I2_WUEPS_PID_TAF == x))
+#define IS_PID_USIM(x)                  ((I0_WUEPS_PID_USIM == (x)) || (I1_WUEPS_PID_USIM == (x)) || (I2_WUEPS_PID_USIM == (x)))
+#define IS_PID_EHSM(x)                  (UEPS_PID_EHSM == (x))
+
 
 /*****************************************************************************
   3 枚举定义

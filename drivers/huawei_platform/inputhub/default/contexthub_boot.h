@@ -79,17 +79,17 @@
 #define DTS_COMP_LG_NT37280 "lg_nt37280_vogue_6p47_1080plus_cmd"
 #define DTS_COMP_BOE_NT37700F_EXT "boe_nt37700f_vogue_p_6p47_1080plus_cmd"
 #define DTS_COMP_LG_NT37280_EXT "lg_nt37280_vogue_p_6p47_1080plus_cmd"
-#define DTS_COMP_LG_TD4320_6P26 "lg_td4320_6p26_1080p_video"
+#define DTS_COMP_LG_TD4320_6P26 "lg_td4320_6p26"
 #define DTS_COMP_SAMSUNG_EA8074 "samsung_ea8074_elle_6p10_1080plus_cmd"
 #define DTS_COMP_SAMSUNG_EA8076 "samsung_ea8076_elle_6p11_1080plus_cmd"
 #define DTS_COMP_SAMSUNG_EA8076_V2 "samsung_ea8076_elle_v2_6p11_1080plus_cmd"
 #define DTS_COMP_BOE_NT37700F_TAH "boe-nt37800f-tah-8p03-3lane-2mux-cmd"
-#define DTS_COMP_TM_TD4320_6P26 "tm_td4320_6p26_1080p_video"
-#define DTS_COMP_TM_TD4330_6P26 "tm_td4330_6p26_1080p_video"
-#define DTS_COMP_TM_NT36672A_6P26 "tm_nt36672a_6p26_1080p_video"
+#define DTS_COMP_TM_TD4320_6P26 "tm_td4320_6p26"
+#define DTS_COMP_TM_TD4330_6P26 "tm_td4330_6p26"
+#define DTS_COMP_TM_NT36672A_6P26 "tm_nt36672a_6p26"
 
-#define DTS_COMP_CTC_FT8719_6P26 "ctc_ft8719_6p26_1080p_video"
-#define DTS_COMP_CTC_NT36672A_6P26 "ctc_nt36672a_6p26_1080p_video"
+#define DTS_COMP_CTC_FT8719_6P26 "ctc_ft8719_6p26"
+#define DTS_COMP_CTC_NT36672A_6P26 "ctc_nt36672a_6p26"
 
 
 enum SENSOR_POWER_CHECK {

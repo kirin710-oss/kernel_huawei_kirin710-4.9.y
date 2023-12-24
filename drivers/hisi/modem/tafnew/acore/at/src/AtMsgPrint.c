@@ -1210,7 +1210,7 @@ TAF_UINT32  At_GetAsciiOrBcdAddr(
 )
 {
     TAF_UINT8                           aucAsciiNum[MN_MAX_ASCII_ADDRESS_NUM+2];   /*array  of ASCII Num*/
-    TAF_UINT8                           *pucNum;                                /*指向实际号码（不包括+号）的指针*/
+    TAF_UINT8                           *pucNum;                    /*指向实际号码（不包括+号）的指针*/
     TAF_UINT32                          ulAsciiAddrLen;
     TAF_UINT32                          ulRet;
     MN_MSG_TON_ENUM_U8                  enNumType;                              /*type of number*/

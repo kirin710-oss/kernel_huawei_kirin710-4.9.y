@@ -423,6 +423,22 @@ static int aw_smartpa_set_correction(struct regmap *regmap,
 	return ret;
 }
 
+static void kit_i2c_reset_irq_debounce_time(
+	struct smartpakit_i2c_priv *i2c_priv)
+{
+	if (i2c_priv->reset_debounce_wait_time == 0)
+		return;
+
+	cancel_delayed_work_sync(&i2c_priv->irq_debounce_work);
+	hwlog_info("%s: pa%d software reset debounce, trigger delayed_work\n",
+		__func__, i2c_priv->chip_id);
+
+	i2c_priv->irq_debounce_jiffies = jiffies +
+		msecs_to_jiffies(i2c_priv->reset_debounce_wait_time);
+	schedule_delayed_work(&i2c_priv->irq_debounce_work,
+		msecs_to_jiffies(i2c_priv->reset_debounce_wait_time));
+}
+
 static int smartpakit_do_write_regs(smartpakit_i2c_priv_t *i2c_priv, unsigned int num, smartpakit_param_node_t *regs)
 {
 	smartpakit_priv_t *pakit_priv = NULL;
@@ -519,6 +535,10 @@ static int smartpakit_do_write_regs(smartpakit_i2c_priv_t *i2c_priv, unsigned in
 				}
 				continue;
 			}
+		} else if (regs[i].node_type ==       /* reset irq debounce */
+			SMARTPAKIT_PARAM_NODE_TYPE_IRQ_DEBOUNCE) {
+			kit_i2c_reset_irq_debounce_time(i2c_priv);
+			continue;
 		} else if (0 == (regs[i].mask ^ cfg->value_mask)) {
 			ret = smartpakit_regmap_write(cfg->regmap, regs[i].index, regs[i].value);
 		} else {

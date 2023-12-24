@@ -1462,8 +1462,8 @@ VOS_UINT32 AT_ReadActiveMessage(
 )
 {
     VOS_UINT32                          ulRet;
-    VOS_UINT8                          *pucActiveMessageInfo;
-    VOS_UINT8                          *pucEvaluate;
+    VOS_UINT8                          *pucActiveMessageInfo = VOS_NULL_PTR;
+    VOS_UINT8                          *pucEvaluate = VOS_NULL_PTR;
 
     pucActiveMessageInfo = (VOS_UINT8 *)PS_MEM_ALLOC(WUEPS_PID_AT,
                                                      MN_MSG_ACTIVE_MESSAGE_PARA_LEN);
@@ -4421,8 +4421,8 @@ VOS_UINT32 AT_CmmiProcUssd(
 VOS_UINT32 At_SetCmmiPara(VOS_UINT8 ucIndex)
 {
     VOS_BOOL                            inCall;
-    MN_MMI_OPERATION_PARAM_STRU        *pMmiOpParam;
-    VOS_CHAR                           *pcOutRestMmiStr;
+    MN_MMI_OPERATION_PARAM_STRU        *pMmiOpParam = VOS_NULL_PTR;
+    VOS_CHAR                           *pcOutRestMmiStr = VOS_NULL_PTR;
     VOS_UINT32                          ulResult;
     AT_CMD_CURRENT_OPT_ENUM             enCmdCurrentOpt;
     AT_MODEM_SS_CTX_STRU               *pstSsCtx = VOS_NULL_PTR;
@@ -8599,7 +8599,7 @@ VOS_UINT32 AT_SetModemStatusPara( VOS_UINT8 ucIndex )
 TAF_UINT32 At_SetCpbwPara2(TAF_UINT8 ucIndex)
 {
     SI_PB_RECORD_STRU   stRecords;
-    TAF_UINT8           *pucNumber;
+    TAF_UINT8           *pucNumber = VOS_NULL_PTR;
     TAF_UINT16          usLen;
     TAF_UINT32          ulResult;
     TAF_UINT32          ulResultTemp;
@@ -8931,7 +8931,7 @@ TAF_UINT32 At_SetScpbwNum4Type4(
     SI_PB_RECORD_STRU                   *pstRecords
 )
 {
-    TAF_UINT8                          *pucNumber;
+    TAF_UINT8                          *pucNumber = VOS_NULL_PTR;
     TAF_UINT16                          usLen;
 
     if (0 != gastAtParaList[7].usParaLen)    /* 设置<num4> */
@@ -14303,7 +14303,7 @@ VOS_UINT32 AT_GetM2MFreqLockPara(
                 break;
 
             case AT_MTA_M2M_FREQLOCK_MODE_WCDMA:
-                if ((gastAtParaList[4].usParaLen == 0))
+                if (gastAtParaList[4].usParaLen == 0)
                 {
                     pstFreqLockInfo->enableFlag                 = AT_MTA_M2M_FREQLOCK_FLAG_TYPE_ON;
                     pstFreqLockInfo->ucMode                     = AT_MTA_M2M_FREQLOCK_MODE_WCDMA;
@@ -14321,7 +14321,7 @@ VOS_UINT32 AT_GetM2MFreqLockPara(
                 break;
 
             case AT_MTA_M2M_FREQLOCK_MODE_TDSCDMA:
-                if ((gastAtParaList[4].usParaLen == 0))
+                if (gastAtParaList[4].usParaLen == 0)
                 {
                     pstFreqLockInfo->enableFlag                 = AT_MTA_M2M_FREQLOCK_FLAG_TYPE_ON;
                     pstFreqLockInfo->ucMode                     = AT_MTA_M2M_FREQLOCK_MODE_TDSCDMA;
@@ -14339,7 +14339,7 @@ VOS_UINT32 AT_GetM2MFreqLockPara(
                 break;
 
             case AT_MTA_M2M_FREQLOCK_MODE_LTE:
-                if ((gastAtParaList[5].usParaLen == 0))
+                if (gastAtParaList[5].usParaLen == 0)
                 {
                     pstFreqLockInfo->enableFlag                 = AT_MTA_M2M_FREQLOCK_FLAG_TYPE_ON;
                     pstFreqLockInfo->ucMode                     = AT_MTA_M2M_FREQLOCK_MODE_LTE;
@@ -15111,7 +15111,7 @@ VOS_UINT32  AT_PhyNumIsNull(
     VOS_UINT32                          ulTotalNum;
     IMEI_STRU                           stImei;
     TAF_SVN_DATA_STRU                   stSvnData;
-    VOS_UINT8                           *pucCheckNum;
+    VOS_UINT8                           *pucCheckNum = VOS_NULL_PTR;
     VOS_UINT8                           aucMac[AT_PHYNUM_MAC_LEN + 1]; /* MAC地址*/
 
 
@@ -19334,7 +19334,7 @@ VOS_UINT32 AT_SetRscpCfgPara ( VOS_UINT8 ucIndex )
         || (0 == gastAtParaList[1].usParaLen)
         || (gucAtParaIndex != 2))
     {
-        PS_PRINTF("RSCP参数格式错误\n");
+        PS_PRINTF("RSCP para error\n");
         return AT_ERROR;
     }
 
@@ -19354,13 +19354,13 @@ VOS_UINT32 AT_SetRscpCfgPara ( VOS_UINT8 ucIndex )
         if (NV_OK != TAF_ACORE_NV_WRITE(MODEM_ID_0, EN_NV_ID_RSCP_CFG, &stRscpCfg,
                           sizeof(stRscpCfg)))
         {
-            PS_PRINTF("判断RSCP是否正确写入NV \n");
+            PS_PRINTF("RSCP NV write error\n");
             return AT_ERROR;
         }
     }
     else
     {
-        PS_PRINTF("RSCP写入权限未开\n");
+        PS_PRINTF("RSCP write limit\n");
         return AT_ERROR; /* 如果权限未打开，返回ERROR */
     }
 
@@ -19381,14 +19381,14 @@ VOS_UINT32 AT_SetEcioCfgPara ( VOS_UINT8 ucIndex )
         || (0 == gastAtParaList[1].usParaLen)
         || (gucAtParaIndex != 2))
     {
-        PS_PRINTF("ECIO参数格式错误\n");
+        PS_PRINTF("ECIO para error\n");
         return AT_ERROR;
     }
 
     if (NV_OK != TAF_ACORE_NV_READ(MODEM_ID_0, EN_NV_ID_ECIO_CFG, &stEcioCfg,
                           sizeof(stEcioCfg)))
     {
-        PS_PRINTF("ECIO read 错误\n");
+        PS_PRINTF("ECIO read error\n");
         return AT_ERROR;
     }
 
@@ -19401,13 +19401,13 @@ VOS_UINT32 AT_SetEcioCfgPara ( VOS_UINT8 ucIndex )
         if (NV_OK != TAF_ACORE_NV_WRITE(MODEM_ID_0, EN_NV_ID_ECIO_CFG, &stEcioCfg,
                           sizeof(stEcioCfg)))
         {
-            PS_PRINTF("ECIO写入错误\n");
+            PS_PRINTF("ECIO write error\n");
             return AT_ERROR;
         }
     }
     else
     {
-        PS_PRINTF("ECIO写入权限未打开\n");
+        PS_PRINTF("ECIO write limit\n");
         return AT_ERROR; /* 如果权限未打开，返回ERROR */
     }
 
@@ -24291,7 +24291,7 @@ VOS_UINT32 At_CovertAtParaToSimlockPlmnInfo(
 {
     VOS_UINT8                           ucMncNum;
     VOS_UINT8                           aucImsiStr[TAF_PH_SIMLOCK_PLMN_STR_LEN];
-    VOS_UINT8                           *pucPlmnRange;
+    VOS_UINT8                           *pucPlmnRange = VOS_NULL_PTR;
     VOS_UINT32                          i;
     VOS_UINT32                          ulPlmnParaIdx;
     VOS_UINT32                          ulImsiStrLen;
@@ -26033,7 +26033,7 @@ VOS_UINT32  At_SendContinuesWaveOnToHPA(
     VOS_UINT8                           ucIndex
 )
 {
-    AT_HPA_RF_CFG_REQ_STRU              *pstMsg;
+    AT_HPA_RF_CFG_REQ_STRU              *pstMsg = VOS_NULL_PTR;
     VOS_UINT32                          ulLength;
     VOS_UINT16                          usMask;
     VOS_UINT8                           ucCtrlType;
@@ -26570,8 +26570,8 @@ VOS_UINT32 AT_SetApRptPortSelectTwoPara(void)
     VOS_UINT32                          ulResult1;
     AT_PORT_RPT_CFG_STRU                stRptCfg;
     VOS_UINT32                          ulClientCfgTabLen;
-    AT_CLIENT_CFG_MAP_TAB_STRU         *pstCfgMapTbl;
-    AT_CLIENT_CONFIGURATION_STRU       *pstClientCfg;
+    AT_CLIENT_CFG_MAP_TAB_STRU         *pstCfgMapTbl = VOS_NULL_PTR;
+    AT_CLIENT_CONFIGURATION_STRU       *pstClientCfg = VOS_NULL_PTR;
     VOS_UINT8                           i;
 
     TAF_MEM_SET_S(&stRptCfg, sizeof(stRptCfg), 0x00, sizeof(stRptCfg));
@@ -26611,8 +26611,8 @@ VOS_UINT32 AT_SetApRptPortSelectThreePara(void)
     VOS_UINT32                          ulResult1;
     VOS_UINT32                          ulResult2;
     AT_PORT_RPT_CFG_STRU                stRptCfg;
-    AT_CLIENT_CFG_MAP_TAB_STRU         *pstCfgMapTbl;
-    AT_CLIENT_CONFIGURATION_STRU       *pstClientCfg;
+    AT_CLIENT_CFG_MAP_TAB_STRU         *pstCfgMapTbl = VOS_NULL_PTR;
+    AT_CLIENT_CONFIGURATION_STRU       *pstClientCfg = VOS_NULL_PTR;
     VOS_UINT8                           i;
 
     TAF_MEM_SET_S(&stRptCfg, sizeof(stRptCfg), 0x00, sizeof(stRptCfg));
@@ -26986,10 +26986,10 @@ unsigned int AtBase64Decode(const void* pcode,const unsigned int code_size,void*
     unsigned int code2;
     unsigned int code3;
     unsigned int bord_width;
-    const unsigned char* input_last_fast_node;
+    const unsigned char* input_last_fast_node = VOS_NULL_PTR;
     unsigned int output_size;
-    unsigned char* output;
-    const unsigned char* input;
+    unsigned char* output = VOS_NULL_PTR;
+    const unsigned char* input = VOS_NULL_PTR;
     unsigned int code_node;
     unsigned int i;
 
@@ -27604,6 +27604,9 @@ VOS_UINT32 AT_ProcAuthPubkeyExData(
     {
         /* 当前不是收到第一条AT命令，需要拼接码流 */
         usTotalLen = (VOS_UINT16)ulParaLen + pstAuthPubKeyCtx->usParaLen;
+        if (usTotalLen < ulParaLen) {
+            return AT_ERROR;
+        }
         /*lint -save -e516 */
         pTempData = (VOS_UINT8*)PS_MEM_ALLOC(WUEPS_PID_AT, usTotalLen);
         /*lint -restore */
@@ -29550,7 +29553,7 @@ VOS_UINT32 AT_FillBodySarWcdmaPara(
 {
     VOS_UINT8                           ucLoop1;
     MTA_WCDMA_BAND_ENUM_UINT16          enLoop2;
-    VOS_UINT8                           ucLoop3;
+    VOS_UINT32                          ulLoop3;
 
     /* 遍历命令所有的参数 */
     for (ucLoop1 = 0; ucLoop1 < pstBodySarWcdmaPara->ucParaNum; ucLoop1++)
@@ -29563,15 +29566,15 @@ VOS_UINT32 AT_FillBodySarWcdmaPara(
                 continue;
             }
 
-            for (ucLoop3 = 0; ucLoop3 < pstBodySarPara->usWBandNum; ucLoop3++)
+            for (ulLoop3 = 0; ulLoop3 < pstBodySarPara->usWBandNum; ulLoop3++)
             {
-                if (enLoop2 == pstBodySarPara->astWBandPara[ucLoop3].enBand)
+                if (enLoop2 == pstBodySarPara->astWBandPara[ulLoop3].enBand)
                 {
                     break;
                 }
             }
 
-            if (ucLoop3 == pstBodySarPara->usWBandNum)
+            if (ulLoop3 == pstBodySarPara->usWBandNum)
             {
                 /* 若超出W Band最大支持个数，则回复失败 */
                 if (MTA_BODY_SAR_WBAND_MAX_NUM <= pstBodySarPara->usWBandNum)
@@ -29583,8 +29586,8 @@ VOS_UINT32 AT_FillBodySarWcdmaPara(
                 pstBodySarPara->usWBandNum++;
             }
 
-            pstBodySarPara->astWBandPara[ucLoop3].enBand = enLoop2;
-            pstBodySarPara->astWBandPara[ucLoop3].sPower = pstBodySarWcdmaPara->asPower[ucLoop1];
+            pstBodySarPara->astWBandPara[ulLoop3].enBand = enLoop2;
+            pstBodySarPara->astWBandPara[ulLoop3].sPower = pstBodySarWcdmaPara->asPower[ucLoop1];
         }
     }
 
@@ -34226,7 +34229,7 @@ VOS_UINT32 AT_SetUECenterPara(VOS_UINT8 ucIndex)
 
 VOS_UINT32 AT_SetMipiRdPara(VOS_UINT8 ucIndex)
 {
-    AT_HPA_MIPI_RD_REQ_STRU             *pstMsg;
+    AT_HPA_MIPI_RD_REQ_STRU             *pstMsg = VOS_NULL_PTR;
     VOS_UINT32                          ulLength;
 
     /* 参数检查 */
@@ -34934,7 +34937,7 @@ VOS_UINT32 AT_SetMtReattachPara(VOS_UINT8 ucIndex )
 
 VOS_UINT32 AT_SetCgmtuPara(VOS_UINT8 ucIndex)
 {
-    AT_PS_CALL_ENTITY_STRU             *pstCallEntity;
+    AT_PS_CALL_ENTITY_STRU             *pstCallEntity = VOS_NULL_PTR;
     VOS_UINT8                           ucCallId;
     VOS_UINT16                          usLength;
 

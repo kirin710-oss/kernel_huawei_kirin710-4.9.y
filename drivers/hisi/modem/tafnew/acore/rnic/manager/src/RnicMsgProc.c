@@ -1280,7 +1280,7 @@ VOS_VOID RNIC_SndNetManagerPdpActInd(
     MsgBlock                           *pstMsg
 )
 {
-    IMSA_RNIC_PDN_ACT_IND_STRU         *pstRcvInd;
+    IMSA_RNIC_PDN_ACT_IND_STRU         *pstRcvInd = VOS_NULL_PTR;
     NM_MSG_STRU                         stRnicNmMsg;
 
     TAF_MEM_SET_S(&stRnicNmMsg, sizeof(NM_MSG_STRU), 0x00, sizeof(NM_MSG_STRU));
@@ -1386,7 +1386,7 @@ VOS_VOID RNIC_SndNetManagerSocketExceptInd(
     MsgBlock                           *pstMsg
 )
 {
-    IMSA_RNIC_SOCKET_EXCEPTION_IND_STRU               *pstRcvInd;
+    IMSA_RNIC_SOCKET_EXCEPTION_IND_STRU               *pstRcvInd = VOS_NULL_PTR;
     NM_MSG_STRU                                        stRnicNmMsg;
 
     TAF_MEM_SET_S(&stRnicNmMsg, sizeof(NM_MSG_STRU), 0x00, sizeof(NM_MSG_STRU));

@@ -1293,6 +1293,7 @@ AT_PAR_CMD_ELEMENT_STRU g_astAtPrivateCmdTbl[] = {
     AT_ERROR,                    CMD_TBL_PIN_IS_LOCKED,
     (VOS_UINT8*)"^SILENTPININFO",    (VOS_UINT8 *)"(@pin)"},
 
+
     {AT_CMD_PRIVATECCHO,
     At_SetPrivateCchoPara, AT_SET_PARA_TIME, TAF_NULL_PTR,    AT_NOT_SET_TIME,  At_CmdTestProcOK, AT_NOT_SET_TIME,
     VOS_NULL_PTR,        AT_NOT_SET_TIME,

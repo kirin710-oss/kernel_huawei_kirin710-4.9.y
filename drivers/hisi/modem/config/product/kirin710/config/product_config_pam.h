@@ -1,4 +1,4 @@
-/* MD5: d7f61570eb1be10bad4349104594fc66*/
+/* MD5: 19fa0c8dd9f36b4dffc58c3e76a82382*/
 #if !defined(__PRODUCT_CONFIG_PAM_H__)
 #define __PRODUCT_CONFIG_PAM_H__
 
@@ -107,6 +107,10 @@
 
 #ifndef FEATURE_SET_C1C2_VALUE
 #define FEATURE_SET_C1C2_VALUE FEATURE_OFF 
+#endif 
+
+#ifndef FEATURE_ESIM_ADAPT
+#define FEATURE_ESIM_ADAPT FEATURE_OFF 
 #endif 
 
 #endif /*__PRODUCT_CONFIG_H__*/ 

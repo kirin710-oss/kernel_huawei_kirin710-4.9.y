@@ -520,6 +520,10 @@ OAL_STATIC oal_uint16  hmac_mgmt_encap_addts_rsp(hmac_vap_stru     *pst_vap,
     /*                Set the fields in the frame header                     */
     /*************************************************************************/
     mac_rx_get_sa((mac_ieee80211_frame_stru *)puc_addts_req, &puc_sa);
+    if (us_frame_len > WLAN_MEM_NETBUF_SIZE2) {
+        OAM_ERROR_LOG1(0, OAM_SF_ANY, "hmac_mgmt_encap_addts_rsp::us_frame_len[%d] error!", us_frame_len);
+        return 0;
+    }
 
     /* ¿½±´Õû¸öADDTS REQÖ¡ */
     oal_memcopy(puc_data, puc_addts_req, us_frame_len);

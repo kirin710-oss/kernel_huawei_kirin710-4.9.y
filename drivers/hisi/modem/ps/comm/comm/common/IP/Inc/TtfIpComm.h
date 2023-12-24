@@ -49,19 +49,14 @@
 #ifndef __TTFIPCOMM_H__
 #define __TTFIPCOMM_H__
 
+#include "vos.h"
+#include "TTFComm.h"
+#include "TtfLinkInterface.h"
 #ifdef __cplusplus
 #if __cplusplus
 extern "C" {
 #endif
 #endif
-
-
-/*****************************************************************************
-  1 其他头文件包含
-*****************************************************************************/
-#include "vos.h"
-#include "TtfLinkInterface.h"
-#include "TTFComm.h"
 
 #pragma pack(4)
 
@@ -134,6 +129,8 @@ typedef VOS_UINT8 IP_DATA_TYPE_ENUM_UINT8;
 #endif
 
 
+#define TTF_MASK_IPV4_ADDR(Ipv4Addr)        ((Ipv4Addr) & 0xFFFFFF00)
+
 #define TTF_IP_MAX_OPT                  (40)
 #define TTF_TCP_MAX_OPT                 (40)
 #define TTF_TCP_HEAD_NORMAL_LEN         (20)
@@ -156,6 +153,11 @@ typedef VOS_UINT8 IP_DATA_TYPE_ENUM_UINT8;
 #define TTF_IP_DF_MASK                  (0x4000)
 #define TTF_IP_MF_MASK                  (0x2000)
 #define TTF_IP_FRAGMENT_OFFSET_MASK     (0x1FFF)
+
+#define TTF_IPV4_MASK_IP_ADDR_SENSITIVE_POS      (3)     /* IPV4 地址脱敏的位置 */
+#define TTF_IPV4_MASK_IP_ADDR_SENSITIVE_BYTE_NUM (1)     /* IPV4 地址脱敏的字节数 */
+#define TTF_IPV6_MASK_IP_ADDR_SENSITIVE_POS      (5)     /* IPV6 地址脱敏的位置 */
+#define TTF_IPV6_MASK_IP_ADDR_SENSITIVE_BYTE_NUM (11)    /* IPV6 地址脱敏的字节数 */
 
 /*****************************************************************************
   4 全局变量声明
@@ -266,6 +268,26 @@ extern VOS_UINT16 TTF_GetIpDataTraceLen
     VOS_UINT8                          *pData,
     VOS_UINT16                          usSduLen
 );
+
+/*
+ * TTF勾取非敏感的IP地址 (因为IPV4在某些国际是否是个人数据还存在争议,
+ * 因此modem建议掩掉IP地址的后几位, IPv4掩掉后8bit, IPV6掩掉后88bit)
+ * ipData指向ip协议起始的位置，必须是连续的内存; dataLen为缓冲区实际长度，函数会对dataLen进行校验
+ */
+VOS_VOID TTF_MaskIpAddrTraces(VOS_UINT32 pid, VOS_UINT8 *ipData, VOS_UINT16 dataLen);
+
+/*
+ * 将IPV4地址的敏感信息脱敏处理，IPv4掩掉后8bit。
+ * 外部输入保证ipAddr指向空间满足IPV4 4字节存储大小
+ */
+VOS_VOID TTF_FilterIpv4AddrSensitiveInfo(VOS_UINT8 *ipAddr);
+
+
+/*
+ * 将IPV6地址的敏感信息脱敏处理，IPV6掩掉后88bit。
+ * 外部输入保证ipAddr指向空间满足IPV6 16字节存储大小
+ */
+VOS_VOID TTF_FilterIpv6AddrSensitiveInfo(VOS_UINT8 *ipAddr);
 
 
 #pragma pack()

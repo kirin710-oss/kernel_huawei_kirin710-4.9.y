@@ -63,6 +63,9 @@
 #include "MnComm.h"
 #endif
 
+#if (OSA_CPU_ACPU == VOS_OSA_CPU)
+#include "AtMntn.h"
+#endif
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -200,7 +203,6 @@ extern "C" {
 #endif
 
 #if (OSA_CPU_ACPU == VOS_OSA_CPU)
-#include "AtMntn.h"
 #define MN_INFO_LOG(str)                    TAF_LOG(WUEPS_PID_AT, 0, PS_LOG_LEVEL_INFO, str)
 #define MN_NORM_LOG(str)                    TAF_LOG(WUEPS_PID_AT, 0, PS_LOG_LEVEL_NORMAL, str)
 #define MN_WARN_LOG(str)                    TAF_LOG(WUEPS_PID_AT, 0, PS_LOG_LEVEL_WARNING, str)

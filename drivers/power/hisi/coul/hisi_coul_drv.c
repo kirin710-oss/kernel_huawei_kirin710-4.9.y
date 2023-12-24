@@ -315,6 +315,16 @@ int hisi_get_coul_calibration_status(void)
 	return 0;
 
 }
+int hisi_get_coul_isc_status(void)
+{
+	/*declare the local variable of struct hisi_coul_ops */
+	LOCAL_HISI_COUL_OPS();
+
+	/*execute the operation of coul module */
+	HISI_EXEC_COUL_OP(get_coul_isc_status);
+
+	return 0;
+}
 
 /****************************************************************************
   Function:     hisi_battery_resistance
@@ -1042,6 +1052,46 @@ int hisi_coul_cal_uah_by_ocv(int ocv_uv, int *ocv_soc_uAh)
         return ops->cal_uah_by_ocv(ocv_uv, ocv_soc_uAh);
     }
     return -EPERM;
+}
+
+/****************************************************************************
+  Function:     hisi_coul_get_ndcvolt_dec_nv
+  Description:  get ndcvolt dec nv
+  Input:        NA
+  Output:       volt_dec
+  Return:       0 ro -1;
+****************************************************************************/
+int hisi_coul_get_ndcvolt_dec_nv(unsigned int *volt_dec)
+{
+	/*declare the local variable of struct hisi_coul_ops */
+	LOCAL_HISI_COUL_OPS();
+
+	/*execute the operation of coul module */
+	if (ops && ops->get_ndcvolt_dec_nv)
+	{
+		return ops->get_ndcvolt_dec_nv(volt_dec);
+	}
+	return -EPERM;
+}
+
+/****************************************************************************
+  Function:     hisi_coul_set_ndcvolt_dec_apk
+  Description:  set_ndcvolt_dec_apk
+  Input:        volt_dec
+  Output:       NA
+  Return:       0 ro -1;
+****************************************************************************/
+int hisi_coul_set_ndcvolt_dec_apk(unsigned int volt_dec)
+{
+	/*declare the local variable of struct hisi_coul_ops */
+	LOCAL_HISI_COUL_OPS();
+
+	/*execute the operation of coul module */
+	if (ops && ops->set_ndcvolt_dec_apk)
+	{
+		return ops->set_ndcvolt_dec_apk(volt_dec);
+	}
+	return -EPERM;
 }
 
 /****************************************************************************

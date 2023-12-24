@@ -373,13 +373,12 @@ VOS_VOID RNIC_ShowOndemandInfo(VOS_VOID)
 
 VOS_VOID RNIC_Help(VOS_VOID)
 {
-
-    PS_PRINTF("********************RNIC调试信息************************\n");
-    PS_PRINTF("RNIC_ShowULProcStats(RmnetId)    显示指定RNIC网卡上行统计信息\n");
-    PS_PRINTF("RNIC_ShowDLProcStats(RmnetId)    显示指定RNIC网卡下行统计信息\n");
-    PS_PRINTF("RNIC_ShowPsIfaceInfo(RmnetId)    显示指定RNIC网卡PDP激活信息\n");
-    PS_PRINTF("RNIC_ShowNapiInfo(RmnetId)       显示指定RNIC网卡的NAPI相关信息\n");
-    PS_PRINTF("RNIC_ShowOndemandInfo            显示按需拨号统计信息\n");
+    PS_PRINTF("RNIC Debug Info                    \n");
+    PS_PRINTF("<RNIC_ShowULProcStats(RmnetId)>    \n");
+    PS_PRINTF("<RNIC_ShowDLProcStats(RmnetId)>    \n");
+    PS_PRINTF("<RNIC_ShowPsIfaceInfo(RmnetId)>    \n");
+    PS_PRINTF("<RNIC_ShowNapiInfo(RmnetId)>       \n");
+    PS_PRINTF("<RNIC_ShowOndemandInfo>            \n");
 
     return;
 }

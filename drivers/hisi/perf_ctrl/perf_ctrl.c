@@ -210,6 +210,7 @@ static long perf_ctrl_ioctl(struct file *file, unsigned int cmd, unsigned long a
 	void __user *uarg = (void __user *)(uintptr_t)arg;
 	struct task_struct *leader, *pos;
 	struct related_tid_info *r_t_info = NULL;
+	int count = 0;
 
 	if (!uarg) {
 		pr_err("perf_ctrl: invalid user uarg!\n");
@@ -320,14 +321,15 @@ static long perf_ctrl_ioctl(struct file *file, unsigned int cmd, unsigned long a
 
 		// cppcheck-suppress *
 		do {
-			if (r_t_info->rel_count >= MAX_TID_COUNT) {
+			if (count >= MAX_TID_COUNT) {
 				pr_err("related_tid count > MAX_TID_COUNT(%d).\n", MAX_TID_COUNT);
 				break;
 			}
-			r_t_info->rel_tid[r_t_info->rel_count++] = pos->pid;
+			r_t_info->rel_tid[count++] = pos->pid;
 		} while_each_thread(leader, pos);
 		rcu_read_unlock();
 
+		r_t_info->rel_count = count;
 		if (copy_to_user(uarg, r_t_info, sizeof(struct related_tid_info))) {
 			pr_err("related_tid copy_to_user fail!\n");
 			ret = -EFAULT;

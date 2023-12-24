@@ -149,6 +149,7 @@ gumsp-objs += $(OAMDIR)/gu/comm/si/pbmsg.o
 gumsp-objs += $(OAMDIR)/gu/comm/si/pbdata.o
 gumsp-objs += $(OAMDIR)/gu/comm/si/stkapi.o
 gumsp-objs += $(OAMDIR)/gu/comm/si/pihapi.o
+gumsp-objs += $(OAMDIR)/gu/comm/si/emat_api.o
 gumsp-objs += $(OAMDIR)/gu/comm/si/pbapi_phone.o
 
 ifneq ($(strip $(CONFIG_HISI_BALONG_MODEM)),m)

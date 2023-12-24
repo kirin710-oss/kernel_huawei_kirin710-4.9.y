@@ -1601,7 +1601,7 @@ static const struct mmc_bus_ops mmc_sd_ops = {
 	.sysfs_remove = mmc_sd_sysfs_remove,
 #endif
 	.shutdown = mmc_sd_suspend,
-	.reset = mmc_hw_reset,
+	.reset = mmc_sd_reset,
 };
 
 /*

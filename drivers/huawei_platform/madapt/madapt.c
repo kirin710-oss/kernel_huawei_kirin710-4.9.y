@@ -64,7 +64,14 @@
 #define HWLOG_TAG madapt
 HWLOG_REGIST();
 
-
+/* madapt support write/read nv by hisi modem nv API. All code with this
+ * feature, should be contained by this macro nvcfg version before 3.0,
+ * this macro will be defined, otherwise nvcfg 4.0 or more high nvcfg
+ * version will not define
+ */
+#if defined(CONFIG_HISI_BALONG_MODEM) && !defined(CONFIG_HISI_SECBOOT_IMG)
+#define MADAPT_HISI_MODEM_NV_RW_API
+#endif
 
 #define BSP_ERR_MADAPT_OK                    (0)
 #define BSP_ERR_MADAPT_PARAM_ERR            (1)
@@ -80,10 +87,14 @@ HWLOG_REGIST();
 #define BSP_ERR_MADAPT_PTR_NULL                (11)
 #define BSP_ERR_MADAPT_READ_NV_ERR          (12)
 #define BSP_ERR_MADAPT_REMOVE_FILE_ERR          (13)
+#define BSP_ERR_MADAPT_COPY_TO_USER_ERR 14
 #define BSP_ERR_MADAPT_COMMON_ERR            (100)
 /*AR000AD08A sunjun/00290209 20180807 begin*/
 #define BSP_ERR_MADAPT_NO_THIS_NV             (0x10100016)
 /*AR000AD08A sunjun/00290209 20180807 end*/
+
+#define MADAPT_SUCCESS 0
+#define MADAPT_FAIL 1
 
 #define MADAPT_DEVICE_NAME                "madapt"
 #define MADAPT_DEVICE_CLASS                "madapt_class"
@@ -91,18 +102,34 @@ HWLOG_REGIST();
 #define MADAPT_MAX_USER_BUFF_LEN        (96)
 #define MADAPT_FILE_END_FLAG            (0xFFFFFFFF)
 #define MADAPT_FILE_NOTBIT_FLAG         (0xFFFFFFFF)
+#define MADAPT_NV_ID_INVALID 0xFFFFFFFF
 #define MADAPT_MIN_NV_MODEM_ID            (1)
 #define MADAPT_MAX_NV_MODEM_ID            (3)
+#define MADAPT_MODEM_ID_0 1
+#define MADAPT_MODEM_ID_1 2
 #define MADAPT_NVFILE_PATH    "/cust_spec/modemConfig/nvcfg/"
 #define MADAPT_NVFILE_VERSION            (0x0601)
 #define MADAPT_BIT_LENGTH_SIZE          (32)
 #define MADAPT_MAX_NV_LENGTH_SIZE           (2048)
 #define MADAPT_MODEMID_CONVERT(x)        (x-1)
+#define MADAPT_MAX_PATH_LENGTH 80
 
 #define MADAPT_MODEMID_INVALID          (0xFF)
 
+#define MADAPT_READ_WORK_WAIT_TIMER 2
 #define NCFG_BIN_FILE_PATH_IN_MODEM_SEC "/mnt/modem/mnvm2:0/mbn_nv/sec_carrier.bin"
 #define NCFG_BIN_FILE_PATH_IN_MODEM     "/mnt/modem/mnvm2:0/mbn_nv/carrier.bin"
+
+#define MADAPT_DEFAULT_MODIFY_TIME 1
+#define MADAPT_PARAM_COMMON "common"
+#define MADAPT_NVCFG_RESULT_NVID 0xD14D
+#define MADAPT_NVCFG_RESULT_UPDATED 1
+
+struct madapt_nvcfg_result_type {
+    unsigned int others     :8;
+    unsigned int rsv_nvcfg  :1;
+    unsigned int reserved   :23;
+};
 
 struct madapt_file_stru {
     unsigned int    modem_id;
@@ -153,7 +180,21 @@ static struct madapt_file_stru *kbuf;
 static struct completion my_completion;
 static struct my_work_struct test_work;
 static ssize_t work_ret = BSP_ERR_MADAPT_OK;
+static struct completion my_read_completion;
+static struct my_work_struct test_read_work;
+static ssize_t read_work_ret = BSP_ERR_MADAPT_OK;
 static struct mutex madapt_mutex;
+
+#ifdef MADAPT_HISI_MODEM_NV_RW_API
+static unsigned int nvcfg_result_flag = 0;
+#endif
+static unsigned long modify_time = MADAPT_DEFAULT_MODIFY_TIME;
+static char commbin_path[][MADAPT_MAX_PATH_LENGTH] = {
+	{ "/mnt/modem/mnvm2:0/mbn_nv/comm.bin" },
+	{ "/mnvm2:0/mbn_nv/comm.bin" },
+	{ "/mnt/modem/mnvm2:0/mbn_nv/comm.mbn" },
+	{ "/mnvm2:0/mbn_nv/comm.mbn" }
+};
 
 /*lint -save -e438*/
 /*lint -save -e745 -e601 -e49 -e65 -e64 -e533 -e830*/
@@ -202,57 +243,195 @@ static unsigned int mdrv_nv_flush(void)
 #endif
 
 /*lint -restore +e745 +e601 +e49 +e65 +e64 +e533 +e830*/
-/*
-data stru:
-    ---------------------------------------------
-    | NV ID | data length |    data      |
-    ---------------------------------------------
-*/
 
-/*lint -save --e{529,527}*/
-ssize_t madapt_dev_read(struct file *file, char __user *buf, size_t count,
-                                loff_t *ppos){
-#if 0
-    ssize_t ret;
-    struct nv_data_stru *kbuf = NULL;
+static int madapt_write_nv_item(unsigned int modem_id, unsigned int nv_id,
+			void *nv_buffer, unsigned int nv_item_len)
+{
+	int ret = MADAPT_SUCCESS;
 
+	if (nv_id !=MADAPT_NV_ID_INVALID) {
+		ret = mdrv_nv_writeex(MADAPT_MODEMID_CONVERT(modem_id),
+			nv_id, nv_buffer, nv_item_len);
+		if (ret != MADAPT_SUCCESS)
+			ret = MADAPT_FAIL;
+	}
 
-    if ((NULL == buf)
-        || (count <= NV_HEAD_LEN)
-        || (count > NV_MAX_USER_BUFF_LEN)) {
-        return BSP_ERR_NV_INVALID_PARAM;
-    }
-
-    kbuf = kmalloc(count+1, GFP_KERNEL);
-    if (NULL == kbuf) {
-        return BSP_ERR_NV_MALLOC_FAIL;
-    }
-
-    memset(kbuf, 0, (count+1));
-    if (copy_from_user(kbuf, buf, count)) {
-        kfree(kbuf);
-        return -1;
-    }
-
-    /* coverity[tainted_data] */
-    ret = (ssize_t)bsp_nvm_read(kbuf->nvid, kbuf->data, kbuf->len);
-    if (ret) {
-        kfree(kbuf);
-        return ret;
-    }
-
-    ret = (ssize_t)copy_to_user(buf, kbuf, count);
-    if (ret) {
-        kfree(kbuf);
-        return ret;
-    }
-
-    kfree(kbuf);
-    return (ssize_t)count;
-#endif
-    return 0;
+	return ret;
 }
-/*lint -restore*/
+
+static int madapt_read_nv(unsigned int modem_id, unsigned int nv_item_number,
+			char *nv_buffer, unsigned int *nv_item_length)
+{
+	int ret;
+	unsigned int nv_length = 0;
+
+	ret = mdrv_nv_get_length(nv_item_number, &nv_length);
+	if (ret != MADAPT_SUCCESS) {
+		hwlog_err("madapt_read_nv read curNV = %x failed=%d\n", nv_item_number, ret);
+		return BSP_ERR_MADAPT_READ_NV_ERR;
+	}
+
+	if (nv_length < MADAPT_MAX_NV_LENGTH_SIZE) {
+		ret = mdrv_nv_readex(MADAPT_MODEMID_CONVERT(modem_id),
+				nv_item_number, nv_buffer, nv_length);
+		if (ret != MADAPT_SUCCESS)
+			ret = BSP_ERR_MADAPT_READ_NV_ERR;
+	} else {
+		hwlog_err("madapt_parse_and_writeatonv, nv:%d with modemid:%d and size:%d write fail, ret=%d\n",
+				nv_item_number, modem_id, nv_length, ret);
+		ret = BSP_ERR_MADAPT_READ_NV_ERR;
+	}
+
+	*nv_item_length = nv_length;
+	return BSP_ERR_MADAPT_OK;
+}
+
+#ifdef MADAPT_HISI_MODEM_NV_RW_API
+static  int madapt_read_nvcfg_result_flag(void)
+{
+	int ret = MADAPT_SUCCESS;
+	unsigned int nv_item_length = sizeof(struct madapt_nvcfg_result_type);
+	unsigned int nv_item_number = MADAPT_NVCFG_RESULT_NVID;
+	struct madapt_nvcfg_result_type nvcfg_result;
+
+	memset(&nvcfg_result, 0x00, sizeof(nvcfg_result));
+	ret = madapt_read_nv(MADAPT_MODEM_ID_0,
+			nv_item_number, (char*)&nvcfg_result, &nv_item_length);
+	if (ret != MADAPT_SUCCESS) {
+		hwlog_err("madapt_read_nvcfg_result_flag: modem0 read nv:%d fail, ret=%d\n",
+					nv_item_number, ret);
+		return BSP_ERR_MADAPT_READ_NV_ERR;
+	}
+
+	nvcfg_result_flag = nvcfg_result.rsv_nvcfg;
+	hwlog_info("read nvcfg result flag:%d success\n", nvcfg_result_flag);
+
+	return BSP_ERR_MADAPT_OK;
+}
+#endif
+
+static int madapt_set_nvcfg_result_flag(void)
+{
+	int ret;
+	unsigned int nv_item_length = sizeof(struct madapt_nvcfg_result_type);
+	unsigned int nv_item_number = MADAPT_NVCFG_RESULT_NVID;
+	struct madapt_nvcfg_result_type nvcfg_result;
+	memset(&nvcfg_result, 0x00, sizeof(nvcfg_result));
+
+	ret = madapt_read_nv(MADAPT_MODEM_ID_0,
+			nv_item_number, (char*)&nvcfg_result, &nv_item_length);
+	if (ret != MADAPT_SUCCESS) {
+		hwlog_err("update_nvcfg_result: modem0 read nv:%d fail, ret=%d\n",
+					nv_item_number, ret);
+		ret = BSP_ERR_MADAPT_READ_NV_ERR;
+		return ret;
+	}
+
+	/* update nv value special part for nvcfg result */
+	nvcfg_result.rsv_nvcfg = MADAPT_NVCFG_RESULT_UPDATED;
+
+	ret = madapt_write_nv_item(MADAPT_MODEM_ID_0,
+			nv_item_number, (char *)&nvcfg_result, nv_item_length);
+	if (ret != MADAPT_SUCCESS) {
+		hwlog_err("update_nvcfg_result: modem0 write nv:%d fail, ret=%d\n",
+				nv_item_number, ret);
+		ret = BSP_ERR_MADAPT_READ_NV_ERR;
+		return ret;
+	}
+
+	hwlog_info("update nvcfg result flag success\n");
+	return BSP_ERR_MADAPT_OK;
+}
+
+static int get_commbin_last_modify_time(void)
+{
+	int i;
+	struct file *fp = NULL;
+	int open_result = MADAPT_FAIL;
+	modify_time = MADAPT_DEFAULT_MODIFY_TIME;
+
+	for (i = 0; i < ARRAY_SIZE(commbin_path); i++) {
+		fp = filp_open(commbin_path[i], O_RDONLY, 0);
+		if (IS_ERR(fp)) {
+			open_result = MADAPT_FAIL;
+			continue;
+		} else {
+			open_result = MADAPT_SUCCESS;
+			break;
+		}
+	}
+	if (open_result == MADAPT_FAIL) {
+		hwlog_err("get_commbin_last_modify_time, open file error!\n");
+		return BSP_ERR_MADAPT_OPEN_FILE_ERR;
+	}
+
+	modify_time = file_inode(fp)->i_mtime.tv_sec;
+	hwlog_info("get common bin file modify time: %lu\n", modify_time);
+	filp_close(fp, NULL);
+
+	return BSP_ERR_MADAPT_OK;
+}
+
+static void do_read_proc(struct work_struct *p_work)
+{
+	read_work_ret = get_commbin_last_modify_time();
+#ifdef MADAPT_HISI_MODEM_NV_RW_API
+	if (read_work_ret != BSP_ERR_MADAPT_OK)
+		read_work_ret = madapt_read_nvcfg_result_flag();
+#endif
+	complete(&(my_read_completion));
+}
+
+ssize_t madapt_dev_read(struct file *file, char __user *buf,
+			size_t count, loff_t *ppos)
+{
+	ssize_t ret = BSP_ERR_MADAPT_OK;
+	int ticks_left = 0;
+	char dest_buf[MADAPT_BIT_LENGTH_SIZE] = {0};
+	char read_time_buf[MADAPT_BIT_LENGTH_SIZE] = {0};
+	size_t read_size = count >= sizeof(dest_buf) ? sizeof(dest_buf) - 1 : count;
+
+	if (buf == NULL || read_size <= 0)
+		return BSP_ERR_MADAPT_PARAM_ERR;
+
+	if (copy_from_user(dest_buf, buf, read_size))
+		return BSP_ERR_MADAPT_COPY_FROM_USER_ERR;
+
+	if (!strcmp(dest_buf, MADAPT_PARAM_COMMON)) {
+		mutex_lock(&madapt_mutex);
+
+		schedule_work(&(test_read_work.proc_nv));
+		ticks_left = wait_for_completion_timeout(&(my_read_completion),
+			HZ * MADAPT_READ_WORK_WAIT_TIMER);
+		if (ticks_left == 0)
+			ret = BSP_ERR_MADAPT_TIMEOUT;
+		else
+			ret = read_work_ret;
+
+		if (ret != BSP_ERR_MADAPT_OK) {
+			mutex_unlock(&madapt_mutex);
+			return ret;
+		}
+
+#ifdef MADAPT_HISI_MODEM_NV_RW_API
+		if (modify_time == MADAPT_DEFAULT_MODIFY_TIME)
+			(void)sprintf(read_time_buf, "%u", nvcfg_result_flag);
+		else
+			(void)sprintf(read_time_buf, "%lu", modify_time);
+#else
+		(void)sprintf(read_time_buf, "%lu", modify_time);
+#endif
+		read_time_buf[MADAPT_BIT_LENGTH_SIZE - 1] = '\0';
+		if (copy_to_user(buf, read_time_buf, sizeof(read_time_buf))) {
+			mutex_unlock(&madapt_mutex);
+			return BSP_ERR_MADAPT_COPY_TO_USER_ERR;
+		}
+
+		mutex_unlock(&madapt_mutex);
+	}
+
+	return ret;
+}
 
 
 unsigned int nv_buffer_update(unsigned int ulOffset,void *nv_buffer, void *pdata, unsigned int ulLength)
@@ -465,6 +644,12 @@ static int madapt_parse_and_writeatonv(char *ptr, int len)
     } while (len > 0);
     vfree(nv_buffer);
 
+	ret = madapt_set_nvcfg_result_flag();
+	if (ret != MADAPT_SUCCESS) {
+		hwlog_err("update nvcfg matched flag error, ret = %d\n", ret);
+		return BSP_ERR_MADAPT_WRITE_NV_ERR;
+	}
+
     /* flush all nv into file system */
     ret = mdrv_nv_flush();
     if (ret != 0) {
@@ -531,6 +716,12 @@ static int madapt_parse_and_writenv(char *ptr, int len, unsigned int modem_id)
         len -= (sizeof(struct madapt_item_hdr_type)
             + nv_header.nv_item_size);
     } while (len > 0);
+
+	ret = madapt_set_nvcfg_result_flag();
+	if (ret != MADAPT_SUCCESS) {
+		hwlog_err("update nvcfg matched flag error, ret = %d\n", ret);
+		return BSP_ERR_MADAPT_WRITE_NV_ERR;
+	}
 
     /* flush all nv into file system */
     ret = mdrv_nv_flush();
@@ -787,8 +978,10 @@ int madapt_init(void)
     /* madapt_mutex init */
     mutex_init(&madapt_mutex);
 
-    INIT_WORK(&(test_work.proc_nv), do_proc_nv_file);
-    init_completion(&(my_completion));
+	INIT_WORK(&(test_work.proc_nv), do_proc_nv_file);
+	INIT_WORK(&(test_read_work.proc_nv), do_read_proc);
+	init_completion(&(my_completion));
+	init_completion(&my_read_completion);
 
     hwlog_err("madapt_init, complete!\n");
     return BSP_ERR_MADAPT_OK;

@@ -2791,6 +2791,11 @@ oal_int32  wal_recv_config_cmd_etc(oal_uint8 *puc_buf, oal_uint16 us_len)
         return OAL_ERR_CODE_PTR_NULL;
     }
 
+    if (us_msg_size < OAL_IF_NAME_SIZE) { // 确保大于0为合法值，防止减下溢，导致后续申请内存以及拷贝发生堆溢出
+        OAM_ERROR_LOG1(0, OAM_SF_ANY, "{wal_recv_config_cmd_etc::msg_size[%d] overrun!}", us_msg_size);
+        return OAL_FAIL;
+    }
+
     us_msg_size -= OAL_IF_NAME_SIZE;
 
     /* 申请内存 */
@@ -2818,11 +2823,7 @@ oal_int32  wal_recv_config_cmd_etc(oal_uint8 *puc_buf, oal_uint16 us_len)
     pst_msg = (wal_msg_stru *)(puc_buf + OAL_IF_NAME_SIZE);
     pst_rep_hdr = (wal_msg_rep_hdr*)pst_event->auc_event_data;
 
-    if (WAL_MSG_TYPE_QUERY == pst_msg->st_msg_hdr.en_msg_type)
-    {
-        /*need response*/
-        us_need_response = OAL_TRUE;
-    }
+    WAL_RECV_CMD_NEED_RESP(pst_msg, us_need_response);
 
     if(OAL_TRUE == us_need_response)
     {

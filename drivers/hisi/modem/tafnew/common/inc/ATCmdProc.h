@@ -70,7 +70,9 @@
 #include "NasOmInterface.h"
 #include "ImmInterface.h"
 #include "msp_errno.h"
-
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+#include "si_app_emat.h"
+#endif
 
 #include "AcpuReset.h"
 #include "siapppih.h"
@@ -1385,6 +1387,14 @@ typedef enum
     AT_CMD_PRIVATECCHO,
     AT_CMD_PRIVATECCHP,
 
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+    AT_CMD_ESIMCLEAN,
+    AT_CMD_ESIMCHECK,
+    AT_CMD_ESIMEID,
+    AT_CMD_PKID,
+    AT_CMD_ESIMSWITCH,
+#endif
+
     AT_CMD_PRIVATECGLA,
 
     AT_CMD_EOPLMN,
@@ -2449,6 +2459,16 @@ typedef enum
     AT_CMD_SILENTPIN_SET,
 
     AT_CMD_SILENTPININFO_SET,
+#endif
+
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+    AT_CMD_ESIMCLEAN_SET,
+    AT_CMD_ESIMCHECK_QRY,
+    AT_CMD_ESIMEID_QRY,
+    AT_CMD_ESIMPKID_QRY,
+
+    AT_CMD_ESIMSWITCH_SET,
+    AT_CMD_ESIMSWITCH_QRY,
 #endif
 
     AT_CMD_PRIVATECGLA_REQ,
@@ -4462,6 +4482,9 @@ extern TAF_VOID     At_VcMsgProc(MN_AT_IND_EVT_STRU *pstData,TAF_UINT16 usLen);
 extern TAF_INT32    At_sprintf(TAF_INT32 MaxLength,TAF_CHAR *headaddr,TAF_CHAR *curraddr,const TAF_CHAR *fmt,...);
 extern TAF_VOID     At_PIHMsgProc(MsgBlock* pMsg);
 extern TAF_VOID     At_STKMsgProc(MsgBlock* pMsg);
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+TAF_VOID            At_EMATMsgProc(VOS_VOID* pMsg);
+#endif
 extern TAF_VOID     At_PbMsgProc(MsgBlock* pMsg);
 extern TAF_VOID     At_TAFPbMsgProc(TAF_UINT8* pData,TAF_UINT16 usLen);
 
@@ -6691,6 +6714,12 @@ extern VOS_UINT32 AT_RcvNvManufactureExtSetCnf(VOS_VOID *pMsg);
 
 VOS_UINT32 AT_TestNetScan( VOS_UINT8 ucIndex );
 
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+TAF_VOID At_EMATIndProc(TAF_UINT8 ucIndex, SI_EMAT_EVENT_INFO_STRU *pEvent);
+TAF_UINT32 At_EMATNotBroadIndProc(TAF_UINT8 ucIndex, SI_EMAT_EVENT_INFO_STRU *pEvent);
+TAF_VOID At_EMATRspProc(TAF_UINT8 ucIndex, SI_EMAT_EVENT_INFO_STRU *pEvent);
+#endif
+
 
 #if (FEATURE_ON == FEATURE_AT_HSUART)
 VOS_VOID AT_UpdateUartCfgNV(VOS_VOID);
@@ -6889,6 +6918,20 @@ extern TAF_UINT32 At_QryCardTypeExPara(TAF_UINT8 ucIndex);
 extern VOS_UINT32 At_SetSilentPin(TAF_UINT8 ucIndex);
 
 extern VOS_UINT32 At_SetSilentPinInfo(TAF_UINT8 ucIndex);
+#endif
+
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+VOS_UINT32 At_SetEsimCleanProfile(VOS_UINT8 ucIndex);
+
+VOS_UINT32 At_QryEsimCheckProfile(VOS_UINT8 ucIndex);
+
+VOS_UINT32 At_QryEsimEid(VOS_UINT8 ucIndex);
+
+VOS_UINT32 At_QryEsimPKID(VOS_UINT8 ucIndex);
+
+VOS_UINT32 At_SetEsimSwitchPara(VOS_UINT8 ucIndex);
+
+VOS_UINT32 At_QryEsimSwitch(VOS_UINT8 ucIndex);
 #endif
 
 #if (FEATURE_ON == FEATURE_UE_MODE_CDMA)

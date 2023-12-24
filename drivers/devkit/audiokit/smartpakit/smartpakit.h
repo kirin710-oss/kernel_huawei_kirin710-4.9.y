@@ -219,6 +219,7 @@ typedef enum smartpakit_param_node_type {
 	SMARTPAKIT_PARAM_NODE_TYPE_REG_RXORW, // read, xor, write
 	SMARTPAKIT_PARAM_NODE_TYPE_REG_READ, //read reg
 	SMARTPAKIT_PARAM_NODE_TYPE_AW_CORRECT, /* set aw smartpa correction */
+	SMARTPAKIT_PARAM_NODE_TYPE_IRQ_DEBOUNCE = 8, /* reset irq debounce time */
 
 	SMARTPAKIT_PARAM_NODE_TYPE_MAX,
 } smartpakit_param_node_type_t;
@@ -300,6 +301,7 @@ typedef struct smartpakit_priv {
 	struct mutex hw_reset_lock;
 	struct mutex dump_regs_lock;
 	struct mutex i2c_ops_lock; // regmap or i2c_transfer r/w ops
+	struct mutex do_ioctl_lock;
 } smartpakit_priv_t;
 
 int  smartpakit_register_i2c_device(smartpakit_i2c_priv_t *i2c_priv);

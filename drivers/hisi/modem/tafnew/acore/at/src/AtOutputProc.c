@@ -227,6 +227,8 @@ const AT_RETURN_TAB_TYPE_STRU gastAtReturnCodeTab[]=
     {AT_CME_NV_NOT_SUPPORT_ERR,                            {  (TAF_UINT8*)"758", (TAF_UINT8*)"NV Not Support" } },
     {AT_CME_FUNC_DISABLE,                                  {  (TAF_UINT8*)"759", (TAF_UINT8*)"Function Disable" } },
     {AT_CME_SCI_ERROR,                                     {  (TAF_UINT8*)"760", (TAF_UINT8*)"SCI Error" } },
+
+
     {AT_CME_ERROR_ENUM_END,                                {TAF_NULL_PTR,       TAF_NULL_PTR                 }  },
 
     /*装备AT命令错误码提示*/
@@ -1860,8 +1862,8 @@ VOS_VOID At_FormatResultData(
 )
 {
     VOS_UINT16                          usLength;
-    VOS_UINT8                          *pDataAt1;
-    VOS_UINT8                          *pDataAt3;
+    VOS_UINT8                          *pDataAt1 = VOS_NULL_PTR;
+    VOS_UINT8                          *pDataAt3 = VOS_NULL_PTR;
 
     VOS_UINT32                          ulComCmdSubProc;
     VOS_UINT8                           aucDialRateTmp[AT_AP_RATE_STRLEN];

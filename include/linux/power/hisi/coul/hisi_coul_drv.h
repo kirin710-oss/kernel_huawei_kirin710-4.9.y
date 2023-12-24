@@ -176,6 +176,9 @@ struct hisi_coul_ops {
     int (*get_coul_calibration_status)(void);
     int (*battery_removed_before_boot)(void);
     int (*get_qmax)(void);
+	int (*get_ndcvolt_dec_nv)(unsigned int *volt_dec);
+	int (*set_ndcvolt_dec_apk)(unsigned int volt_dec);
+    int (*get_coul_isc_status)(void);
 #ifdef CONFIG_HISI_ASW
 	int (*asw_refresh_fcc)(void);
 #endif /* CONFIG_HISI_ASW */

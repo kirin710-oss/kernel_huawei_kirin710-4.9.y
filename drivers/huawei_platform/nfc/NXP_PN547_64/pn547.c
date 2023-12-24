@@ -80,6 +80,7 @@ static int g_nfcservice_lock;
 /*0 -- close nfcservice normally; 1 -- close nfcservice with enable CE */
 static int g_nfc_close_type;
 static int g_nfc_single_channel;
+static int g_nfc_spec_rf;
 static int g_nfc_card_num;
 static int g_nfc_ese_num;
 static int g_wake_lock_timeout = WAKE_LOCK_TIMEOUT_DISABLE;
@@ -549,6 +550,29 @@ void set_nfc_single_channel(void)
 	}
 	hwlog_info("%s: nfc single channel:%d\n", __func__, g_nfc_single_channel);
 	return;
+}
+
+void set_nfc_spec_rf(void)
+{
+    int ret;
+    char spec_rf_dts_str[MAX_CONFIG_NAME_SIZE] = {0};
+
+    memset(spec_rf_dts_str, 0, MAX_CONFIG_NAME_SIZE);
+    ret = nfc_get_dts_config_string("nfc_spec_rf", "nfc_spec_rf",
+        spec_rf_dts_str, sizeof(spec_rf_dts_str));
+
+    if (ret != 0) {
+        memset(spec_rf_dts_str, 0, MAX_CONFIG_NAME_SIZE);
+        hwlog_err("%s: can't get nfc spec rf dts config\n", __func__);
+        g_nfc_spec_rf = 0;    // special rf config flag 0:normal
+        return;
+    }
+    if (!strcasecmp(spec_rf_dts_str, "true")) {
+        g_nfc_spec_rf = 1;    // special rf config flag 1:special
+    }
+
+    hwlog_info("%s: nfc spec rf:%d\n", __func__, g_nfc_spec_rf);
+    return;
 }
 
 void set_nfc_chip_type_name(void)
@@ -1663,6 +1687,13 @@ static ssize_t nfc_single_channel_show(struct device *dev, struct device_attribu
 	return (ssize_t)(snprintf(buf, MAX_ATTRIBUTE_BUFFER_SIZE-1, "%d", g_nfc_single_channel));
 }
 
+static ssize_t nfc_spec_rf_show(struct device *dev,
+                                struct device_attribute *attr, char *buf)
+{
+    return (ssize_t)(snprintf(buf, MAX_ATTRIBUTE_BUFFER_SIZE - 1, "%d",
+                              g_nfc_spec_rf));
+}
+
 static ssize_t nfc_wired_ese_info_show(struct device *dev, struct device_attribute *attr, char *buf)
 {
 	return (ssize_t)(snprintf(buf, MAX_ATTRIBUTE_BUFFER_SIZE-1, "%d", g_nfc_ese_type));
@@ -1919,6 +1950,7 @@ static struct device_attribute pn547_attr[] = {
         __ATTR(nfc_recovery_close_nfc, 0664, nfc_recovery_close_nfc_show, nfc_recovery_close_nfc_store),
         /*end   : recovery close nfc  2018-03-20*/
         __ATTR(nfc_get_rssi, 0664, nfc_get_rssi_show, nfc_get_rssi_store),
+    __ATTR(nfc_spec_rf, 0444, nfc_spec_rf_show, NULL),
 };
 /*lint -restore*/
 /*lint -save -e* */
@@ -2448,6 +2480,7 @@ static int pn547_probe(struct i2c_client *client,
 	set_nfc_brcm_config_name();
 	set_nfc_chip_type_name();
 	set_nfc_single_channel();
+    set_nfc_spec_rf();
 	set_nfc_card_num();
     set_nfc_ese_num();
 

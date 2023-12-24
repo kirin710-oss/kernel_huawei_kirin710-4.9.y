@@ -165,23 +165,22 @@ VOS_UINT8* TAF_AGENT_SaveMsg(
 
 VOS_VOID TAF_AGENT_ShowStats(VOS_VOID)
 {
-    PS_PRINTF("********************TAF AGENT统计信息*******************\n");
-    PS_PRINTF("模块初始化标识                              %d\n", g_stTafAgentCtx.ulInitFlg);
-    PS_PRINTF("当前的互斥信号量                            %u\n", g_stTafAgentCtx.hTafAcpuSyncSem); /*lint !e559 */
-    PS_PRINTF("当前的互斥信号量                            %u\n", g_stTafAgentCtx.hTafAcpuCnfSem); /*lint !e559 */
-    PS_PRINTF("创建的互斥信号量                            %u\n", g_stTafAgentStats.ulMutexSemId); /*lint !e559 */
-    PS_PRINTF("创建的二进制信号量                          %u\n", g_stTafAgentStats.ulBinarySemId); /*lint !e559 */
-    PS_PRINTF("创建互斥信号量失败次数                      %d\n", g_stTafAgentStats.ulCreateMutexSemFailNum);
-    PS_PRINTF("创建二进制信号量失败次数                    %d\n", g_stTafAgentStats.ulCreateBinarySemFailNum);
-    PS_PRINTF("锁互斥信号量失败次数                        %d\n", g_stTafAgentStats.ulLockMutexSemFailNum);
-    PS_PRINTF("锁二进制信号量失败次数                      %d\n", g_stTafAgentStats.ulLockBinarySemFailNum);
-    PS_PRINTF("最后一次锁互斥信号量失败原因                %x\n", g_stTafAgentStats.ulLastMutexSemErrRslt);
-    PS_PRINTF("最后一次锁二进制信号量失败原因              %x\n", g_stTafAgentStats.ulLastBinarySemErrRslt);
-    PS_PRINTF("同步消息为空次数                            %d\n", g_stTafAgentStats.ulSyncMsgIsNullNum);
-    PS_PRINTF("同步消息不匹配次数                          %d\n", g_stTafAgentStats.ulSyncMsgNotMatchNum);
+    PS_PRINTF("TAF AGENT STATS START:                   \n");
+    PS_PRINTF("ulInitFlg                              %d\n", g_stTafAgentCtx.ulInitFlg);
+    PS_PRINTF("hTafAcpuSyncSem                        %u\n", g_stTafAgentCtx.hTafAcpuSyncSem); /*lint !e559 */
+    PS_PRINTF("hTafAcpuCnfSem                         %u\n", g_stTafAgentCtx.hTafAcpuCnfSem);  /*lint !e559 */
+    PS_PRINTF("ulMutexSemId                           %u\n", g_stTafAgentStats.ulMutexSemId);   /*lint !e559 */
+    PS_PRINTF("ulBinarySemId                          %u\n", g_stTafAgentStats.ulBinarySemId);  /*lint !e559 */
+    PS_PRINTF("ulCreateMutexSemFailNum                %d\n", g_stTafAgentStats.ulCreateMutexSemFailNum);
+    PS_PRINTF("ulCreateBinarySemFailNum               %d\n", g_stTafAgentStats.ulCreateBinarySemFailNum);
+    PS_PRINTF("ulLockMutexSemFailNum                  %d\n", g_stTafAgentStats.ulLockMutexSemFailNum);
+    PS_PRINTF("ulLockBinarySemFailNum                 %d\n", g_stTafAgentStats.ulLockBinarySemFailNum);
+    PS_PRINTF("ulLastMutexSemErrRslt                  %x\n", g_stTafAgentStats.ulLastMutexSemErrRslt);
+    PS_PRINTF("ulLastBinarySemErrRslt                 %x\n", g_stTafAgentStats.ulLastBinarySemErrRslt);
+    PS_PRINTF("ulSyncMsgIsNullNum                     %d\n", g_stTafAgentStats.ulSyncMsgIsNullNum);
+    PS_PRINTF("ulSyncMsgNotMatchNum                   %d\n", g_stTafAgentStats.ulSyncMsgNotMatchNum);
 
-    PS_PRINTF("\r\n");
-
+    PS_PRINTF("TAF AGENT STATS END.                     \n");
 }
 
 

@@ -797,6 +797,8 @@ void lcdkit_parse_panel_dts(struct device_node* np)
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-vci-on", &lcdkit_info.panel_infos.delay_af_vci_on, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-iovcc-on", &lcdkit_info.panel_infos.delay_af_iovcc_on, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-vbat-on", &lcdkit_info.panel_infos.delay_af_vbat_on, 0);
+	OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-poweron-af-bl",
+		&lcdkit_info.panel_infos.lcd_poweron_after_bl, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-bias-on", &lcdkit_info.panel_infos.delay_af_bias_on, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-vsp-on", &lcdkit_info.panel_infos.delay_af_vsp_on, 0);
     OF_PROPERTY_READ_U8_DEFAULT(np, "hw,lcdkit-delay-af-vsn-on", &lcdkit_info.panel_infos.delay_af_vsn_on, 0);

@@ -176,6 +176,7 @@ VOS_CHAR*                                       g_apcATFileterTable[]=
 
         "AT^SILENTPININFO"  ,
 
+
 };
 
 

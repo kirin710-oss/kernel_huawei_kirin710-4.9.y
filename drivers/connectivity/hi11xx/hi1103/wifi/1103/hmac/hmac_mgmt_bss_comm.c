@@ -2333,6 +2333,14 @@ oal_void hmac_mgmt_update_11ntxbf_cap_etc(oal_uint8 *puc_payload, hmac_user_stru
         return;
     }
 
+    /* ¼ì²âµ½vendor ie */
+    pst_vendor_ie = (mac_11ntxbf_vendor_ie_stru *)puc_payload;
+    if (pst_vendor_ie->uc_len < (OAL_SIZEOF(mac_11ntxbf_vendor_ie_stru) - MAC_IE_HDR_LEN)) {
+        OAM_WARNING_LOG1(0, OAM_SF_ANY, "hmac_mgmt_update_11ntxbf_cap_etc:invalid vendor ie len[%d]",
+                         pst_vendor_ie->uc_len);
+        return;
+    }
+
     /* ¼ì²âµ½vendor ie*/
     pst_vendor_ie = (mac_11ntxbf_vendor_ie_stru *)puc_payload;
 
@@ -2991,7 +2999,7 @@ OAL_STATIC oal_uint32  hmac_proc_location_action(hmac_vap_stru *pst_hmac_vap, oa
     pst_rx_ctrl           = (mac_rx_ctl_stru *)oal_netbuf_cb(pst_netbuf);
     us_action_len         = pst_rx_ctrl->us_frame_len;
 
-    if (us_action_len < 45)
+    if (us_action_len < MAC_CSI_LOCATION_INFO_LEN)
     {
         OAM_ERROR_LOG1(0, OAM_SF_FTM, "{hmac_proc_location_action: unexpected len %d}", us_action_len);
         return OAL_ERR_CODE_MSG_LENGTH_ERR;

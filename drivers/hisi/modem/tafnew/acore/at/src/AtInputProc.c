@@ -1062,7 +1062,7 @@ VOS_UINT32 At_ModemDataInd(
     AT_DCE_MSC_STRU                     stMscStru;
     VOS_UINT32                          ulRet;
     /* pData为数据内容指针 */
-    VOS_UINT8                          *pData;
+    VOS_UINT8                          *pData = VOS_NULL_PTR;
     /* usLen为数据内容的长度 */
     VOS_UINT16                          usLen;
 

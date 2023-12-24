@@ -1,4 +1,4 @@
-# MD5: d7f61570eb1be10bad4349104594fc66
+# MD5: 19fa0c8dd9f36b4dffc58c3e76a82382
 CFG_BBP_MASTER_NONE                             := 0
 CFG_BBP_MASTER_VER1                             := 1
 CFG_BBP_MASTER_VER2                             := 2
@@ -28,3 +28,4 @@ CFG_FEATURE_XSIM                                := FEATURE_OFF
 CFG_FEATURE_SCI_SWITCH_OPTIMIZE                 := FEATURE_ON
 CFG_FEATURE_VOS_18H_TIMER                       := FEATURE_OFF
 CFG_FEATURE_SET_C1C2_VALUE                      := FEATURE_OFF
+CFG_FEATURE_ESIM_ADAPT                          := FEATURE_OFF

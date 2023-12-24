@@ -1738,8 +1738,8 @@ VOS_UINT32  AT_ProcSimlockWriteExData(
     VOS_UINT16                          usParaLen
 )
 {
-    AT_SIMLOCKDATAWRITEEX_CMD_PROC_CTX *pstSimlockWriteExCtx;
-    VOS_UINT8                          *pTempData                  = VOS_NULL_PTR;
+    AT_SIMLOCKDATAWRITEEX_CMD_PROC_CTX *pstSimlockWriteExCtx = VOS_NULL_PTR;
+    VOS_UINT8                          *pTempData            = VOS_NULL_PTR;
     VOS_UINT16                          usTotalLen;
 
     if ((VOS_NULL_PTR == pucSimLockData)

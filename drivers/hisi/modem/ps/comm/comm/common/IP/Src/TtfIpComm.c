@@ -46,22 +46,13 @@
  *
  */
 
-
-
-
-/******************************************************************************
-   1 头文件包含
-******************************************************************************/
+#include "TtfIpComm.h"
+#include "securec.h"
 #include "PsTypeDef.h"
 #include "TTFComm.h"
-#include "TtfIpComm.h"
 
-/*****************************************************************************
-    协议栈打印打点方式下的.C文件宏定义
-*****************************************************************************/
-/*lint -e767*/
-#define    THIS_FILE_ID        PS_FILE_ID_TTF_IP_COMM_C
-/*lint +e767*/
+
+#define THIS_FILE_ID        PS_FILE_ID_TTF_IP_COMM_C
 
 
 /******************************************************************************
@@ -433,6 +424,42 @@ MODULE_EXPORTED VOS_UINT16 TTF_GetIpDataTraceLen
     return usIpDataTraceLen;
 }
 
+MODULE_EXPORTED VOS_VOID TTF_FilterIpv4AddrSensitiveInfo(VOS_UINT8 *ipAddr)
+{
+    *(ipAddr + TTF_IPV4_MASK_IP_ADDR_SENSITIVE_POS) = 0;
+}
+
+MODULE_EXPORTED VOS_VOID TTF_FilterIpv6AddrSensitiveInfo(VOS_UINT8 *ipAddr)
+{
+    VOS_UINT8 *ipSensitiveAddr = ipAddr + TTF_IPV6_MASK_IP_ADDR_SENSITIVE_POS;
+    (VOS_VOID)memset_s(ipSensitiveAddr, TTF_IPV6_MASK_IP_ADDR_SENSITIVE_BYTE_NUM,
+        0, TTF_IPV6_MASK_IP_ADDR_SENSITIVE_BYTE_NUM);
+}
+
+MODULE_EXPORTED VOS_VOID TTF_MaskIpAddrTraces(VOS_UINT32 pid, VOS_UINT8 *ipData, VOS_UINT16 dataLen)
+{
+    const VOS_UINT32 ipVersion = ipData[0] & IP_VER_MASK;
+
+    if (ipVersion == IPV4_VER_VAL) {
+        if (dataLen < IPV4_HEAD_NORMAL_LEN) {
+            TTF_LOG1(pid, DIAG_MODE_COMM, PS_PRINT_WARNING, "TTF_MaskIpAddrTraces IPHeadLen is exception.", dataLen);
+            return;
+        }
+
+        TTF_FilterIpv4AddrSensitiveInfo(ipData + IPV4_SRC_IP_ADDR_OFFSET_POS);
+        TTF_FilterIpv4AddrSensitiveInfo(ipData + IPV4_DST_IP_ADDR_OFFSET_POS);
+    } else if(ipVersion == IPV6_VER_VAL) {
+        if (dataLen < IPV6_HEAD_NORMAL_LEN) {
+            TTF_LOG1(pid, DIAG_MODE_COMM, PS_PRINT_WARNING, "TTF_MaskIpAddrTraces IPHeadLen is exception.", dataLen);
+            return;
+        }
+
+        TTF_FilterIpv6AddrSensitiveInfo(ipData + IPV6_SRC_IP_ADDR_OFFSET_POS);
+        TTF_FilterIpv6AddrSensitiveInfo(ipData + IPV6_DST_IP_ADDR_OFFSET_POS);
+    } else {
+        TTF_LOG(pid, DIAG_MODE_COMM, PS_PRINT_WARNING, "TTF_MaskIpAddrTraces Protocol is Null.");
+    }
+}
 
 
 /*lint -restore */

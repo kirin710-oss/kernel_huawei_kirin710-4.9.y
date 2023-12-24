@@ -635,7 +635,7 @@ const AT_STRING_TYPE_STRU gastAtStringTab[]=
     {AT_STRINT_RTTERROR,      (VOS_UINT8 *)"^RTTERR"},
 
     {AT_STRING_EMRSSIRPT,     (VOS_UINT8 *)"^EMRSSIRPT: "},
-	
+
     {AT_STRING_ELEVATOR,      (VOS_UINT8 *)"^ELEVATOR"},
 
     {AT_STRING_ULFREQRPT,      (VOS_UINT8 *)"^ULFREQRPT"},
@@ -1104,11 +1104,11 @@ TAF_UINT32  At_SendPduMsgOrCmd(
 )
 {
     TAF_UINT32                          ulRet;
-    MN_MSG_SEND_PARM_STRU               *pstSendDirectParm;
+    MN_MSG_SEND_PARM_STRU               *pstSendDirectParm = VOS_NULL_PTR;
     TAF_UINT32                          uAddrlLen           = 0;
     MN_OPERATION_ID_T                   opId                = At_GetOpId();
-    MN_MSG_TS_DATA_INFO_STRU            *pstTsDataInfo;
-    MN_MSG_RAW_TS_DATA_STRU             *pstRawData;
+    MN_MSG_TS_DATA_INFO_STRU            *pstTsDataInfo = VOS_NULL_PTR;
+    MN_MSG_RAW_TS_DATA_STRU             *pstRawData = VOS_NULL_PTR;
     AT_MODEM_SMS_CTX_STRU               *pstSmsCtx = VOS_NULL_PTR;
 
     pstSmsCtx = AT_GetModemSmsCtxAddrFromClientId(ucIndex);
@@ -1302,14 +1302,14 @@ VOS_UINT32  At_WritePduMsgToMem(
     MN_OPERATION_ID_T                   opId                = At_GetOpId();
     TAF_UINT32                          ulAddrLen           = 0;
     TAF_UINT32                          ulRet;
-    MN_MSG_WRITE_PARM_STRU              *pstWriteParm;
-    MN_MSG_TS_DATA_INFO_STRU            *pstTsDataInfo;
+    MN_MSG_WRITE_PARM_STRU             *pstWriteParm = VOS_NULL_PTR;
+    MN_MSG_TS_DATA_INFO_STRU           *pstTsDataInfo = VOS_NULL_PTR;
     MN_MSG_TPDU_TYPE_ENUM_U8            aucMtiMapTpduType[4] = {MN_MSG_TPDU_DELIVER,
                                                                 MN_MSG_TPDU_SUBMIT,
                                                                 MN_MSG_TPDU_COMMAND,
                                                                 MN_MSG_TPDU_MAX};
     TAF_UINT8                           ucFo;
-    MN_MSG_RAW_TS_DATA_STRU             *pstRawData;
+    MN_MSG_RAW_TS_DATA_STRU            *pstRawData = VOS_NULL_PTR;
     AT_MODEM_SMS_CTX_STRU              *pstSmsCtx = VOS_NULL_PTR;
 
     pstSmsCtx = AT_GetModemSmsCtxAddrFromClientId(ucIndex);
@@ -1746,10 +1746,10 @@ TAF_UINT32  At_WriteTextMsgToMem(
     TAF_UINT8                           ucIndex
 )
 {
-    MN_MSG_TS_DATA_INFO_STRU            *pstTsDataInfo;
+    MN_MSG_TS_DATA_INFO_STRU           *pstTsDataInfo = VOS_NULL_PTR;
     TAF_UINT32                          ulRet;
-    MN_MSG_WRITE_PARM_STRU              *pstWriteParm;
-    MN_MSG_DCS_CODE_STRU                *pstDcs;
+    MN_MSG_WRITE_PARM_STRU             *pstWriteParm = VOS_NULL_PTR;
+    MN_MSG_DCS_CODE_STRU               *pstDcs = VOS_NULL_PTR;
     AT_MODEM_SMS_CTX_STRU              *pstSmsCtx = VOS_NULL_PTR;
 
     pstSmsCtx = AT_GetModemSmsCtxAddrFromClientId(ucIndex);
@@ -3806,7 +3806,7 @@ VOS_UINT32 At_ProcXmlText ( TAF_UINT8 ucIndex, TAF_UINT8 *pData, TAF_UINT16 usLe
 {
     VOS_UINT16                              usTmpLen;
     AT_XML_PROC_TYPE_ENUM_UINT8             enXmlProcType;
-    AT_MTA_CPOS_REQ_STRU                   *pstCposSetReq;
+    AT_MTA_CPOS_REQ_STRU                   *pstCposSetReq = VOS_NULL_PTR;
     VOS_UINT32                              ulResult;
     MTA_AT_CPOS_OPERATE_TYPE_ENUM_UINT32    enCposOpType;
     AT_MODEM_AGPS_CTX_STRU                 *pstAgpsCtx = VOS_NULL_PTR;
@@ -3979,23 +3979,23 @@ VOS_UINT32  AT_GetSeconds(VOS_VOID)
 
 VOS_VOID AT_GetLiveTime(
     NAS_MM_INFO_IND_STRU               *pstATtime,
-    NAS_MM_INFO_IND_STRU               *pstNewTime,    
+    NAS_MM_INFO_IND_STRU               *pstNewTime,
     VOS_UINT32                          ulNwSecond
 )
 {
     TIME_ZONE_TIME_STRU                 stNewTime;
     VOS_UINT32                          ulNowSecond;
     VOS_UINT32                          ulSeconds;
-    VOS_UINT32                          ulAdjustDate;    
+    VOS_UINT32                          ulAdjustDate;
     VOS_UINT32                          ulIndex;
-   
+
     TAF_MEM_SET_S(&stNewTime, sizeof(TIME_ZONE_TIME_STRU), 0x00, sizeof(TIME_ZONE_TIME_STRU));
 
     /* 全局变量中保存有时间信息 */
     if (NAS_MM_INFO_IE_UTLTZ == (pstATtime->ucIeFlg & NAS_MM_INFO_IE_UTLTZ))
     {
         TAF_MEM_CPY_S(pstNewTime, sizeof(NAS_MM_INFO_IND_STRU), pstATtime, sizeof(NAS_MM_INFO_IND_STRU));
-        
+
         if(0 == ulNwSecond)
         {
             return;

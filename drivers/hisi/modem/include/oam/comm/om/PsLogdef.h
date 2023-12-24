@@ -372,7 +372,8 @@ typedef enum
 /* 18497 */      PS_FILE_ID_PIH_PROTECT_RESET_C,
 /* 18498 */      PS_FILE_ID_PIH_VSIM_ICC_C,
 /* 18499 */      PS_FILE_ID_SI_CCORE_API_C,
-
+/* 18500 */      PS_FILE_ID_SI_EMAT_API_C,
+/* 18501 */      PS_FILE_ID_SI_EMAT_PROC_C,
 
                  PAM_FILE_ID_BUTT
 }PAM_FILE_ID_DEFINE_ENUM;
@@ -3448,7 +3449,7 @@ typedef enum
     PS_FILE_ID_PPPC_VSNCP_ENCODE_C              = TTFCOMM_TEAM_FILE_ID + 0x0016,
     PS_FILE_ID_PPPC_PAP_DBG_C                   = TTFCOMM_TEAM_FILE_ID + 0x0017,
     PS_FILE_ID_PPPC_CHAP_DBG_C                  = TTFCOMM_TEAM_FILE_ID + 0x0018,
-    PS_FILE_ID_PPPC_CCP_C                       = TTFCOMM_TEAM_FILE_ID + 0x0019,
+    PS_FILE_ID_PPPC_PPPA_PROC_C                 = TTFCOMM_TEAM_FILE_ID + 0x0019,
     PS_FILE_ID_PPPC_UIM_C                       = TTFCOMM_TEAM_FILE_ID + 0x001A,
     PS_FILE_ID_PPPC_UTIL_SHA1_C                 = TTFCOMM_TEAM_FILE_ID + 0x001B,
     PS_FILE_ID_PPPC_UTIL_AES_C                  = TTFCOMM_TEAM_FILE_ID + 0x001C,
@@ -3570,6 +3571,7 @@ typedef enum
     PS_FILE_ID_RRM_NODE_MEM_C                   = TTFCOMM_TEAM_FILE_ID + 0x0089,
     PS_FILE_ID_NODE_MEM_MNTN_C                  = TTFCOMM_TEAM_FILE_ID + 0x008A,
     PS_FILE_ID_RRM_DSDS3_C                      = TTFCOMM_TEAM_FILE_ID + 0x008b,
+    PS_FILE_ID_PPP_RAND_C                       = TTFCOMM_TEAM_FILE_ID + 0x008C,
 
     PS_FILE_ID_TTFCOMM_BUTT
 }TTFCOMM_FILE_ID_DEFINE_ENUM;

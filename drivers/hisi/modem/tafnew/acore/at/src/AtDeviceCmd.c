@@ -151,7 +151,7 @@ AT_PAR_CMD_ELEMENT_STRU g_astAtDeviceCmdTbl[] = {
     VOS_NULL_PTR,   AT_NOT_SET_TIME,
     AT_CME_INCORRECT_PARAMETERS,    CMD_TBL_PIN_IS_LOCKED,
     (VOS_UINT8 *)"^DCXOTEMPCOMP",    (VOS_UINT8 *)"(0,1)"},
-	
+
     {AT_CMD_FTXON,
     At_SetFTxonPara,     AT_SET_PARA_TIME,   At_QryFTxonPara,       AT_QRY_PARA_TIME,   VOS_NULL_PTR ,    AT_NOT_SET_TIME,
     VOS_NULL_PTR,        AT_NOT_SET_TIME,
@@ -1102,7 +1102,7 @@ VOS_UINT32 AT_SetWiwepPara(VOS_UINT8 ucIndex)
     VOS_UINT32                          ulIndex;
     VOS_UINT8                           ucGroup;
     VOS_UINT32                          ulRet;
-    TAF_AT_MULTI_WIFI_SEC_STRU         *pstWifiSecInfo;
+    TAF_AT_MULTI_WIFI_SEC_STRU         *pstWifiSecInfo = VOS_NULL_PTR;
 
     if (BSP_MODULE_UNSUPPORT == mdrv_misc_support_check(BSP_MODULE_TYPE_WIFI))
     {
@@ -1566,7 +1566,7 @@ VOS_UINT32 AT_SetTmodeAutoPowerOff(VOS_UINT8 ucIndex)
 
     TAF_MMA_PHONE_MODE_PARA_STRU        stPhModeSet;
 
-    VOS_UINT8                             *pucSystemAppConfig;
+    VOS_UINT8                          *pucSystemAppConfig = VOS_NULL_PTR;
 
 
     TAF_MEM_SET_S(&stPhModeSet, sizeof(stPhModeSet), 0x00, sizeof(TAF_MMA_PHONE_MODE_PARA_STRU));
@@ -2767,8 +2767,8 @@ VOS_UINT32 AT_RcvMtaMeidQryCnf(
     VOS_VOID                           *pMsg
 )
 {
-    AT_MTA_MSG_STRU                    *pstRcvMsg;
-    MTA_AT_MEID_QRY_CNF_STRU           *pstQryCnf;
+    AT_MTA_MSG_STRU                    *pstRcvMsg = VOS_NULL_PTR;
+    MTA_AT_MEID_QRY_CNF_STRU           *pstQryCnf = VOS_NULL_PTR;
     VOS_UINT8                           ucIndex;
     VOS_UINT8                           aucMeId[2*MTA_AT_MEID_NV_DATA_LEN_NEW + 1];
     VOS_UINT8                           aucpEsn[2*MTA_AT_PESN_NV_DATA_LEN + 1];
@@ -3324,7 +3324,7 @@ VOS_UINT32  At_SetCltPara(VOS_UINT8 ucIndex)
     {
         return AT_CME_INCORRECT_PARAMETERS;
     }
-    
+
     /* 参数个数不符合要求 */
     if (1 != gucAtParaIndex)
     {

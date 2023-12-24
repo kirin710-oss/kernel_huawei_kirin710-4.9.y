@@ -43,6 +43,14 @@ typedef oal_uint32  (*wal_config_set_func)(mac_vap_stru *pst_mac_vap, oal_uint16
         (_pst_write_msg)->us_len = (_us_len);               \
     } while(0)
 
+#define WAL_RECV_CMD_NEED_RESP(_pst_msg, _us_need_response)          \
+    do {                                                             \
+        if ((_pst_msg)->st_msg_hdr.en_msg_type == WAL_MSG_TYPE_QUERY) { \
+            /* need response */                                      \
+            (_us_need_response) = OAL_TRUE;                             \
+        }                                                            \
+    } while (0)
+
 /* ªÒ»°msg–Ú¡–∫≈∫Í */
 extern oal_atomic g_wal_config_seq_num_etc;
 #define WAL_GET_MSG_SN()     (oal_atomic_inc_return(&g_wal_config_seq_num_etc))

@@ -1017,6 +1017,7 @@ static int smartpakit_ctrl_do_ioctl(struct file *file, unsigned int cmd, void __
 	}
 	pakit_priv = (smartpakit_priv_t *)file->private_data;
 
+	mutex_lock(&pakit_priv->do_ioctl_lock);
 	switch (cmd) {
 		// NOTE:
 		// 1. smartpa with dsp, ex. tfa9895
@@ -1120,6 +1121,7 @@ static int smartpakit_ctrl_do_ioctl(struct file *file, unsigned int cmd, void __
 			break;
 	}
 
+	mutex_unlock(&pakit_priv->do_ioctl_lock);
 	if ((cmd != I2C_SLAVE) && (cmd != I2C_SLAVE_FORCE)) {
 		hwlog_info("%s: enter end, cmd:0x%x ret=%d.\n", __func__, cmd, ret);
 	}
@@ -1592,6 +1594,7 @@ static int smartpakit_probe(struct platform_device *pdev)
 	mutex_init(&pakit_priv->hw_reset_lock);
 	mutex_init(&pakit_priv->dump_regs_lock);
 	mutex_init(&pakit_priv->i2c_ops_lock);
+	mutex_init(&pakit_priv->do_ioctl_lock);
 
 	ret = misc_register(&smartpakit_ctrl_miscdev);
 	if (0 != ret) {

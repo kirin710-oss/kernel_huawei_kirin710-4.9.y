@@ -453,8 +453,8 @@ VOS_UINT32 AT_WriteActiveMessage(
 {
     VOS_UINT32                          ulRet;
     VOS_INT32                           lRet;
-    VOS_UINT8                          *pucActiveMessageInfo;
-    VOS_UINT8                          *pucEvaluate;
+    VOS_UINT8                          *pucActiveMessageInfo = VOS_NULL_PTR;
+    VOS_UINT8                          *pucEvaluate = VOS_NULL_PTR;
 
     /*1.判断待写入的激活短信参数与NVIM中的参数是否一致；一致则不用写NVIM直接退出*/
     if (pstOrgActiveMessageInfo->enActiveStatus == pstActiveMessageInfo->enActiveStatus)
@@ -2828,7 +2828,7 @@ VOS_UINT32 At_QryFrssiPara(
     VOS_UINT8                           ucIndex
 )
 {
-    AT_HPA_RF_RX_RSSI_REQ_STRU          *pstMsg;
+    AT_HPA_RF_RX_RSSI_REQ_STRU          *pstMsg = VOS_NULL_PTR;
     VOS_UINT32                          ulLength;
 
     if ((AT_RAT_MODE_FDD_LTE == g_stAtDevCmdCtrl.ucDeviceRatMode)
@@ -7180,7 +7180,7 @@ VOS_UINT32 AT_FillBodySarWcdmaQryPara(
     MTA_BODY_SAR_PARA_STRU             *pstBodySarPara,
     AT_BODYSARWCDMA_SET_PARA_STRU      *pstBodySarWcdmaPara)
 {
-    VOS_UINT8                           ucLoop1;
+    VOS_UINT32                          ulLoop1;
     VOS_UINT8                           ucLoop2;
     AT_NV_WG_RF_MAIN_BAND_STRU          stWGBand;
     VOS_UINT32                          ulTmpBand;
@@ -7198,11 +7198,11 @@ VOS_UINT32 AT_FillBodySarWcdmaQryPara(
         return VOS_ERR;
     }
 
-    for (ucLoop1 = 0; ucLoop1 < pstBodySarPara->usWBandNum; ucLoop1++)
+    for (ulLoop1 = 0; ulLoop1 < pstBodySarPara->usWBandNum; ulLoop1++)
     {
         for (ucLoop2 = 0; ucLoop2 < pstBodySarWcdmaPara->ucParaNum; ucLoop2++)
         {
-            if (pstBodySarPara->astWBandPara[ucLoop1].sPower == pstBodySarWcdmaPara->asPower[ucLoop2])
+            if (pstBodySarPara->astWBandPara[ulLoop1].sPower == pstBodySarWcdmaPara->asPower[ucLoop2])
             {
                 break;
             }
@@ -7210,11 +7210,11 @@ VOS_UINT32 AT_FillBodySarWcdmaQryPara(
 
         if ((ucLoop2 == pstBodySarWcdmaPara->ucParaNum) && (ucLoop2 < AT_BODYSARWCDMA_MAX_PARA_GROUP_NUM)) {
             pstBodySarWcdmaPara->ucParaNum++;
-            pstBodySarWcdmaPara->asPower[ucLoop2] =pstBodySarPara->astWBandPara[ucLoop1].sPower;
+            pstBodySarWcdmaPara->asPower[ucLoop2] =pstBodySarPara->astWBandPara[ulLoop1].sPower;
         }
 
         if (ucLoop2 < AT_BODYSARWCDMA_MAX_PARA_GROUP_NUM) {
-        pstBodySarWcdmaPara->aulBand[ucLoop2]   |= 0x00000001U << (pstBodySarPara->astWBandPara[ucLoop1].enBand - 1);
+        pstBodySarWcdmaPara->aulBand[ucLoop2]   |= 0x00000001U << (pstBodySarPara->astWBandPara[ulLoop1].enBand - 1);
         ulTmpBand                               |= pstBodySarWcdmaPara->aulBand[ucLoop2];
         }
     }

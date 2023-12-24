@@ -21,7 +21,7 @@
 #include <linux/device.h>
 
 
-#include "tui.h"
+//#include "tui.h"
 
 #include "lcdkit_fb_util.h"
 
@@ -343,12 +343,12 @@ int hisi_fb_blank_sub(int blank_mode, struct fb_info *info)
 			 */
 			if (hisifd->secure_ctrl.secure_status == DSS_SEC_RUNNING) {
 				hisifd->secure_ctrl.secure_blank_flag = 1;
-				tui_poweroff_work_start();
-				HISI_FB_INFO("wait for tui quit.\n");
+				//tui_poweroff_work_start();
+				//HISI_FB_INFO("wait for tui quit.\n");
 				break;
 			} else if (hisifd->secure_ctrl.secure_event == DSS_SEC_ENABLE) {
 				hisifd->secure_ctrl.secure_event = DSS_SEC_DISABLE;
-				send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
+				//send_tui_msg_config(TUI_POLL_CFG_FAIL, 0, "DSS");
 				HISI_FB_INFO("In power down, secure event will not be handled.\n");
 			}
 

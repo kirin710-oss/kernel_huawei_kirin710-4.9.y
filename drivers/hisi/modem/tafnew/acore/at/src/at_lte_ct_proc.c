@@ -124,7 +124,7 @@ VOS_UINT32 atSetFTXONPara(VOS_UINT8 ucClientId)
     if (EN_FTM_TXON_UL_RFBBP_OPEN == stFTXONSetReq.enSwtich )
     {
         stFTXONSetReq.enCltEnableFlg    = (FTM_CLT_ENABLE_ENUM_UINT8)g_stAtDevCmdCtrl.enCltEnableFlg;
-    }  
+    }
 
     
     ulRst = atSendFtmDataMsg(I0_MSP_SYS_FTM_PID, ID_MSG_FTM_SET_TXON_REQ, ucClientId, (VOS_VOID*)(&stFTXONSetReq), sizeof(stFTXONSetReq));
@@ -233,7 +233,7 @@ VOS_UINT32 atQryFPllStatusPara(VOS_UINT8 ucClientId)
     ulRst = atSendFtmDataMsg(I0_MSP_SYS_FTM_PID, ID_MSG_FTM_RD_FPLLSTATUS_REQ,ucClientId, (VOS_VOID*)(&stFPLLSTATUSQryReq), sizeof(stFPLLSTATUSQryReq));
     if(AT_SUCCESS == ulRst)
     {
-        gastAtClientTab[ucClientId].CmdCurrentOpt = AT_CMD_FPLLSTATUS_READ;
+        gastAtClientTab[ucClientId].CmdCurrentOpt = (AT_CMD_CURRENT_OPT_ENUM)AT_CMD_FPLLSTATUS_READ;
         return AT_WAIT_ASYNC_RETURN;
     }
 
@@ -1261,12 +1261,12 @@ VOS_UINT32 At_ProcLteTxCltInfoReport(VOS_VOID *pMsgBlock)
     MSP_MEMSET(&g_stAtDevCmdCtrl.stCltInfo, sizeof(g_stAtDevCmdCtrl.stCltInfo), 0x0, sizeof(AT_TX_CLT_INFO_STRU));
 
     /* 设置CLT信息有效标志 */
-    g_stAtDevCmdCtrl.stCltInfo.ulInfoAvailableFlg   = VOS_TRUE;   
+    g_stAtDevCmdCtrl.stCltInfo.ulInfoAvailableFlg   = VOS_TRUE;
 
     /* 将接入层上报的信息记录下全局变量中 */
-    g_stAtDevCmdCtrl.stCltInfo.shwGammaReal             = pstTxCltInfoInd->shwGammaReal;                 /* 反射系数实部 */  
+    g_stAtDevCmdCtrl.stCltInfo.shwGammaReal             = pstTxCltInfoInd->shwGammaReal;                 /* 反射系数实部 */
     g_stAtDevCmdCtrl.stCltInfo.shwGammaImag             = pstTxCltInfoInd->shwGammaImag;                 /* 反射系数虚部 */
-    g_stAtDevCmdCtrl.stCltInfo.ushwGammaAmpUc0          = pstTxCltInfoInd->ushwGammaAmpUc0;              /* 驻波检测场景0反射系数幅度 */   
+    g_stAtDevCmdCtrl.stCltInfo.ushwGammaAmpUc0          = pstTxCltInfoInd->ushwGammaAmpUc0;              /* 驻波检测场景0反射系数幅度 */
     g_stAtDevCmdCtrl.stCltInfo.ushwGammaAmpUc1          = pstTxCltInfoInd->ushwGammaAmpUc1;              /* 驻波检测场景1反射系数幅度 */
     g_stAtDevCmdCtrl.stCltInfo.ushwGammaAmpUc2          = pstTxCltInfoInd->ushwGammaAmpUc2;              /* 驻波检测场景2反射系数幅度 */
     g_stAtDevCmdCtrl.stCltInfo.ushwGammaAntCoarseTune   = pstTxCltInfoInd->ushwGammaAntCoarseTune;       /* 粗调格点位置 */

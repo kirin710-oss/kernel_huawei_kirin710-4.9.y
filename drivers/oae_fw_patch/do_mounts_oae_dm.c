@@ -393,7 +393,7 @@ static int __init vertify_root_hash(const char *patch_mnt_dir)
 		snprintf(a_hash + strlen(a_hash),
 			 hash_size - strlen(a_hash) - 1, "%02x", r_hash[i]);
 
-	// get root hash
+/*	// get root hash
 	if (g_root_sha_para == NULL) {
 		OAE_DM_INFO("oae_dm: no root hash\n");
 		rc = 0;
@@ -420,7 +420,7 @@ static int __init vertify_root_hash(const char *patch_mnt_dir)
 		rc = 0;
 		goto out;
 	}
-
+*/
 	OAE_DM_INFO("oae_dm: verity root_sha %s--%s\n", div_start + 1, a_hash);
 	rc = strncmp(a_hash, div_start + 1, digest_size * 2);
 	if (rc)
@@ -935,12 +935,12 @@ void __init oae_dm_cleanup(const char *patch_mnt_dir, int patched)
 	char squash_mnt_dir[OAE_DM_PATCH_FILE_LEN] = {0};
 	char path[OAE_DM_PATCH_FILE_LEN] = {0};
 
-	if (g_root_sha_para) {
+/*	if (g_root_sha_para) {
 		OAE_DM_ERROR("oae_dm: test test clean\n");
 		kfree(g_root_sha_para);
 		g_root_sha_para = NULL;
 	}
-
+*/
 	if (!patch_mnt_dir) {
 		OAE_DM_ERROR("oae_dm: oae_dm_cleanup patch_mnt_dir is null\n");
 		return;

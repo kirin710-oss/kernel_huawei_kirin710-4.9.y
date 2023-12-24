@@ -64,6 +64,9 @@
 
 #include "TafAppCall.h"
 #include "ATCmdProc.h"
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+#include "si_app_emat.h"
+#endif
 
 #ifdef __cplusplus
 #if __cplusplus
@@ -239,7 +242,17 @@ typedef struct
     SI_PIH_EVENT                        ulEventType;
     AT_PIH_RSP_PROC_FUNC                pAtPihRspProcFunc; //lint !e958
 }AT_PIH_RSP_PROC_FUNC_STRU;
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+typedef VOS_UINT32 (*AT_EMAT_RSP_PROC_FUNC)(TAF_UINT8                 ucIndex,
+                                            SI_EMAT_EVENT_INFO_STRU  *pstEvent,
+                                            VOS_UINT16               *pusLength);
 
+typedef struct
+{
+    SI_EMAT_EVENT_ENUM_UINT32            ulEventType;
+    AT_EMAT_RSP_PROC_FUNC                pAtEMATRspProcFunc; //lint !e958
+}AT_EMAT_RSP_PROC_FUNC_STRU;
+#endif
 
 typedef struct
 {
@@ -1448,6 +1461,33 @@ VOS_UINT32 At_PrintSilentPinInfo(
     SI_PIH_EVENT_INFO_STRU             *pstEvent,
     VOS_UINT16                         *pusLength
 );
+
+#if (FEATURE_ESIM_ADAPT == FEATURE_ON)
+
+VOS_UINT32 At_PrintEsimCleanProfileInfo(
+    TAF_UINT8                           ucIndex,
+    SI_EMAT_EVENT_INFO_STRU            *pstEvent,
+    VOS_UINT16                         *pusLength
+);
+
+VOS_UINT32 At_PrintEsimCheckProfileInfo(
+    TAF_UINT8                           ucIndex,
+    SI_EMAT_EVENT_INFO_STRU            *pstEvent,
+    VOS_UINT16                         *pusLength
+);
+
+VOS_UINT32 At_PrintGetEsimEidInfo(
+    TAF_UINT8                           ucIndex,
+    SI_EMAT_EVENT_INFO_STRU            *pstEvent,
+    VOS_UINT16                         *pusLength
+);
+
+VOS_UINT32 At_PrintGetEsimPKIDInfo(
+    TAF_UINT8                           ucIndex,
+    SI_EMAT_EVENT_INFO_STRU            *pstEvent,
+    VOS_UINT16                         *pusLength
+);
+#endif
 
 VOS_UINT32 AT_RcvTafPsCallEvtLimitPdpActInd(
     VOS_UINT8                           ucIndex,
