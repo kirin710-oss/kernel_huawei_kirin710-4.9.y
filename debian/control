@@ -1,0 +1,13 @@
+Source: linux-android-huawei-kirin710
+Section: kernel
+Priority: optional
+Maintainer: Your Name <you@example.com>
+Build-Depends: debhelper (>= 13), bc, kmod, cpio, rsync
+Standards-Version: 4.1.0
+
+Package: linux-image-huawei-kirin710
+Architecture: arm64
+Depends: ${misc:Depends}
+Description: Linux kernel image for Huawei Kirin 710 devices
+ This package contains the Linux kernel image for Huawei devices
+ based on the Kirin 710 platform.
