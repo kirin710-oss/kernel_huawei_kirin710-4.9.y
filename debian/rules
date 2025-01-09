@@ -1,7 +1,6 @@
 #!/usr/bin/make -f
 
-export KBUILD_BUILD_VERSION = 1
-export DEB_HOST_ARCH = arm64
+include /usr/share/linux-packaging-snippets/kernel-snippet.mk
 
 %:
 	dh $@

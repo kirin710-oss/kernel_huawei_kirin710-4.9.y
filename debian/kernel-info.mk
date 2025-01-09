@@ -1,8 +1,36 @@
-# Device name
-DEVICE_NAME := Huawei Kirin 710
+VARIANT = android
+KERNEL_BASE_VERSION = 4.9-0
+KERNEL_BOOTIMAGE_CMDLINE = loglevel=4 initcall_debug=n page_tracker=on unmovable_isolate1=2:192M,3:224M,4:256M printktimer=0xfff0a000,0x534,0x538 androidboot.selinux=permissive buildvariant=user
+DEVICE_VENDOR = huawei
+DEVICE_MODEL = kirin710
+DEVICE_FULL_NAME = Huawei Nova 3I
+KERNEL_DEFCONFIG = merge_kirin710_defconfig
+KERNEL_IMAGE_WITH_DTB = 0
+KERNEL_IMAGE_WITH_DTB_OVERLAY = 0
+KERNEL_BOOTIMAGE_PAGE_SIZE = 4096
+KERNEL_BOOTIMAGE_BASE_OFFSET = 0x00000000
+KERNEL_BOOTIMAGE_KERNEL_OFFSET = 0x00008000
+KERNEL_BOOTIMAGE_INITRAMFS_OFFSET = 0x07b88000
+KERNEL_BOOTIMAGE_SECONDIMAGE_OFFSET = 0x00f00000
+KERNEL_BOOTIMAGE_TAGS_OFFSET = 0x07988000
+BUILD_CROSS = 1
+BUILD_TRIPLET = aarch64-linux-android-
+BUILD_CLANG_TRIPLET = aarch64-linux-gnu-
+BUILD_CC = clang
+BUILD_PATH = /usr/lib/llvm-android-6.0-4691093/bin
+DEB_TOOLCHAIN = linux-initramfs-halium-generic:arm64, binutils-aarch64-linux-gnu, clang-android-6.0-4691093, gcc-4.9-aarch64-linux-android, g++-4.9-aarch64-linux-android, libgcc-4.9-dev-aarch64-linux-android-cross
+DEB_BUILD_ON = amd64
+DEB_BUILD_FOR = arm64
+KERNEL_ARCH = arm64
+KERNEL_BUILD_TARGET = Image.gz
+KERNEL_IMAGE_WITH_DTB_OVERLAY_IN_KERNEL = 0
 
-# Kernel base version
-KERNEL_BASE_VERSION := 4.9
+# Disable vbmeta
+DEVICE_VBMETA_REQUIRED = 0
 
-# Defconfig
-KERNEL_DEFCONFIG := merge_kirin710_defconfig
+# Flashing
+FLASH_ENABLED = 1
+FLASH_INFO_MANUFACTURER = Huawei
+FLASH_INFO_MODEL = INE-AL00
+FLASH_INFO_CPU = KIRIN 710
+FLASH_INFO_DEVICE_IDS = kirin710

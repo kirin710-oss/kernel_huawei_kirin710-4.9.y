@@ -34,7 +34,7 @@ jobs:
             -v ${{ github.workspace }}:/buildd/sources \
             quay.io/droidian/build-essential:current-amd64 \
             bash -c "
-              set -e
+              set -xe
               apt-get update
               apt-get install -y linux-packaging-snippets
               cd /buildd/sources
