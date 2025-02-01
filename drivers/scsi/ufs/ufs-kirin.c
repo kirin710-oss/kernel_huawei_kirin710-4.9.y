@@ -14,7 +14,7 @@
 
 #define pr_fmt(fmt) "ufshcd :" fmt
 
-#include <linux/bootdevice.h>
+#include <linux/hisi/bootdevice.h>
 #include <linux/time.h>
 #include <linux/of.h>
 #include <linux/of_address.h>
@@ -24,16 +24,10 @@
 #include <linux/gpio.h>
 #include <soc_sctrl_interface.h>
 #include <soc_ufs_sysctrl_interface.h>
-#include <linux/hisi/hisi_idle_sleep.h>
 #include <linux/vmalloc.h>
 #include <linux/kthread.h>
 #include <linux/i2c.h>
 #include <linux/of_gpio.h>
-#ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-#include <teek_client_api.h>
-#include <teek_client_id.h>
-#include <teek_client_constants.h>
-#endif
 #include <linux/mfd/hisi_pmic.h>
 #include <pmic_interface.h>
 
@@ -46,21 +40,6 @@
 #include "hisi_ufs_bkops.h"
 #endif
 
-#ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-/*uuid to TA: 54ff868f-0d8d-4495-9d95-8e24b2a08274*/
-#define UUID_TEEOS_UFS_InlineCrypto \
-{ \
-	0x54ff868f,\
-	0x0d8d,\
-	0x4495,\
-	{ \
-		0x9d, 0x95, 0x8e, 0x24, 0xb2, 0xa0, 0x82, 0x74 \
-	} \
-}
-
-#define CMD_ID_UFS_KEY_RESTORE		(3)
-#endif
-
 struct st_caps_map {
 	char *caps_name;
 	uint64_t cap_bit;
@@ -71,9 +50,6 @@ static int __init early_parse_ufs_product_name_cmdline(char *arg)
 	if (arg) {
 		strncpy(ufs_product_name, arg,
 			strnlen(arg, sizeof(ufs_product_name)));
-#ifdef CONFIG_HISI_DEBUG_FS
-		pr_info("cmdline ufs_product_name=%s\n", ufs_product_name);
-#endif
 	} else {
 		pr_info("no ufs_product_name cmdline\n");
 	}
@@ -84,140 +60,6 @@ early_param("ufs_product_name", early_parse_ufs_product_name_cmdline);
 /*lint -e528 +esym(528,*)*/
 /* Here external BL31 function declaration for UFS inline encrypt*/
 
-#ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-TEEC_Context *context = NULL;
-TEEC_Session *session = NULL;
-
-static int uie_open_session(void)
-{
-	u32 root_id = 2012;
-	const char *package_name = "ufs_key_restore";
-	TEEC_UUID svc_id = UUID_TEEOS_UFS_InlineCrypto;
-	TEEC_Operation op = {0};
-	TEEC_Result result;
-	u32 origin = 0;
-	int ret = 0;
-
-	pr_err("%s: start ++\n", __func__);
-
-	context = kzalloc(sizeof(TEEC_Context), GFP_KERNEL);
-	if (!context) {
-		ret = -ENOMEM;
-		goto no_memory;
-	}
-	session = kzalloc(sizeof(TEEC_Session), GFP_KERNEL);
-	if (!session) {
-		ret = -ENOMEM;
-		goto free_context;
-	}
-
-	/* initialize TEE environment */
-	result = TEEK_InitializeContext(NULL, context);
-	if(result != TEEC_SUCCESS) {
-		pr_err("%s: InitializeContext failed, Ret=0x%x\n",
-				  __func__, result);
-		ret = -1;
-		goto cleanup_1;
-	}
-
-	/* operation params create  */
-	op.started = 1;
-	/*open session*/
-	op.paramTypes = TEEC_PARAM_TYPES(TEEC_NONE,
-			    TEEC_NONE,
-			    TEEC_MEMREF_TEMP_INPUT,
-			    TEEC_MEMREF_TEMP_INPUT);
-
-	op.params[2].tmpref.buffer = (void *)&root_id;
-	op.params[2].tmpref.size = sizeof(root_id);
-	op.params[3].tmpref.buffer = (void *)package_name;
-	op.params[3].tmpref.size = (size_t)(strlen(package_name) + 1);
-
-	result = TEEK_OpenSession(context, session, &svc_id,
-				  TEEC_LOGIN_IDENTIFY, NULL,
-				  &op, &origin);
-	if(result != TEEC_SUCCESS) {
-		pr_err("%s: OpenSession fail, RC=0x%x, RO=0x%x\n",
-				  __func__, result, origin);
-		ret = -1;
-		goto cleanup_2;
-	}
-
-	pr_err("%s: end ++\n", __func__);
-	return ret;
-
-cleanup_2:
-	TEEK_FinalizeContext(context);
-cleanup_1:
-	if (session) {
-		kfree(session);
-		session = NULL;
-	}
-free_context:
-	if (context) {
-		kfree(context);
-		context = NULL;
-	}
-no_memory:
-	pr_err("%s: failed end ++\n", __func__);
-	return ret;
-}
-
-static int set_key_in_tee(void)
-{
-	u32 root_id = 2012;
-	const char *package_name = "ufs_key_restore";
-	TEEC_Operation op = {0};
-	TEEC_Result result;
-	u32 origin = 0;
-	int ret = 0;
-
-	if (!session) {
-		pr_err("%s: session is null\n", __func__);
-		return ret;
-	}
-
-	pr_err("%s: start ++\n", __func__);
-
-	/* operation params create  */
-	op.started = 1;
-	/*open session*/
-	op.paramTypes = TEEC_PARAM_TYPES(TEEC_NONE, TEEC_NONE,
-				  TEEC_NONE, TEEC_NONE);
-
-	op.params[2].tmpref.buffer = (void *)&root_id;
-	op.params[2].tmpref.size = sizeof(root_id);
-	op.params[3].tmpref.buffer = (void *)package_name;
-	op.params[3].tmpref.size = (size_t)(strlen(package_name) + 1);
-
-	result = TEEK_InvokeCommand(session,
-				    CMD_ID_UFS_KEY_RESTORE,
-				    &op, &origin);
-	if (result != TEEC_SUCCESS) {
-		pr_err("%s: Invoke CMD fail, RC=0x%x, RO=0x%x\n",
-				  __func__, result, origin);
-		ret = -1;
-	}
-
-	pr_err("%s: end ++\n", __func__);
-	return ret;
-}
-
-static int ufs_kirin_set_key(void)
-{
-	int err, i;
-
-	for (i = 0; i < 2; i++) {
-		err = set_key_in_tee();
-		if (!err)
-			return err;
-
-		pr_err("%s: set ufs crypto key error, times: %d\n", __func__, i + 1);
-	}
-
-	return err;
-}
-#else
 #ifdef CONFIG_SCSI_UFS_INLINE_CRYPTO
 noinline int atfd_hisi_uie_smc(u64 _function_id, u64 _arg0, u64 _arg1, u64 _arg2)
 {
@@ -236,7 +78,6 @@ noinline int atfd_hisi_uie_smc(u64 _function_id, u64 _arg0, u64 _arg1, u64 _arg2
 
 	return (int)function_id;
 }
-#endif
 #endif
 
 static u64 kirin_ufs_dma_mask = DMA_BIT_MASK(64);/*lint !e598 !e648*/
@@ -563,14 +404,6 @@ int ufs_kirin_uie_config_init(struct ufs_hba *hba)
 	reg_value |= CRYPTO_GENERAL_ENABLE;
 	ufshcd_writel(hba, reg_value, REG_CONTROLLER_ENABLE);
 
-#ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-	dev_err(hba->dev, "%s: UFS inline crypto V2.0.\n", __func__);
-	if (ufshcd_eh_in_progress(hba)) {
-		err = ufs_kirin_set_key();
-		if (err)
-			BUG();
-	}
-#else
 	/* Here UFS driver, which set SECURITY reg 0x1 in BL31,
 	 * has the permission to write scurity key registers.
 	 */
@@ -583,8 +416,6 @@ int ufs_kirin_uie_config_init(struct ufs_hba *hba)
 			BUG_ON(1);
 	}
 #endif
-#endif
-
 	return err;
 }
 
@@ -603,20 +434,6 @@ static u32 bkdrhash_alg(u8 *str, int len)
 
 	return (hash & 0xFFFFFFFF);
 }
-
-#ifdef CONFIG_HISI_DEBUG_FS
-static void test_generate_cci_dun_use_bkdrhash(u8 *key, int key_len)
-{
-	u32 crypto_cci;
-	u64 dun;
-	u32 hash_res;
-
-	hash_res = bkdrhash_alg(key, key_len);
-	crypto_cci = hash_res % MAX_CRYPTO_KEY_INDEX;
-	dun = (u64)hash_res;
-	pr_err("%s: ufs crypto key index is %d, dun is 0x%llx\n", __func__, crypto_cci, dun);
-}
-#endif
 #endif
 
 /* configure UTRD to enable cryptographic operations for this transaction. */
@@ -653,21 +470,7 @@ void ufs_kirin_uie_utrd_prepare(struct ufs_hba *hba,
 #ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO
 		hash_res = bkdrhash_alg((u8 *)lrbp->cmd->request->hisi_req.ci_key,
 				lrbp->cmd->request->hisi_req.ci_key_len);
-#ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-		if ((lrbp->cmd->request->hisi_req.ci_key_index < 0) || (lrbp->cmd->request->hisi_req.ci_key_index > 31)) {
-			dev_err(hba->dev, "%s: ci_key index err is 0x%x\n", __func__, lrbp->cmd->request->hisi_req.ci_key_index);
-			BUG();
-		}
-
-		crypto_cci = lrbp->cmd->request->hisi_req.ci_key_index;
-#else
 		crypto_cci = hash_res % MAX_CRYPTO_KEY_INDEX;
-#endif
-
-#ifdef CONFIG_HISI_DEBUG_FS
-		if(hba->inline_debug_flag == DEBUG_LOG_ON)
-			dev_err(hba->dev, "%s: key index is %d\n", __func__, crypto_cci);
-#endif
 #else
 		crypto_cci = lrbp->task_tag;
 		spin_lock_irqsave(hba->host->host_lock, flags);
@@ -679,17 +482,6 @@ void ufs_kirin_uie_utrd_prepare(struct ufs_hba *hba,
 	}
 
 	dun = (u64)lrbp->cmd->request->bio->hisi_bio.index;
-
-#if defined(CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO) && defined(CONFIG_HISI_DEBUG_FS)
-	if(hba->inline_debug_flag == DEBUG_LOG_ON) {
-		dev_err(hba->dev, "%s: dun is 0x%llx\n", __func__, ((u64)hash_res) << 32 | dun);
-	}
-	if(hba->inline_debug_flag == DEBUG_CRYPTO_ON) {
-		crypto_enable = UTP_REQ_DESC_CRYPTO_ENABLE;
-	} else if(hba->inline_debug_flag == DEBUG_CRYPTO_OFF) {
-		crypto_enable = 0x0;
-	}
-#endif
 
 	dword_0 = crypto_enable | crypto_cci;
 	dword_1 = (u32)(dun & 0xffffffff);
@@ -1057,81 +849,6 @@ void ufs_kirin_inline_crypto_attr(struct ufs_hba *hba)
 		dev_err(hba->dev, "Failed to create sysfs for ufs_inline_state\n");
 }
 
-#if defined(CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO) && defined(CONFIG_HISI_DEBUG_FS)
-static ssize_t ufs_kirin_inline_debug_show(struct device *dev,
-				  struct device_attribute *attr, char *buf)
-{
-	struct ufs_hba *hba = dev_get_drvdata(dev);
-
-	if (hba->inline_debug_flag == DEBUG_LOG_ON || hba->inline_debug_flag == DEBUG_CRYPTO_ON) {
-		return snprintf(buf, PAGE_SIZE, "%s\n", "on");
-	} else {
-		return snprintf(buf, PAGE_SIZE, "%s\n", "off");
-	}
-}
-
-static ssize_t ufs_kirin_inline_debug_store(struct device *dev,
-			struct device_attribute *attr, const char *buf, size_t count)
-{
-	struct ufs_hba *hba = dev_get_drvdata(dev);
-
-	if (sysfs_streq(buf, "off")) {
-		hba->inline_debug_flag = DEBUG_LOG_OFF;
-	} else if (sysfs_streq(buf, "on")) {
-		hba->inline_debug_flag = DEBUG_LOG_ON;
-	} else if(sysfs_streq(buf, "crypto_on")) {
-		hba->inline_debug_flag = DEBUG_CRYPTO_ON;
-	} else if(sysfs_streq(buf, "crypto_off")) {
-		hba->inline_debug_flag = DEBUG_CRYPTO_OFF;
-	} else {
-		pr_err("%s: invalid input debug parameter.\n", __func__);
-		return -EINVAL;
-	}
-
-	return count;
-}
-
-static ssize_t ufs_kirin_inline_dun_cci_test(struct device *dev,
-			struct device_attribute *attr, const char *buf, size_t count)
-{
-	int i;
-	char buf_temp[65] = {0};
-
-	if(count != 65) {
-		pr_err("%s: the input key len is not 64.\n", __func__);
-		return count;
-	}
-
-	for(i = 0; i < 64; i++) {
-		buf_temp[i] = buf[i];
-	}
-	buf_temp[64] = '\0';
-	pr_err("%s: input key is %s\n", __func__, buf_temp);
-	test_generate_cci_dun_use_bkdrhash((u8 *)buf_temp, 64);
-	return count;
-}
-
-static void ufs_kirin_inline_crypto_debug_init(struct ufs_hba *hba)
-{
-	hba->inline_debug_flag = DEBUG_LOG_OFF;
-
-	hba->inline_debug_state.inline_attr.show = ufs_kirin_inline_debug_show;
-	hba->inline_debug_state.inline_attr.store = ufs_kirin_inline_debug_store;
-	sysfs_attr_init(&hba->inline_debug_state.inline_attr.attr);
-	hba->inline_debug_state.inline_attr.attr.name = "ufs_inline_debug";
-	hba->inline_debug_state.inline_attr.attr.mode = S_IRUSR | S_IRGRP | S_IWUSR;
-	if (device_create_file(hba->dev, &hba->inline_debug_state.inline_attr))
-		dev_err(hba->dev, "Failed to create sysfs for inline_debug_state\n");
-
-	hba->inline_dun_cci_test.inline_attr.store = ufs_kirin_inline_dun_cci_test;
-	sysfs_attr_init(&hba->inline_dun_cci_test.inline_attr.attr);
-	hba->inline_dun_cci_test.inline_attr.attr.name = "ufs_inline_dun_cci_test";
-	hba->inline_dun_cci_test.inline_attr.attr.mode = S_IWUSR;
-	if (device_create_file(hba->dev, &hba->inline_dun_cci_test.inline_attr))
-		dev_err(hba->dev, "Failed to create sysfs for inline_dun_cci_test\n");
-}
-#endif
-
 void ufs_kirin_set_pm_lvl(struct ufs_hba *hba)
 {
 	hba->rpm_lvl = UFS_PM_LVL_1;
@@ -1225,9 +942,6 @@ static void ufs_kirin_populate_mgc_dt(struct device_node *parent_np,
 
 		ret = of_property_read_u32(child_np, "manufacturer_id", &man_id);
 		if (ret) {
-#ifdef CONFIG_HISI_DEBUG_FS
-			pr_err("check the manufacturer_id %s\n", child_np->name);
-#endif
 			continue;
 		}
 
@@ -1290,13 +1004,6 @@ void ufs_kirin_populate_dt(struct device *dev,
 #ifdef CONFIG_HISI_UFS_MANUAL_BKOPS
 	ufs_kirin_populate_mgc_dt(np, host);
 #endif
-#ifdef CONFIG_SCSI_UFS_KIRIN_LINERESET_CHECK
-	if (of_find_property(np, "ufs-kirin-linereset-check-disable", NULL))
-		host->hba->bg_task_enable = false;
-	else
-		host->hba->bg_task_enable = true;
-#endif
-
 	if (of_find_property(np, "ufs-kirin-use-auto-H8", NULL))
 		host->hba->caps |= UFSHCD_CAP_AUTO_HIBERN8;
 
@@ -1324,9 +1031,6 @@ void ufs_kirin_populate_dt(struct device *dev,
 	ret = of_property_match_string(np, "ufs-0db-equalizer-product-names",
 				     ufs_product_name);
 	if (ret >= 0) {
-#ifdef CONFIG_HISI_DEBUG_FS
-		dev_info(dev, "find %s in dts\n", ufs_product_name);
-#endif
 		host->tx_equalizer = 0;
 	} else {
 #ifdef UFS_TX_EQUALIZER_0DB
@@ -1418,10 +1122,6 @@ int ufs_kirin_init(struct ufs_hba *hba)
 	if (get_bootdevice_type() == BOOT_DEVICE_UFS) {
 #endif
 		ufs_kirin_inline_crypto_attr(hba);
-
-#if defined(CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO) && defined(CONFIG_HISI_DEBUG_FS)
-		ufs_kirin_inline_crypto_debug_init(hba);
-#endif
 
 #ifdef CONFIG_HISI_BOOTDEVICE
 	}
@@ -1546,9 +1246,6 @@ const struct ufs_hba_variant_ops ufs_hba_kirin_vops = {
 #endif
 	.dbg_hci_dump = kirin_ufs_hci_log,
 	.dbg_uic_dump = kirin_ufs_uic_log,
-#ifdef CONFIG_SCSI_UFS_KIRIN_LINERESET_CHECK
-	.background_thread = ufs_kirin_daemon_thread,
-#endif
 #ifdef CONFIG_SCSI_UFS_HS_ERROR_RECOVER
 	.get_pwr_by_debug_register = ufs_kirin_get_pwr_by_sysctrl,
 #endif
@@ -1560,13 +1257,6 @@ const struct ufs_hba_variant_ops ufs_hba_kirin_vops = {
 static int __init uie_open_session_late(void)
 {
 	int err = 0;
-
-#ifdef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
-	err = uie_open_session();
-	if (err) {
-		BUG_ON(1);
-	}
-#endif
 
 	return err;
 }

@@ -468,6 +468,7 @@ int32 free_seperted_rx_buf(uint8 subsys,uint8 alloctype)
 {
     struct ps_core_s *ps_core_d = NULL;
     struct bfgx_sepreted_rx_st *pst_sepreted_data = NULL;
+    uint8 *buf_ptr = NULL;
 
     if (subsys >= BFGX_BUTT)
     {
@@ -488,23 +489,20 @@ int32 free_seperted_rx_buf(uint8 subsys,uint8 alloctype)
     }
     pst_sepreted_data = &ps_core_d->bfgx_info[subsys].sepreted_rx;
 
+    buf_ptr = pst_sepreted_data->rx_buf_org_ptr;
     spin_lock(&pst_sepreted_data->sepreted_rx_lock);
-    if (NULL != pst_sepreted_data->rx_buf_org_ptr)
-    {
-        if (KZALLOC == alloctype)
-        {
-            kfree(pst_sepreted_data->rx_buf_org_ptr);
-        }
-        else if (VMALLOC == alloctype)
-        {
-            vfree(pst_sepreted_data->rx_buf_org_ptr);
-        }
-    }
     pst_sepreted_data->rx_prev_seq = RX_SEQ_NULL;
     pst_sepreted_data->rx_buf_all_len = 0;
     pst_sepreted_data->rx_buf_ptr = NULL;
     pst_sepreted_data->rx_buf_org_ptr = NULL;
     spin_unlock(&pst_sepreted_data->sepreted_rx_lock);
+    if (buf_ptr != NULL) {
+        if (alloctype == KZALLOC) {
+            kfree(buf_ptr);
+        } else if (alloctype == VMALLOC) {
+            vfree(buf_ptr);
+        }
+    }
 
     return 0;
 }
@@ -604,7 +602,7 @@ int32 uart_wifi_open(void)
         return -EINVAL;
     }
 
-    /*如果BFGIN睡眠，则唤醒之*/
+    /*????BFGIN??????????????*/
     ret = prepare_to_visit_node(ps_core_d);
     if (ret < 0)
     {
@@ -651,7 +649,7 @@ int32 uart_wifi_close(void)
         return -EINVAL;
     }
 
-    /*如果BFGIN睡眠，则唤醒之*/
+    /*????BFGIN??????????????*/
     ret = prepare_to_visit_node(ps_core_d);
     if (ret < 0)
     {
@@ -700,7 +698,7 @@ int32 uart_bfgx_close_cmd(void)
         return -EINVAL;
     }
 
-    /*如果BFGIN睡眠，则唤醒之*/
+    /*????BFGIN??????????????*/
     ret = prepare_to_visit_node(ps_core_d);
     if (ret < 0)
     {
@@ -708,7 +706,7 @@ int32 uart_bfgx_close_cmd(void)
         return ret;
     }
 
-    /*下发BFGIN shutdown命令*/
+    /*????BFGIN shutdown????*/
     PS_PRINT_INFO("uart shutdown BCPU\n");
 
     ps_uart_state_pre(ps_core_d->tty);
@@ -1024,7 +1022,7 @@ STATIC ssize_t hw_bt_write(struct file *filp, const int8 __user *buf, size_t cou
         return -EINVAL;
     }
 
-    /*适配Android O，BT数据分两次下发，先发数据类型，长度固定为1Byte，然后发数据，需要在驱动中组合起来发给device*/
+    /*????Android O??BT????????????????????????????????????????1Byte??????????????????????????????????????device*/
     if (BT_TYPE_DATA_LEN == count)
     {
         get_user(type, puser);
@@ -1198,14 +1196,14 @@ STATIC int32 hw_bt_release(struct inode *inode, struct file *filp)
     ret = prepare_to_visit_node(ps_core_d);
     if (ret < 0)
     {
-        /*唤醒失败，bfgx close时的唤醒失败不进行DFR恢复*/
+        /*??????????bfgx close??????????????????DFR????*/
         PS_PRINT_ERR("prepare work FAIL\n");
     }
 
     ret = bfgx_close_cmd_send(BFGX_BT);
     if (ret < 0)
     {
-        /*发送close命令失败，不进行DFR，继续进行下电流程，DFR恢复延迟到下次open时或者其他业务运行时进行*/
+        /*????close????????????????DFR????????????????????DFR??????????????open????????????????????????*/
         PS_PRINT_ERR("bfgx close cmd fail\n");
     }
 
@@ -1217,7 +1215,7 @@ STATIC int32 hw_bt_release(struct inode *inode, struct file *filp)
         ret = ps_core_d->ps_pm->bfg_power_set(BFGX_BT, BFG_POWER_GPIO_DOWN);
         if (ret)
         {
-            /*下电失败，不进行DFR，DFR恢复延迟到下次open时或者其他业务运行时进行*/
+            /*????????????????DFR??DFR??????????????open????????????????????????*/
             PS_PRINT_ERR("set bt power off err!ret = %d\n", ret);
         }
     }
@@ -2318,7 +2316,7 @@ STATIC ssize_t hw_gnss_read(struct file *filp, int8 __user *buf, size_t count, l
             spin_unlock(&ps_core_d->gnss_rx_lock);
             if (0 != read_queue.qlen)
             {
-                //没有找到last包，skb queue就空了
+                //????????last????skb queue??????
                 PS_PRINT_ERR("skb dequeue error, qlen=%x!\n", read_queue.qlen);
                 goto skb_dequeue_error;
             }

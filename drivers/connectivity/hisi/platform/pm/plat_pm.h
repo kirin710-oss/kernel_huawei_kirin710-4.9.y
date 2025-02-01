@@ -8,11 +8,13 @@
 *****************************************************************************/
 #include <linux/mutex.h>
 #include <linux/kernel.h>
-#include <linux/wakelock.h>
 
 #include "plat_pm_wlan.h"
 #include "hw_bfg_ps.h"
 #include "board.h"
+#ifdef CONFIG_HUAWEI_DSM
+#include <dsm/dsm_pub.h>
+#endif
 /*****************************************************************************
   2 Define macro
 *****************************************************************************/
@@ -42,10 +44,10 @@
 #define WAIT_DEVACK_MSEC               (100)
 #define WAIT_DEVACK_TIMEOUT_MSEC       (200)
 
-/*超时时间要大于wkup dev work中的最长执行时间，否则超时以后进入DFR和work中会同时操作tty，导致冲突*/
+/*??????????????wkup dev work??????????????????????????????????DFR??work????????????tty??????????*/
 #define WAIT_WKUPDEV_MSEC              (10000)
 
-/* BFGX系统上电加载异常类型 */
+/* BFGX???????????????????? */
 enum BFGX_POWER_ON_EXCEPTION_ENUM
 {
     BFGX_POWER_FAILED                               = -1,
@@ -67,7 +69,7 @@ enum BFGX_POWER_ON_EXCEPTION_ENUM
     BFGX_POWER_ENUM_BUTT,
 };
 
-/* wifi系统上电加载异常类型 */
+/* wifi???????????????????? */
 enum WIFI_POWER_ON_EXCEPTION_ENUM
 {
     WIFI_POWER_FAIL                                 = -1,
@@ -182,5 +184,8 @@ extern int32 bfgx_pm_feature_set(void);
 extern int firmware_download_function(uint32 which_cfg);
 extern oal_int32 hi110x_get_wifi_power_stat(oal_void);
 extern int32 device_mem_check(unsigned long long *time);
+#endif
+#ifdef CONFIG_HUAWEI_DSM
+extern void hw_1102_dsm_client_notify(int dsm_id, const char *fmt, ...);
 #endif
 

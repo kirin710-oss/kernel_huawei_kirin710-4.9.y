@@ -333,13 +333,6 @@ t_ap_sensor_ops_record all_ap_sensor_operations[TAG_SENSOR_END] = {
 		.ops = {.setdelay = ak8789_register_report_data},
 	},
 #endif
-#ifdef CONFIG_SENSORS_COLOR_AP
-	[TAG_COLOR] = {
-		.work_on_ap = true,
-		.ops = {//.setdelay = ams_tcs3430_setdelay,
-				.enable = color_sensor_enable},
-	},
-#endif
 };
 
 int register_ap_sensor_operations(int tag, sensor_operation_t *ops)
@@ -1595,14 +1588,11 @@ static int report_sensor_event_batch(int tag, int value[], int length, uint64_t 
 					  event.length + OFFSET_OF_END_MEM(struct sensor_data, length), ltimestamp);
 }
 
-#ifdef CONFIG_HW_TOUCH_KEY
-extern int touch_key_report_from_sensorhub(int key, int value);
-#else
 int touch_key_report_from_sensorhub(int key, int value)
 {
 	return 0;
 }
-#endif
+
 #ifndef CONFIG_HISI_SYSCOUNTER
 int syscounter_to_timespec64(u64 syscnt, struct timespec64 *ts)
 {

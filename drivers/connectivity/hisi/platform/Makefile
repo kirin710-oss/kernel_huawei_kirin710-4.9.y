@@ -1,4 +1,4 @@
-HI1102_DRIVER_BUILTIN_PATH ?= $(subst ",,$(CONFIG_HI110X_DRIVER_PATH))
+HI1102_DRIVER_BUILTIN_PATH := drivers/connectivity/hisi
 DRIVER_FLODER = platform
 
 export _PRE_PRODUCT_VERSION  ?= 1102
@@ -163,7 +163,10 @@ $(warning HI110X_VERSION: $(HI110X_VERSION))
 EXTRA_CFLAGS = $(HI1102_INCLUDES)
 EXTRA_CFLAGS += $(COPTS) $(KBUILD_CFLAGS)
 EXTRA_CFLAGS += $(COMM_COPTS)
-EXTRA_CFLAGS +=  -Wuninitialized -Wempty-body -Wclobbered -Wmissing-parameter-type -Wold-style-declaration -Woverride-init -Wtype-limits
+EXTRA_CFLAGS += -Werror -Wuninitialized -Wempty-body -Woverride-init -Wtype-limits
+
+#ignore some option is not support by calng
+EXTRA_CFLAGS += -Wno-unknown-warning-option
 
 EXTRA_CFLAGS +=  -fno-pic
 MODFLAGS = -fno-pic

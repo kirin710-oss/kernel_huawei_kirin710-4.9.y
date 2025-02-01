@@ -37,12 +37,6 @@ config DEVFREQ_GOV_NPU_PM_QOS
     depends on ARCH_HISI && PM_DEVFREQ
     select PM_OPP
 
-config HISI_DDR_CHINTLV
-    bool "Hisilicon ddr devfreq chintlv"
-    default n
-    help
-      Deliver register address of GLB_ADDR_INTLV to ATF.
-
 config HISI_DDR_DEVFREQ_DEBUGFS
 	bool "Hisilicon ddr devfreq debugfs"
 	depends on HI3650_DDR_DEVFREQ && DEBUG_FS
@@ -86,6 +80,3 @@ config DDR_HW_VOTE_15BITS
         default n
         help
           Hisilicon ddr dfs "hardware vote 15 bits" enbale.
-
-source "drivers/devfreq/hisi/dsu_pctrl/Kconfig"
-source "drivers/devfreq/hisi/l3c_devfreq/Kconfig"

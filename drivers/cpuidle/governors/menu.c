@@ -19,6 +19,7 @@
 #include <linux/hrtimer.h>
 #include <linux/tick.h>
 #include <linux/sched.h>
+#include <linux/sched/loadavg.h>
 #include <linux/math64.h>
 #include <linux/module.h>
 #include <linux/cpufreq.h>
@@ -135,18 +136,12 @@ struct menu_device {
 	int		interval_ptr;
 };
 
-
-#define LOAD_INT(x) ((x) >> FSHIFT)
-#define LOAD_FRAC(x) LOAD_INT(((x) & (FIXED_1-1)) * 100)
 #define BIT(nr) (1UL << (nr))
-
 
 /* 60 * 60 > STDDEV_THRESH * INTERVALS = 400 * 8 */
 #define MAX_DEVIATION 60
-static DEFINE_PER_CPU(int, hrtimer_status); //lint !e129
-/*lint -e528 -esym(528,*)*/
+static DEFINE_PER_CPU(int, hrtimer_status);
 static DEFINE_PER_CPU(struct hrtimer, menu_hrtimer);
-/*lint -e528 +esym(528,*)*/
 static unsigned int menu_switch_profile __read_mostly = 0;
 static struct cpumask menu_cpumask;
 static int repeat;
@@ -163,7 +158,6 @@ module_param(perfect_cstate_ms, uint, 0000);
 static unsigned int menu_hrtimer_enable __read_mostly = 0;
 
 /*add cpufreq notify block for dvfs target profile */
-/*lint -e715*/
 static int menu_cpufreq_callback(struct notifier_block *nb,
 				       unsigned long event, void *data)
 {
@@ -179,12 +173,11 @@ static int menu_cpufreq_callback(struct notifier_block *nb,
 		menu_hrtimer_enable = 0;
 	return 0;
 }
-/*lint +e715*/
-/*lint -e785*/
+
 static struct notifier_block menu_cpufreq_notifier = {
 	.notifier_call  = menu_cpufreq_callback,
 };
-/*lint +e785*/
+
 static int __init register_menu_cpufreq_notifier(void)
 {
 	int ret;
@@ -192,7 +185,7 @@ static int __init register_menu_cpufreq_notifier(void)
 		CPUFREQ_TRANSITION_NOTIFIER);
 	return ret;
 }
-/*lint -e64 -e507 -e530 */
+
 /* Cancel the hrtimer if it is not triggered yet */
 void menu_hrtimer_cancel(void)
 {
@@ -228,7 +221,7 @@ static enum hrtimer_restart menu_hrtimer_notify(struct hrtimer *phrtimer)
 	per_cpu(hrtimer_status, cpu) = MENU_HRTIMER_STOP;
 	return HRTIMER_NORESTART;
 }
-/*lint +e64 +e507 +e530 */
+
 static inline int get_loadavg(unsigned long load)
 {
 	return LOAD_INT(load) * 10 + LOAD_FRAC(load) / 10;
@@ -486,17 +479,11 @@ static int menu_select(struct cpuidle_driver *drv, struct cpuidle_device *dev)
 		if (s->disabled || su->disable)
 			continue;
 
-#ifdef CONFIG_HISI_CPU_ISOLATION
-		if (cpu_isolated(cpu)) {
-			data->last_state_idx = i;
-			continue;
-		}
-#endif
 		if (s->target_residency > data->predicted_us) {
 			low_predicted = 1;
 			continue;
 		}
-		if (s->exit_latency > latency_req)/*lint !e574*/
+		if (s->exit_latency > latency_req)
 			continue;
 
 		data->last_state_idx = i;

@@ -60,7 +60,7 @@
 #include <linux/wakelock.h>
 #endif
 #ifdef CONFIG_HISI_UFS_MANUAL_BKOPS
-#include <linux/hisi-bkops-core.h>
+#include <linux/hisi/hisi-bkops-core.h>
 #endif
 
 #include <asm/irq.h>
@@ -341,11 +341,6 @@ struct debugfs_files {
 	struct dentry *dme_local_read;
 	struct dentry *dme_peer_read;
 	struct dentry *req_stats;
-#ifdef CONFIG_HISI_DEBUG_FS
-	struct dentry *idle_intr_verify;
-	struct dentry *idle_timeout_val;
-	struct dentry *idle_intr_check_timer_threshold;
-#endif
 	u32 dme_local_attr_id;
 	u32 dme_peer_attr_id;
 };
@@ -509,9 +504,6 @@ struct ufs_hba_variant_ops {
 	void (*add_debugfs)(struct ufs_hba *hba, struct dentry *root);
 	void (*remove_debugfs)(struct ufs_hba *hba);
 #endif
-#ifdef CONFIG_SCSI_UFS_KIRIN_LINERESET_CHECK
-	int (*background_thread)(void *d);
-#endif
 	void (*dbg_register_dump)(struct ufs_hba *hba);
 	int (*phy_initialization)(struct ufs_hba *);
 #ifdef CONFIG_SCSI_UFS_HS_ERROR_RECOVER
@@ -548,19 +540,6 @@ struct ufs_temp {
 struct ufs_inline_state {
 	struct device_attribute inline_attr;
 };
-
-#if defined(CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO) && defined(CONFIG_HISI_DEBUG_FS)
-enum ufs_inline_debug_state {
-	DEBUG_LOG_OFF,
-	DEBUG_LOG_ON,
-	DEBUG_CRYPTO_OFF,
-	DEBUG_CRYPTO_ON,
-};
-
-struct ufs_inline_debug {
-	struct device_attribute inline_attr;
-};
-#endif
 
 struct ufs_clk_scaling {
 	ktime_t  busy_start_t;
@@ -810,11 +789,6 @@ struct ufs_hba {
 	struct ufs_temp ufs_temp;
 	struct ufs_inline_state inline_state;
 
-#if defined(CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO) && defined(CONFIG_HISI_DEBUG_FS)
-	struct ufs_inline_debug inline_debug_state;
-	u32 inline_debug_flag;
-	struct ufs_inline_debug inline_dun_cci_test;
-#endif
 	/* Control to enable/disable host capabilities */
 	u32 caps;
 	/* Allow dynamic clk gating */
@@ -910,11 +884,6 @@ struct ufs_hba {
 	int v_tx;
 	int init_retry;
 #endif
-#ifdef CONFIG_SCSI_UFS_KIRIN_LINERESET_CHECK
-	bool bg_task_enable;
-	struct task_struct *background_task;
-	u32 reg_uecpa;
-#endif
 	struct io_latency_state io_lat_s;
 
 #ifdef CONFIG_DEVICE_HEALTH_INFO
@@ -942,9 +911,6 @@ struct ufs_hba {
 	struct timer_list idle_intr_check_timer;
 #define UFSHCD_IDLE_INTR_CHECK_INTERVAL	3600000
 	unsigned int idle_intr_check_timer_threshold;/* in ms */
-#ifdef CONFIG_HISI_DEBUG_FS
-	bool ufs_idle_intr_verify;
-#endif
 	struct mutex eh_mutex;
 	int ufs_init_retries;
 	int ufs_reset_retries;
@@ -1161,10 +1127,8 @@ int ufshcd_change_power_mode(struct ufs_hba *hba,
 			     struct ufs_pa_layer_attr *pwr_mode);
 int ufshcd_wait_for_doorbell_clr(struct ufs_hba *hba, u64 wait_timeout_us);
 void ufshcd_enable_intr(struct ufs_hba *hba, u32 intrs);
-#ifndef CONFIG_SCSI_UFS_ENHANCED_INLINE_CRYPTO_V2
 #ifdef CONFIG_SCSI_UFS_INLINE_CRYPTO
 int ufshcd_keyregs_remap_wc(struct ufs_hba *hba, resource_size_t hci_reg_base);
-#endif
 #endif
 void ufshcd_disable_run_stop_reg(struct ufs_hba *hba);
 

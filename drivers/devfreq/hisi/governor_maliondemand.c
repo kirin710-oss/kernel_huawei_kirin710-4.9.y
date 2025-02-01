@@ -25,17 +25,13 @@
 
 #include <linux/hisi/hisi_devfreq.h>
 
-#ifdef CONFIG_HUAWEI_DUBAI
-#include <chipset_common/dubai/dubai.h>
-#endif
-
 /* Default constants for DevFreq-Mali-Ondemand (DFMO) */
 #define DFMO_VSYNC_UPTHRESHOLD		(85)
 #define DFMO_VSYNC_DOWNDIFFERENCTIAL	(15)
-#define DFMO_NO_VSYNC_UPTHRESHOLD	(45)
+#define DFMO_NO_VSYNC_UPTHRESHOLD	(40)
 #define DFMO_NO_VSYNC_DOWNDIFFERENCTIAL	(10)
 #define DFMO_MAX_UPTHRESHOLD		(100)
-#define DFMO_MIN_UPTHRESHOLD		(50)
+#define DFMO_MIN_UPTHRESHOLD		(11)
 #define DFMO_MAX_DOWNDIFFERENCTIAL	(30)
 #define DFMO_MIN_DOWNDIFFERENCTIAL	(1)
 #define DFMO_CONSANTS_DIGIT_MAX		(16)
@@ -100,11 +96,6 @@ static int devfreq_mali_ondemand_func(struct devfreq *df,
 	struct devfreq_mali_ondemand_data *data = df->data;
 	struct hisi_devfreq_data *priv_data = stat.private_data;
 	unsigned long max = (df->max_freq) ? df->max_freq : UINT_MAX;
-
-#ifdef CONFIG_HUAWEI_DUBAI
-	dubai_update_gpu_info(stat.current_frequency, stat.busy_time,
-		stat.total_time, df->profile->polling_ms);
-#endif
 
 	if (err)
 		return err;

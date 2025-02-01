@@ -11,11 +11,12 @@ extern "C" {
 
 
 /*****************************************************************************
-  1 其他头文件包含
+  1 ??????????????
 *****************************************************************************/
 /*lint -e322*/
 #include <linux/compiler.h>
 #include <linux/kernel.h>
+#include <linux/version.h>
 #include <linux/kallsyms.h>
 #include <asm/string.h>
 #if (_PRE_PRODUCT_ID == _PRE_PRODUCT_ID_HI1151)
@@ -37,9 +38,9 @@ extern "C" {
 /*lint +e322*/
 
 /*****************************************************************************
-  2 宏定义
+  2 ??????
 *****************************************************************************/
-/* 32字节序大小端转换 */
+/* 32???????????????? */
 #define OAL_SWAP_BYTEORDER_32(_val)        \
         ((((_val) & 0x000000FF) << 24) +     \
         (((_val) & 0x0000FF00) << 8) +       \
@@ -48,20 +49,21 @@ extern "C" {
 
 #define OAL_CONST                                   const
 
-/* 获取CORE ID */
+/* ????CORE ID */
 #if (_PRE_MULTI_CORE_MODE_OFFLOAD_DMAC == _PRE_MULTI_CORE_MODE)
 #define OAL_GET_CORE_ID()    (0)
-#else                                   /* 非offload架构 */
+#else                                   /* ??offload???? */
 #ifdef _PRE_WLAN_FEATURE_SMP_SUPPORT
 #define OAL_GET_CORE_ID()    smp_processor_id()
 #else
-#define OAL_GET_CORE_ID()    (0)        /* 主要给E5平台使用 */
+#define OAL_GET_CORE_ID()    (0)        /* ??????E5???????? */
 #endif
 #endif
 
 typedef oal_uint    oal_bitops;
 
 typedef struct file              oal_file_stru;
+typedef loff_t                   oal_file_pos;
 #define OAL_FILE_FAIL            OAL_PTR_NULL
 
 #define OAL_LIKELY(_expr)       likely(_expr)
@@ -69,16 +71,16 @@ typedef struct file              oal_file_stru;
 #define OAL_FUNC_NAME           __func__
 #define OAL_RET_ADDR            __builtin_return_address(0)
 
-/* 将几个字符串按照指定格式合成一个字符串 */
+/* ?????????????????????????????????????? */
 #define OAL_SPRINTF             snprintf
 
-/* 内存读屏障 */
+/* ?????????? */
 #define OAL_RMB()               rmb()
 
-/* 内存写屏障 */
+/* ?????????? */
 #define OAL_WMB()               wmb()
 
-/* 内存屏障 */
+/* ???????? */
 #define OAL_MB()                mb()
 
 #define OAL_OFFSET_OF          offsetof
@@ -99,7 +101,7 @@ typedef struct file              oal_file_stru;
 
 #define OAL_VSPRINTF            vsnprintf
 
-/* E5平台描述符用，注意，host侧平台不同，MEM_BASE_ADDR需要修改 */
+/* E5????????????????????host????????????MEM_BASE_ADDR???????? */
 #if(_PRE_TARGET_PRODUCT_TYPE_E5 == _PRE_CONFIG_TARGET_PRODUCT)
 extern oal_uint32 gul_dscr_fstvirt_addr;
 extern oal_uint32 gul_dscr_fstphy_addr;
@@ -119,7 +121,7 @@ extern oal_uint32 gul_dscr_fstphy_addr;
 #define OAL_DSCR_PHY_TO_VIRT(_phy_addr)     phys_to_virt((_phy_addr) + OAL_PLAT_MEM_BASE_ADDR)
 #endif
 
-/* 物理地址和虚拟地址之间的转换,作为netbuf用 */
+/* ????????????????????????????,????netbuf?? */
 #define OAL_VIRT_TO_PHY_ADDR(_virt_addr)            (virt_to_phys(_virt_addr) - OAL_PLAT_MEM_BASE_ADDR)
 #define OAL_PHY_TO_VIRT_ADDR(_phy_addr)             phys_to_virt((_phy_addr) + OAL_PLAT_MEM_BASE_ADDR)
 
@@ -150,41 +152,41 @@ typedef struct kobject              oal_kobject;
 /* hi1102-cb for sys interface  51/02 */
 
 /*****************************************************************************
-  3 枚举定义
+  3 ????????
 *****************************************************************************/
 
 /*****************************************************************************
-  4 全局变量声明
-*****************************************************************************/
-
-
-/*****************************************************************************
-  5 消息头定义
+  4 ????????????
 *****************************************************************************/
 
 
 /*****************************************************************************
-  6 消息定义
+  5 ??????????
 *****************************************************************************/
 
 
 /*****************************************************************************
-  7 STRUCT定义
+  6 ????????
 *****************************************************************************/
 
 
 /*****************************************************************************
-  8 UNION定义
+  7 STRUCT????
 *****************************************************************************/
 
 
 /*****************************************************************************
-  9 OTHERS定义
+  8 UNION????
 *****************************************************************************/
 
 
 /*****************************************************************************
-  10 函数声明
+  9 OTHERS????
+*****************************************************************************/
+
+
+/*****************************************************************************
+  10 ????????
 *****************************************************************************/
 
 /* #define random_ether_addr(addr) eth_random_addr(addr) */
@@ -279,7 +281,7 @@ OAL_STATIC OAL_INLINE oal_file_stru* oal_file_write(oal_file_stru *file, oal_int
 
     i_ret = file->f_op->write(file, pc_string, ul_length, &file->f_pos);
 
-    return OAL_SUCC;
+    return file;
 }
 
 
@@ -302,7 +304,24 @@ OAL_STATIC OAL_INLINE oal_int32  oal_file_read(oal_file_stru *file,
 		                                         oal_int8 *pc_buf,
 		                                         oal_uint32 ul_count)
 {
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,14,0))
+    loff_t pos = 0;
+    return kernel_read(file, pc_buf, ul_count, &pos);
+#else
     return kernel_read(file, 0, pc_buf, ul_count);
+#endif
+}
+
+OAL_STATIC OAL_INLINE oal_int32  oal_file_read_ext(oal_file_stru *file,
+                                                oal_file_pos pos,
+                                                oal_int8 *pc_buf,
+                                                oal_uint32 ul_count)
+{
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(4,14,0))
+    return kernel_read(file, pc_buf, ul_count, &pos);
+#else
+    return kernel_read(file, pos, pc_buf, ul_count);
+#endif
 }
 
 
@@ -480,7 +499,7 @@ OAL_STATIC OAL_INLINE unsigned long long oal_simple_strtoull(const oal_int8 *cp,
 
 OAL_STATIC OAL_INLINE oal_int  oal_strtol(OAL_CONST oal_int8 *pc_nptr, oal_int8 **ppc_endptr, oal_int32 l_base)
 {
-    /* 跳过空格 */
+    /* ???????? */
     while (' ' == (*pc_nptr))
     {
         pc_nptr++;
@@ -515,7 +534,7 @@ OAL_STATIC OAL_INLINE oal_uint32  oal_kallsyms_lookup_name(OAL_CONST oal_uint8 *
 OAL_STATIC OAL_INLINE oal_void oal_dump_stack(oal_void)
 {
 #if(_PRE_CONFIG_TARGET_PRODUCT != _PRE_TARGET_PRODUCT_TYPE_WS835DMB)
-    //835产品调用dump_stack会触发系统重启
+    //835????????dump_stack??????????????
     dump_stack();
 #endif
 }
